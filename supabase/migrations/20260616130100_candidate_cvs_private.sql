@@ -1,0 +1,12 @@
+-- Make the candidate-cvs storage bucket PRIVATE.
+-- ---------------------------------------------------------------------------
+-- The bucket was public (storage.buckets.public = true), so candidate CV PII was
+-- served over unauthenticated, partly-guessable CDN URLs (getPublicUrl).
+--
+-- PROMOTION ORDER — apply this ONLY after the app's signed-URL change is live in
+-- the same environment. The app now reads candidate-cvs via time-limited
+-- createSignedUrl() (public-apply.ts, scout.ts, idibu/process-webhook.ts,
+-- agency/reprocess-candidate.ts). Flipping the bucket private BEFORE that code is
+-- deployed will break CV reads. Idempotent; safe to re-run.
+-- ---------------------------------------------------------------------------
+update storage.buckets set public = false where id = 'candidate-cvs';

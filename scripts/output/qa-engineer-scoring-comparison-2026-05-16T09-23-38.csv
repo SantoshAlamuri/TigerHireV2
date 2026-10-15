@@ -1,0 +1,3 @@
+candidate_id,candidate_name,current_path,current_score,hybrid_v2_score,three_stage_score,v1_score,score_spread,max_agreement_pair,skipped,skip_reason
+a4126b48-b841-4bbf-b9aa-0b94c8c24893,SAMEERULLA SHARIEF,hybrid_v2,34,39,12,64,52,hybrid_v2+v1_stage2 (Δ25),no,
+77eaffe4-97fa-4563-ae83-766c6188b04d,Samikshya Nath,hybrid_v2,61,63,4,42,59,hybrid_v2+v1_stage2 (Δ21),no,

@@ -1,0 +1,239 @@
+name: Promote Dev to Production
+
+on:
+  # Manual trigger - allows you to promote dev to main when ready
+  workflow_dispatch:
+    inputs:
+      skip_ci:
+        description: "Skip CI checks (use only if CI already passed)"
+        required: false
+        default: "false"
+        type: choice
+        options:
+          - "false"
+          - "true"
+      create_release:
+        description: "Create a GitHub release after promotion"
+        required: false
+        default: "false"
+        type: choice
+        options:
+          - "false"
+          - "true"
+
+  # Optional: Auto-promote when dev branch passes all CI checks
+  # Uncomment the section below if you want automatic promotion
+  # workflow_run:
+  #   workflows: ["CI"]
+  #   branches:
+  #     - dev
+  #   types:
+  #     - completed
+
+concurrency:
+  group: promote-to-production
+  cancel-in-progress: false
+
+jobs:
+  check-dev-status:
+    name: Check Dev Branch Status
+    runs-on: ubuntu-latest
+    outputs:
+      dev_sha: ${{ steps.sha.outputs.value }}
+      main_sha: ${{ steps.main-sha.outputs.value }}
+      has_changes: ${{ steps.compare.outputs.has_changes }}
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+          ref: dev
+
+      - name: Get dev commit SHA
+        id: sha
+        run: echo "value=$(git rev-parse HEAD)" >> $GITHUB_OUTPUT
+
+      - name: Get main commit SHA
+        id: main-sha
+        run: |
+          git fetch origin main:main --depth=1
+          echo "value=$(git rev-parse main)" >> $GITHUB_OUTPUT
+
+      - name: Check if dev has new changes
+        id: compare
+        run: |
+          if [ "${{ steps.sha.outputs.value }}" != "${{ steps.main-sha.outputs.value }}" ]; then
+            echo "has_changes=true" >> $GITHUB_OUTPUT
+          else
+            echo "has_changes=false" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Show status
+        run: |
+          echo "Dev SHA: ${{ steps.sha.outputs.value }}"
+          echo "Main SHA: ${{ steps.main-sha.outputs.value }}"
+          echo "Has changes: ${{ steps.compare.outputs.has_changes }}"
+          if [ "${{ steps.compare.outputs.has_changes }}" = "false" ]; then
+            echo "⚠️  Dev and main are already in sync. Nothing to promote."
+          fi
+
+  run-ci-checks:
+    name: Run CI Checks on Dev
+    env:
+      NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}
+      NEXT_PUBLIC_SUPABASE_ANON_KEY: ${{ secrets.NEXT_PUBLIC_SUPABASE_ANON_KEY }}
+      SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+    runs-on: ubuntu-latest
+    if: |
+      github.event.inputs.skip_ci != 'true' && 
+      needs.check-dev-status.outputs.has_changes == 'true'
+    needs: check-dev-status
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          ref: dev
+
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 24
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Verify preview database before release tests
+        run: node scripts/assert-ci-preview.mjs
+
+      - name: Lint
+        run: npm run lint -- --max-warnings 0
+
+      - name: Typecheck
+        run: npm run typecheck
+
+      - name: Run tests
+        run: npm run test:coverage
+
+      - name: Dev release gate (ga-sweep)
+        run: npm run test:release-gate
+
+      - name: API route guard audit
+        run: node scripts/audit-api-routes.mjs
+
+      - name: E2E smoke (optional; set vars.REQUIRE_E2E_ON_PROMOTE=false to skip)
+        if: vars.REQUIRE_E2E_ON_PROMOTE != 'false'
+        env:
+          E2E_APPLY_ORG_SLUG: ${{ secrets.E2E_APPLY_ORG_SLUG }}
+          NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}
+          NEXT_PUBLIC_SUPABASE_ANON_KEY: ${{ secrets.NEXT_PUBLIC_SUPABASE_ANON_KEY }}
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+        run: |
+          npx playwright install --with-deps chromium
+          npm run test:e2e:smoke
+
+      - name: Build
+        # `next build` OOMs on the default heap now that the source tree is
+        # larger — the same failure ci.yml already fixed. Without this the
+        # promote gate dies at "Running TypeScript" after compiling cleanly,
+        # which reads like a code break but is purely a runner memory limit.
+        env:
+          NODE_OPTIONS: --max-old-space-size=6144
+          NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}
+          NEXT_PUBLIC_SUPABASE_ANON_KEY: ${{ secrets.NEXT_PUBLIC_SUPABASE_ANON_KEY }}
+        run: npm run build
+
+      - name: Verify production server boots against preview configuration
+        env:
+          CRON_SECRET: ci-boot-check-only
+          VERCEL_ENV: preview
+          OUTBOUND_NOTIFICATIONS_ENABLED: "false"
+        run: npm run verify:boot
+
+  promote:
+    name: Promote Dev to Main
+    runs-on: ubuntu-latest
+    needs: [check-dev-status, run-ci-checks]
+    if: |
+      (github.event.inputs.skip_ci == 'true' || needs.run-ci-checks.result == 'success') &&
+      needs.check-dev-status.outputs.has_changes == 'true'
+    permissions:
+      contents: write
+      pull-requests: write
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Configure Git
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+      - name: Fetch latest branches
+        run: |
+          git fetch origin dev:dev
+          git fetch origin main:main
+
+      - name: Checkout main
+        run: git checkout main
+
+      - name: Merge dev into main
+        id: merge
+        run: |
+          git merge --no-ff dev -m "chore: promote dev to production
+
+          Promoted from dev branch (commit ${{ needs.check-dev-status.outputs.dev_sha }})
+
+          Triggered by: ${{ github.actor }}
+          Workflow run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+        continue-on-error: true
+
+      - name: Check merge result
+        if: steps.merge.outcome == 'failure'
+        run: |
+          echo "❌ Merge failed. This might be due to conflicts."
+          echo "Please resolve conflicts manually and try again."
+          exit 1
+
+      - name: Push to main
+        run: |
+          git push origin main
+          echo "✅ Successfully promoted dev to main!"
+
+      - name: Create release
+        if: github.event.inputs.create_release == 'true'
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: release-${{ github.run_number }}-${{ github.run_id }}
+          name: Production Release ${{ github.run_number }}
+          body: |
+            ## Production Release
+
+            Promoted from dev branch.
+
+            **Commit:** ${{ needs.check-dev-status.outputs.dev_sha }}
+            **Triggered by:** ${{ github.actor }}
+            **Date:** ${{ github.event.head_commit.timestamp || github.run_id }}
+
+            ### Changes
+            See the [full diff](https://github.com/${{ github.repository }}/compare/${{ needs.check-dev-status.outputs.main_sha }}...${{ needs.check-dev-status.outputs.dev_sha }})
+          draft: false
+          prerelease: false
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  notify:
+    name: Notify Promotion Status
+    runs-on: ubuntu-latest
+    needs: [check-dev-status, promote]
+    if: always()
+    steps:
+      - name: Promotion summary
+        run: |
+          if [ "${{ needs.promote.result }}" == "success" ]; then
+            echo "✅ Successfully promoted dev to main!"
+            echo "Dev SHA: ${{ needs.check-dev-status.outputs.dev_sha }}"
+          elif [ "${{ needs.check-dev-status.outputs.has_changes }}" == "false" ]; then
+            echo "ℹ️  Dev and main are already in sync. No promotion needed."
+          else
+            echo "❌ Promotion failed. Check the logs above for details."
+          fi

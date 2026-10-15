@@ -1,0 +1,1449 @@
+<!doctype html><html><head><!-- frame-runtime --><script>window.__FRAME_PREAMBLE={"capabilities":{"downloads":"downloads.BABDwU1K.js","mcp":"mcp.hoz5jxDa.js","permissions":"permissions.ByA9Fd8x.js","self":"self.D3u1zjZe.js","user":"user.Cp1-RnjB.js"},"transforms":"_transforms.DYk1Ltlh.js","comments":"_comments.DiwQajF_.js","translate":"_translate.C5leZL2A.js"}</script><script>(function(){"use strict";const Ee="modulepreload",we=function(e){return"/"+e},Se={},ee=function(t,n,l){let i=Promise.resolve();function s(f){const c=new Event("vite:preloadError",{cancelable:!0});if(c.payload=f,window.dispatchEvent(c),!c.defaultPrevented)throw f}return i.then(f=>{for(const c of f||[])c.status==="rejected"&&s(c.reason);return t().catch(s)})},te=["light","dark","system"];function ne(e){if(e===null||typeof e!="object")return!1;const t=e.__frame_init;return t!==null&&typeof t=="object"}function W(e){return e!==null&&typeof e=="object"&&e.__frame_size_poke===!0}function re(e){if(e===null||typeof e!="object")return!1;const t=e.__frame_theme;if(t===null||typeof t!="object")return!1;const n=t.theme;return typeof n=="string"&&te.includes(n)}function se(e){try{typeof reportError=="function"?reportError(e):setTimeout(()=>{throw e},0)}catch{}}const oe=Object.freeze(Object.assign(Object.create(null),{user:Object.freeze(Object.assign(Object.create(null),{id:null,isOwner:!1,canEdit:!1,name:null,avatarUrl:null,email:null}))}));function Y(e){if(window===top||e.type==="auxclick"&&e.button!==1)return;const t=e.composedPath?e.composedPath():[e.target];let n=null;for(let f=0;f<t.length;f++){const c=t[f];if(c&&c.matches&&c.matches("a[href],area[href]")){n=c;break}}if(!n&&e.target&&e.target.closest&&(n=e.target.closest("a[href],area[href]")),!n)return;const l=n.getAttribute("href");if(!l)return;let i,s;try{i=new URL(l,document.baseURI),s=new URL(document.baseURI).origin}catch{return}(i.protocol==="http:"||i.protocol==="https:")&&i.origin!==s&&(e.preventDefault(),parent.postMessage({__frame_nav:!0,url:i.href},"*"))}const K={};function D(e){if(window===top)return;const t=Date.now();t-(K[e]||0)<500||(K[e]=t,parent.postMessage({__frame_engaged:!0,kind:e},"*"))}const ie=2e3,x=["wheel","touchstart","touchmove","keydown","pointerdown"];let J=0;function ae(e){e.isTrusted&&(J=Date.now())}function ce(){addEventListener("click",Y,!0),addEventListener("auxclick",Y,!0)}function le(){for(let e=0;e<x.length;e++)addEventListener(x[e],ae,{capture:!0,passive:!0});addEventListener("scroll",e=>{e.isTrusted&&Date.now()-J<ie&&D("scroll")},{capture:!0,passive:!0}),addEventListener("pointermove",e=>{e.isTrusted&&D("pointer")},{capture:!0,passive:!0}),addEventListener("click",e=>{e.isTrusted&&D("click")},{capture:!0,passive:!0})}const I="__frame_scroll",ue=150,fe=310,de=160,me=3e4;function pe(){let e=0,t=!1,n=!1,l=!1,i=0;const s=a=>{try{sessionStorage.setItem(I,JSON.stringify({y:a}))}catch{}},f=()=>{if(t){t=!1;return}n=!0,clearTimeout(e),e=setTimeout(()=>s(scrollY),ue)};try{addEventListener("scroll",f,{passive:!0}),addEventListener("pagehide",()=>{clearTimeout(e),s(scrollY)})}catch{}const c=()=>{let a;try{a=sessionStorage.getItem(I)}catch{return null}if(a===null)return null;let _;try{_=JSON.parse(a)}catch{_=null}const m=_?.y;if(!(typeof m=="number"&&Number.isFinite(m)&&m>=0)){try{sessionStorage.removeItem(I)}catch{}return null}return m};let g=!1;const p=a=>{try{const _=scrollY;scrollTo({top:a,left:0,behavior:"instant"}),i=a,l=!0,s(a);const m=scrollY;m!==_&&(t=!0),m!==a&&!g&&(g=!0,addEventListener("load",()=>{try{if(scrollY===m){const y=c();p(y!==null?y:i)}}catch{}},{once:!0}))}catch{}},o=()=>{try{return!!location.hash}catch{return!0}};let u=!1;const d=()=>{try{if(u||innerWidth>fe||innerHeight>de)return;u=!0;const a=Date.now(),_=()=>{try{removeEventListener("resize",_)}catch{}if(Date.now()-a>me||n||o())return;const m=c();p(m!==null?m:i)};addEventListener("resize",_)}catch{}};let h=!1,b=!1;return{restore(){if(h||(h=!0,o()))return;const a=c();a!==null&&(p(a),d())},promoted(){if(b||(b=!0,o()))return;const a=c();a!==null?(p(a),d()):l&&p(i)}}}function he(e,t,n){const l=[...t.values()].filter(i=>i.targets.some(s=>s.startsWith(e+".")));return{wrap(i,s){const f=`${e}.${i}`,c=l.filter(g=>g.targets.includes(f));return c.length===0?(...g)=>{try{return s(...g)}catch(p){return Promise.reject(p)}}:(...g)=>{let p=g;for(const u of c){const d=u.module.parameters;if(d)try{p=d(p)}catch{return Promise.reject({code:"transform_error",id:u.id,scope:e,message:"parameters transform failed"})}}let o;try{o=s(...p)}catch(u){o=Promise.reject(u)}return o.then(u=>{for(let d=c.length-1;d>=0;d--){const h=c[d],b=h.module.returns;if(b)try{u=b(u)}catch{return n({id:h.id,scope:e,leg:"returns"}),u}}return u},u=>{for(let d=c.length-1;d>=0;d--){const h=c[d],b=h.module.throws;if(b)try{u=b(u)}catch{return n({id:h.id,scope:e,leg:"throws"}),Promise.reject(u)}}return Promise.reject(u)})}}}}function ge(e,t,n,l=()=>{}){const i=new Set(e.changes??[]),s=new Map;for(const f of i){const c=t[f];c&&s.set(f,c)}return{contract:e.contract,changes:i,flags:new Set(e.flags??[]),capabilities:e.capabilities??{},capBudgets:e.capBudgets??{},transforms:s,shellOrigin:n.shellOrigin,mount:n.mount,pipe:f=>he(f,s,l)}}(function(){const e=Object.defineProperty,t=globalThis,n=["RTCPeerConnection","webkitRTCPeerConnection","RTCDataChannel","RTCIceCandidate","RTCSessionDescription","RTCRtpSender","RTCRtpReceiver"];let l=0;for(let i=0;i<n.length;i++){const s=n[i];try{e(t,s,{value:void 0,writable:!1,configurable:!1})}catch{try{delete t[s]}catch{}try{e(t,s,{value:void 0,writable:!1,configurable:!0})}catch{}}typeof t[s]=="function"&&l++}if(l&&window!==top)try{parent.postMessage({__frame_rtc_lockdown_failed:l},"*")}catch{}})();const _e=1e4,ye=Object.freeze([...window.__FRAME_PREAMBLE?.origins??["https://claude.ai","https://preview.claude.ai"]]);function G(e){for(const t of ye)if(t.endsWith(":*"))try{const n=new URL(e);if(`${n.protocol}//${n.hostname}:*`===t)return!0}catch{}else if(e===t)return!0;return!1}const R=Object.freeze({...window.__FRAME_PREAMBLE?.capabilities}),U=window.__FRAME_PREAMBLE?.transforms,z=window.__FRAME_PREAMBLE?.comments,$=window.__FRAME_PREAMBLE?.translate,T=/^[\w.-]+\.js$/,be=/^[a-z][a-z0-9_-]{0,63}$/;let V=null,j=null;function q(e,t,n){try{Object.defineProperty(e,t,{value:n,writable:!1,configurable:!1,enumerable:!0})}catch{try{Object.defineProperty(e,t,{value:n,writable:!1,configurable:!0,enumerable:!0})}catch{}}}let B=!1;function X(e){const t=document.documentElement;e==="light"||e==="dark"?(t.dataset.theme=e,t.style.colorScheme=e,B=!0):B&&(delete t.dataset.theme,t.style.colorScheme="",B=!1)}const A=Object.assign(Object.create(null),{mcp:Object.assign(Object.create(null),{watchTool:{handlerArg:3}})}),M=new Map;function Q(e,t){const n=M.get(e);if(!n)return;const l=Object.assign(Object.create(null),t);Object.assign(n.impl,l),n.impl.__settled=()=>Promise.reject({code:"capability_removed",message:`${e}: method not in this runtime`});const i=n.queue;n.queue=[];for(const s of i){const f=l[s.method];if(f)if(A[e]?.[s.method])try{s.resolve(f(...s.args))}catch{k(s,A[e][s.method].handlerArg,{code:"transform_error",message:`${e}.${s.method} rejected its arguments`})}else f(...s.args).then(s.resolve,s.reject);else{const c={code:"capability_removed",message:`${e}.${s.method} is not in this runtime`},g=A[e]?.[s.method];if(g){k(s,g.handlerArg,c);continue}s.reject(c)}}}function ve(e,t){const n=M.get(e);if(!n)return;n.impl.__settled=()=>Promise.reject(t);const l=n.queue;n.queue=[];for(const i of l){const s=A[e]?.[i.method];if(s){k(i,s.handlerArg,t);continue}i.reject(t)}}function N(e,t){const n=oe[e];if(!n){ve(e,t);return}Q(e,Object.fromEntries(Object.entries(n).map(([l,i])=>[l,()=>Promise.resolve(i)])))}function k(e,t,n){if(e.syncState?.dead)return;const l=e.args[t];typeof l=="function"&&queueMicrotask(()=>{if(!e.syncState?.dead)try{l({type:"error",error:n})}catch(i){se(i)}})}const F=Object.getOwnPropertyDescriptor(window,"claude");if(window!==top&&!(F&&F.writable===!1)){ce(),le();let e=null;try{e=pe()}catch{}const t=F?.value??{};q(window,"claude",t);const n=o=>{const u={impl:Object.create(null),queue:[]};M.set(o,u);const d=u.impl,h=new Proxy(d,{get:(b,a)=>{if(typeof a!="string"||a==="then"||a==="toJSON"||a==="valueOf")return;if(a==="toString")return Object.prototype.toString;const _=A[o]?.[a];return _?(...m)=>{if(typeof m[_.handlerArg]!="function")throw new TypeError(`${o}.${a} requires a handler function`);const y=d[a];if(y)return y(...m);if(d.__settled){const v={dead:!1},P={args:[...m],syncState:v};return d.__settled().catch(C=>k(P,_.handlerArg,C)),()=>{v.dead=!0}}let E=null;const S={dead:!1};return u.queue.push({method:a,args:m,resolve:v=>{E=typeof v=="function"?v:null,S.dead&&E?.()},reject:()=>{},syncState:S}),()=>{S.dead=!0,E?.()}}:(...m)=>{const y=d[a]??d.__settled;return y?y(...m):new Promise((E,S)=>{u.queue.push({method:a,args:m,resolve:E,reject:S})})}},set:()=>!1});q(t,o,h)};for(const o of Object.keys(R)){if(t[o]!==void 0){q(t,o,t[o]);continue}n(o)}let l=null,i=null,s=0;const f=o=>{o.source!==parent||!G(o.origin)||ne(o.data)&&(l=o.data.__frame_init,j=o.origin,removeEventListener("message",f),clearTimeout(s),i?.())};addEventListener("message",f),parent.postMessage({__frame_connect:!0},"*");const c=new Promise(o=>{i=o,s=setTimeout(()=>{removeEventListener("message",f),o()},_e)}),g=document.readyState==="loading"?new Promise(o=>document.addEventListener("DOMContentLoaded",()=>o(),{once:!0})):Promise.resolve();g.then(()=>{try{e?.restore()}catch{}});const p=o=>{if(!(o.source!==parent||!G(o.origin))&&W(o.data)){removeEventListener("message",p);try{e?.promoted()}catch{}}};addEventListener("message",p),c.then(async()=>{if(!l||!j){for(const r of M.keys())N(r,{code:"not_granted",message:"frame initialization did not arrive - capability unavailable"});return}X(l.theme);const o=j;let u=!1,d=!1;addEventListener("message",r=>{if(r.source!==parent||r.origin!==o)return;re(r.data)&&X(r.data.__frame_theme.theme);const w=r.data?.__fc_mode;w&&typeof w=="object"&&!u&&z&&T.test(z)&&(u=!0,h(z).then(H=>H.install?.(o,w.on===!0)).catch(()=>{}));const O=r.data?.__ft_cmd;O&&typeof O=="object"&&!d&&$&&T.test($)&&(d=!0,h($).then(H=>H.install?.(o,O)).catch(()=>{}))});const h=r=>ee(()=>import("/_runtime/"+r),void 0),b=Object.keys(l.capabilities??{});for(const r of b)Object.hasOwn(R,r)||be.test(r)&&t[r]===void 0&&(n(r),N(r,{code:"capability_disabled",message:"capability not in this runtime generation"}));const a=b.filter(r=>Object.hasOwn(R,r)).map(r=>[r,R[r]]).filter(r=>typeof r[1]=="string"&&T.test(r[1])),[_,...m]=await Promise.allSettled([U&&T.test(U)?h(U):Promise.resolve({}),...a.map(([,r])=>h(r))]),y=j;V=ge(l,_.status==="fulfilled"&&_.value?.TRANSFORMS||{},{shellOrigin:y,mount:Q},r=>parent.postMessage({__frame_cap_telemetry:r},y));const E=r=>parent.postMessage({__frame_cap_telemetry:{kind:"cap-load-error",cap:r}},y),S=V;m.forEach((r,w)=>{const O=a[w][0];if(r.status!=="fulfilled"){E(O);return}try{r.value?.install?.(S)}catch{E(O)}});for(const[r,w]of M)if(!(w.queue.length===0&&Object.keys(w.impl).length>0)){if(b.includes(r)){N(r,{code:"capability_disabled",message:"capability not available in this session"});continue}N(r,{code:"not_granted",message:"capability not available in this session"})}await g,parent.postMessage({__frame_ready:!0},j);let v=-1,P=0;const C=()=>{P=0;const r=Math.max(document.documentElement.scrollHeight,document.body?document.body.scrollHeight:0);r!==v&&(v=r,parent.postMessage({__frame_size:!0,h:r},y))},L=()=>{P||(P=setTimeout(C,200))},Z=new ResizeObserver(L);Z.observe(document.documentElement),document.body&&Z.observe(document.body),document.addEventListener("load",L,!0),document.fonts?.ready.then(L,()=>{}),addEventListener("beforeprint",()=>{v=-1,C()}),L(),addEventListener("message",r=>{if(!(r.source!==parent||r.origin!==y)&&W(r.data)){try{e?.promoted()}catch{}v=-1,L()}})})}})();</script><!-- /frame-runtime --><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1"><style>:root{color-scheme:light}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#faf9f5;color:#141413}img{max-width:100%}</style></head><body>
+<title>TigerHire — UI resolution · every seat</title>
+<style>
+  :root{
+    --bg:#0b0d11; --panel:#13161c; --panel-2:#181c23; --sunk:#0f1216;
+    --line:rgba(255,255,255,.07); --line-2:rgba(255,255,255,.14);
+    --tx:#eef1f6; --tx-2:#a4aebf; --tx-3:#6b7789;
+    --amber:#f59e0b; --amber-2:#fbbf24;
+    --good:#34d399; --mid:#fbbf24; --low:#f87171;
+    --mono:ui-monospace,"SF Mono",Menlo,Consolas,monospace;
+    --sans:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{background:var(--bg);color:var(--tx);font:15px/1.55 var(--sans);-webkit-font-smoothing:antialiased}
+  .wrap{max-width:1240px;margin:0 auto;padding:32px 22px 60px}
+  .eyebrow{font-family:var(--mono);font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--amber);margin-bottom:10px}
+  h1{font-size:clamp(24px,3.2vw,34px);letter-spacing:-.026em;line-height:1.14;font-weight:700;text-wrap:balance}
+  .lede{margin-top:10px;color:var(--tx-2);max-width:74ch;font-size:15px}
+  .lede b{color:var(--tx);font-weight:600}
+  h2{font-size:18px;letter-spacing:-.016em;font-weight:680;margin:32px 0 4px}
+  .sub{color:var(--tx-3);font-size:13px;margin-bottom:12px;max-width:82ch}
+  .mapnote{margin-top:12px;border:1px dashed var(--line-2);border-radius:10px;padding:10px 14px;font-size:12.8px;color:var(--tx-2)}
+  .mapnote b{color:var(--tx);font-weight:640}
+  code{font-family:var(--mono);font-size:.92em;color:var(--tx-2)}
+  kbd{font-family:var(--mono);font-size:10px;background:var(--panel-2);border:1px solid var(--line-2);border-bottom-width:2px;border-radius:4px;padding:1px 5px;color:var(--tx-2)}
+
+  /* persona switcher */
+  .personas{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;margin-top:16px}
+  @media(max-width:960px){.personas{grid-template-columns:repeat(2,1fr)}}
+  .pcard{text-align:left;background:var(--panel);border:1px solid var(--line);border-radius:11px;padding:11px 12px;cursor:pointer;font:inherit;color:inherit;display:flex;gap:10px;align-items:flex-start}
+  .pcard:hover{border-color:var(--line-2)}
+  .pcard[aria-selected="true"]{border-color:var(--amber);background:linear-gradient(180deg,rgba(245,158,11,.1),rgba(245,158,11,.02))}
+  .pcard:focus-visible{outline:2px solid var(--amber);outline-offset:2px}
+  .av{width:34px;height:34px;border-radius:9px;flex:none;display:flex;align-items:center;justify-content:center;font:700 12px var(--mono);background:rgba(245,158,11,.14);color:var(--amber-2)}
+  .pcard .nm{font-weight:670;font-size:13.4px;line-height:1.25}
+  .pcard .rl{font-size:11.4px;color:var(--tx-3)}
+  .pcard .q{font-size:11.6px;color:var(--tx-2);margin-top:3px;line-height:1.4}
+  .pcard[aria-selected="true"] .q{color:var(--tx)}
+
+  /* app shell */
+  .shell{margin-top:12px;display:grid;grid-template-columns:186px 1fr;border:1px solid var(--line-2);border-radius:14px;overflow:hidden;background:var(--panel);min-height:600px}
+  @media(max-width:860px){.shell{grid-template-columns:1fr}.rail{flex-direction:row;overflow-x:auto;border-right:0;border-bottom:1px solid var(--line)}}
+  .rail{display:flex;flex-direction:column;gap:2px;padding:12px 8px;background:var(--panel-2);border-right:1px solid var(--line)}
+  .mark{font-weight:800;font-size:13.5px;padding:4px 10px 2px}
+  .mark span{color:var(--amber)}
+  .seat{font-family:var(--mono);font-size:10px;color:var(--tx-3);padding:0 10px 10px}
+  .ask{margin:0 6px 10px;border:1px solid var(--line-2);border-radius:8px;padding:6px 10px;font-size:12px;color:var(--tx-3);display:flex;gap:6px;align-items:center}
+  .ask kbd{margin-left:auto}
+  .nav{display:flex;align-items:center;gap:8px;text-align:left;font:600 13.4px var(--sans);color:var(--tx-2);background:none;border:0;border-radius:8px;padding:8px 10px;cursor:pointer;white-space:nowrap}
+  .nav:hover{background:rgba(255,255,255,.05);color:var(--tx)}
+  .nav[aria-selected="true"]{background:rgba(245,158,11,.13);color:var(--amber-2)}
+  .nav:focus-visible{outline:2px solid var(--amber);outline-offset:2px}
+  .nav .b{margin-left:auto;font:600 10.5px var(--mono);background:var(--amber);color:#0b0d11;border-radius:99px;padding:1px 6px}
+  .railfoot{margin-top:auto;padding:10px;font-size:11px;color:var(--tx-3);line-height:1.5}
+  @media(max-width:860px){.railfoot,.ask,.seat{display:none}}
+
+  .stagewrap{min-width:0;display:flex;flex-direction:column}
+  .shead{display:flex;align-items:center;gap:10px;padding:11px 16px;border-bottom:1px solid var(--line);flex-wrap:wrap}
+  .shead .t{font-weight:680;font-size:14.5px}
+  .shead .s{color:var(--tx-3);font-size:12.8px}
+  .shead .r{margin-left:auto;font-family:var(--mono);font-size:11px;color:var(--tx-3);display:flex;align-items:center;gap:8px}
+  .pane{padding:14px 16px;flex:1}
+  .lbl{font-family:var(--mono);font-size:9.8px;letter-spacing:.13em;text-transform:uppercase;color:var(--tx-3);margin:4px 0 8px}
+  .lbl.sp{margin-top:18px}
+  .insight{margin-top:13px;display:flex;gap:10px;background:rgba(245,158,11,.05);border:1px solid rgba(245,158,11,.2);border-radius:9px;padding:10px 13px}
+  .insight b{color:var(--amber-2);font-weight:640}
+  .insight p{font-size:12.6px;color:var(--tx-2);line-height:1.55}
+
+  /* tables */
+  .tscroll{overflow-x:auto;border:1px solid var(--line);border-radius:10px;background:var(--sunk)}
+  table{border-collapse:collapse;width:100%;min-width:640px}
+  th{font-family:var(--mono);font-size:9.4px;letter-spacing:.11em;text-transform:uppercase;color:var(--tx-3);text-align:left;padding:8px 11px;border-bottom:1px solid var(--line);font-weight:500;white-space:nowrap}
+  td{padding:9px 11px;border-bottom:1px solid rgba(255,255,255,.045);font-size:13px;vertical-align:top}
+  tr:last-child td{border-bottom:0}
+  tr[data-goto]{cursor:pointer}
+  tr[data-goto]:hover td{background:rgba(255,255,255,.03)}
+  td.n{font-family:var(--mono);font-variant-numeric:tabular-nums;text-align:right;white-space:nowrap}
+  .rn{font-weight:640}
+  td.cat{font-family:var(--mono);font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--amber);white-space:nowrap;padding-top:12px}
+  td .rt2{color:var(--tx-3);font-family:var(--mono);font-size:11px;display:block;margin-top:1px}
+  .chip{display:inline-block;font-family:var(--mono);font-size:10px;padding:2px 7px;border-radius:5px;white-space:nowrap}
+  .c-ok{background:rgba(52,211,153,.14);color:var(--good)}
+  .c-warn{background:rgba(251,191,36,.14);color:var(--mid)}
+  .c-bad{background:rgba(248,113,113,.13);color:var(--low)}
+  .c-mute{background:rgba(255,255,255,.05);color:var(--tx-3)}
+
+  /* review queue */
+  .tri{display:grid;grid-template-columns:236px 1fr;gap:12px}
+  @media(max-width:860px){.tri{grid-template-columns:1fr}.q{display:none}}
+  .q{background:var(--sunk);border:1px solid var(--line);border-radius:10px;overflow:hidden;height:fit-content}
+  .qh{display:flex;justify-content:space-between;padding:8px 11px;border-bottom:1px solid var(--line);font-family:var(--mono);font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--tx-3)}
+  .qr{display:flex;align-items:center;gap:8px;padding:7px 11px;border-bottom:1px solid rgba(255,255,255,.04);border-left:2px solid transparent;font-size:13px}
+  .qr.on{background:rgba(245,158,11,.09);border-left-color:var(--amber)}
+  .qr.done{opacity:.35}
+  .qs{font-family:var(--mono);font-weight:600;width:22px;font-variant-numeric:tabular-nums}
+  .qn{flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .pips{display:flex;gap:3px;font-family:var(--mono);font-size:9.6px;font-variant-numeric:tabular-nums}
+  .pip{padding:0 4px;border-radius:3px;line-height:15px}
+  .pip.g{background:rgba(52,211,153,.16);color:var(--good)}
+  .pip.a{background:rgba(251,191,36,.15);color:var(--mid)}
+  .pip.r{background:rgba(248,113,113,.14);color:var(--low)}
+
+  .card{background:var(--sunk);border:1px solid var(--line);border-radius:10px;padding:14px}
+  .ch{display:flex;align-items:flex-start;gap:12px;flex-wrap:wrap}
+  .who .nm{font-size:17.5px;font-weight:700;letter-spacing:-.015em}
+  .who .rl{font-size:12.8px;color:var(--tx-2)}
+  .scores{margin-left:auto;display:flex}
+  .sc{padding:0 12px;text-align:right;border-left:1px solid var(--line)}
+  .sc:first-child{border-left:0}
+  .sc .k{font-family:var(--mono);font-size:9px;letter-spacing:.09em;text-transform:uppercase;color:var(--tx-3)}
+  .sc .n{font-family:var(--mono);font-weight:600;font-variant-numeric:tabular-nums;line-height:1.1}
+  .sc.hero .n{font-size:30px;color:var(--good)}
+  .sc.sub .n{font-size:17px;padding-top:3px}
+  .vt{display:flex;gap:6px;margin-left:12px}
+  .vt button{font:600 11px var(--sans);border:1px solid var(--line-2);background:rgba(255,255,255,.04);color:var(--tx-2);border-radius:6px;padding:3px 8px;cursor:pointer}
+  .vt button[aria-pressed="true"]{background:rgba(245,158,11,.15);color:var(--amber-2);border-color:rgba(245,158,11,.4)}
+  .flags{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:12px}
+  @media(max-width:760px){.flags{grid-template-columns:1fr}}
+  .fc{border:1px solid var(--line);border-radius:8px;overflow:hidden;background:var(--panel)}
+  .fc h4{font-family:var(--mono);font-size:9.4px;letter-spacing:.09em;text-transform:uppercase;padding:6px 9px;display:flex;justify-content:space-between;border-bottom:1px solid var(--line)}
+  .fc.g h4{color:var(--good);background:rgba(52,211,153,.07)}
+  .fc.a h4{color:var(--mid);background:rgba(251,191,36,.07)}
+  .fc.r h4{color:var(--low);background:rgba(248,113,113,.06)}
+  .fc ul{list-style:none;padding:6px 9px;display:flex;flex-direction:column;gap:5px}
+  .fc li{font-size:12px;line-height:1.4;color:var(--tx-2)}
+  .fc li q{color:var(--tx);quotes:none;font-style:normal}
+  .fc li cite{display:block;font-style:normal;color:var(--tx-3);font-family:var(--mono);font-size:10px}
+  .logi{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--line);border:1px solid var(--line);border-radius:8px;overflow:hidden;margin-top:12px}
+  .lc{background:var(--panel);padding:7px 10px}
+  .lc .k{font-family:var(--mono);font-size:9px;letter-spacing:.09em;text-transform:uppercase;color:var(--tx-3)}
+  .lc .v{font-size:13px;font-weight:600;margin-top:1px}
+  .lc .v.warn{color:var(--mid)}.lc .v.ok{color:var(--good)}
+  .acts{display:flex;gap:8px;align-items:center;margin-top:12px;padding-top:11px;border-top:1px solid var(--line);flex-wrap:wrap}
+  .btn{display:inline-flex;align-items:center;gap:6px;border:1px solid var(--line-2);background:rgba(255,255,255,.04);color:var(--tx);border-radius:8px;padding:7px 12px;font:600 12.8px var(--sans);cursor:pointer}
+  .btn.pri{background:var(--amber);border-color:var(--amber);color:#0b0d11}
+  .btn:focus-visible{outline:2px solid var(--amber);outline-offset:2px}
+  .khint{margin-top:10px;font-size:11.6px;color:var(--tx-3);display:flex;gap:12px;flex-wrap:wrap}
+
+  /* dashboard rows + funnel */
+  .funnel{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:14px}
+  .fs{flex:1;min-width:100px;border:1px solid var(--line);border-radius:9px;background:var(--sunk);padding:8px 10px;border-top:2px solid var(--tx-3)}
+  .fs.ok{border-top-color:var(--good)} .fs.warn{border-top-color:var(--mid)} .fs.bad{border-top-color:var(--low)}
+  .fs .k{font-family:var(--mono);font-size:9.4px;letter-spacing:.1em;text-transform:uppercase;color:var(--tx-3)}
+  .fs .n{font-family:var(--mono);font-size:20px;font-weight:600;font-variant-numeric:tabular-nums;line-height:1.2}
+  .fs .d{font-size:10.8px;color:var(--tx-2)}
+  .fs.warn .d{color:var(--mid)} .fs.bad .d{color:var(--low)}
+  .fs[data-goto]{cursor:pointer}
+  .fs[data-goto]:hover{border-color:var(--line-2);background:rgba(255,255,255,.03)}
+  .pr[data-goto]{cursor:pointer}
+  .pr[data-goto]:hover{background:rgba(255,255,255,.03)}
+  .qa{display:flex;gap:8px;padding:7px 0;border-bottom:1px solid rgba(255,255,255,.045);font-size:12.6px}
+  .qa:last-child{border-bottom:0}
+  .qa .ques{color:var(--tx-3);width:38%;flex:none}
+  .qa .ans{color:var(--tx)}
+  .qa .ans small{display:block;color:var(--tx-3);font-family:var(--mono);font-size:10px}
+  .rows{display:flex;flex-direction:column;gap:7px}
+  .row{display:flex;align-items:center;gap:11px;background:var(--sunk);border:1px solid var(--line);border-left-width:3px;border-radius:9px;padding:10px 12px}
+  .row.hot{border-left-color:var(--amber)} .row.warn{border-left-color:var(--mid)}
+  .row.bad{border-left-color:var(--low)} .row.calm{border-left-color:var(--tx-3)}
+  .num{font-family:var(--mono);font-size:21px;font-weight:600;font-variant-numeric:tabular-nums;width:36px;flex:none;text-align:right}
+  .row.hot .num{color:var(--amber)} .row.warn .num{color:var(--mid)}
+  .row.bad .num{color:var(--low)} .row.calm .num{color:var(--tx-2)}
+  .rt{flex:1;min-width:0}
+  .rt .a{font-size:13.6px;font-weight:600}
+  .rt .b{font-size:12.2px;color:var(--tx-2)}
+  .go{flex:none;border:1px solid var(--line-2);background:rgba(255,255,255,.045);color:var(--tx);border-radius:7px;padding:6px 11px;font:600 12.4px var(--sans);cursor:pointer;white-space:nowrap}
+  .go.pri{background:var(--amber);border-color:var(--amber);color:#0b0d11}
+  .roomgrid{display:grid;grid-template-columns:1fr 258px;gap:14px}
+  @media(max-width:860px){.roomgrid{grid-template-columns:1fr}}
+  .setup{border:1px solid var(--line);border-radius:10px;background:var(--sunk);padding:12px;height:fit-content}
+  .setup h4{font-size:13px;font-weight:680;margin-bottom:2px}
+  .setup .st{font-size:11.4px;color:var(--tx-3);margin-bottom:9px}
+  .si{display:flex;align-items:center;gap:8px;padding:6px 0;border-bottom:1px solid rgba(255,255,255,.045);font-size:12.6px;color:var(--tx-2)}
+  .si:last-of-type{border-bottom:0}
+  .si i{font-style:normal;font-family:var(--mono);font-size:11px;width:14px;flex:none}
+  .si.ok i{color:var(--good)} .si.miss i{color:var(--tx-3)}
+  .si b{color:var(--tx);font-weight:600}
+  .si .m{margin-left:auto;font-family:var(--mono);font-size:10px;color:var(--tx-3);white-space:nowrap}
+
+  /* candidates groups */
+  .grp{border:1px solid var(--line);border-radius:10px;background:var(--sunk);overflow:hidden;margin-bottom:10px}
+  .gh{display:flex;align-items:center;gap:9px;padding:9px 12px;border-bottom:1px solid var(--line);background:rgba(255,255,255,.02)}
+  .gh .t{font-weight:660;font-size:13.6px}
+  .gh .c{font-family:var(--mono);font-size:11px;color:var(--tx-3)}
+  .gh .bar{margin-left:auto;font-family:var(--mono);font-size:10.4px;color:var(--tx-3)}
+  .pr{display:flex;align-items:center;gap:10px;padding:8px 12px;border-bottom:1px solid rgba(255,255,255,.04);font-size:13px}
+  .pr:last-child{border-bottom:0}
+  .pscore{font-family:var(--mono);font-weight:600;width:26px;text-align:right;font-variant-numeric:tabular-nums}
+  .pn{flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .pl{font-size:11.4px;color:var(--tx-3);white-space:nowrap}
+  .search{width:100%;background:var(--sunk);border:1px solid var(--line-2);border-radius:8px;color:var(--tx);font:14px var(--sans);padding:8px 12px;margin-bottom:12px}
+  .search::placeholder{color:var(--tx-3)}
+
+  /* setup + analytics cards */
+  .cards2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+  @media(max-width:760px){.cards2{grid-template-columns:1fr}}
+  .sc2{border:1px solid var(--line);border-radius:10px;background:var(--sunk);padding:12px}
+  .sc2 h4{font-size:13.4px;font-weight:680}
+  .sc2 .d{font-size:12px;color:var(--tx-3);margin:2px 0 8px}
+  .sc2 .it{display:flex;gap:8px;align-items:center;padding:5px 0;font-size:12.6px;color:var(--tx-2);border-bottom:1px solid rgba(255,255,255,.045)}
+  .sc2 .it:last-child{border-bottom:0}
+  .sc2 .it b{color:var(--tx);font-weight:600}
+  .sc2 .it .m{margin-left:auto;font-family:var(--mono);font-size:10px;color:var(--tx-3)}
+  .stats{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--line);border:1px solid var(--line);border-radius:10px;overflow:hidden;margin-bottom:12px}
+  @media(max-width:700px){.stats{grid-template-columns:1fr 1fr}}
+  .stat{background:var(--sunk);padding:11px 13px}
+  .stat .k{font-family:var(--mono);font-size:9.6px;letter-spacing:.11em;text-transform:uppercase;color:var(--tx-3)}
+  .stat .v{font-family:var(--mono);font-size:22px;font-weight:600;font-variant-numeric:tabular-nums;margin-top:3px;line-height:1.1}
+  .stat .v small{font-size:12px;color:var(--tx-3);font-weight:500}
+  .stat .d{font-size:11.6px;color:var(--tx-2);margin-top:2px}
+  .v-good{color:var(--good)} .v-mid{color:var(--mid)} .v-low{color:var(--low)}
+
+  /* analytics sub-tabs + spark bars */
+  .subtabs{display:flex;gap:6px;margin-bottom:12px;flex-wrap:wrap}
+  .subtab{font:600 12px var(--sans);border:1px solid var(--line-2);background:rgba(255,255,255,.04);color:var(--tx-2);border-radius:99px;padding:5px 12px;cursor:pointer}
+  .subtab.on{background:rgba(245,158,11,.15);color:var(--amber-2);border-color:rgba(245,158,11,.4)}
+  .subtab:focus-visible{outline:2px solid var(--amber);outline-offset:2px}
+  .spark{display:flex;align-items:flex-end;gap:3px;height:58px;margin-top:8px}
+  .spark i{flex:1;background:rgba(245,158,11,.35);border-radius:2px 2px 0 0;min-width:4px}
+  .spark i.hi{background:var(--amber)}
+  .spark i.g{background:rgba(52,211,153,.55)}
+  .sparkcap{display:flex;justify-content:space-between;font-family:var(--mono);font-size:9.6px;color:var(--tx-3);margin-top:4px}
+  .stat[data-goto]{cursor:pointer}
+  .stat[data-goto]:hover{background:rgba(255,255,255,.03)}
+  .qr[data-goto]{cursor:pointer}
+  td .up{color:var(--good);font-family:var(--mono);font-size:11px}
+  td .dn{color:var(--low);font-family:var(--mono);font-size:11px}
+
+  /* guided setup sequence */
+  .seqbar{display:flex;align-items:center;gap:10px;margin-bottom:14px;font-size:12.8px;color:var(--tx-2)}
+  .seqbar b{color:var(--tx);font-weight:640}
+  .seqtrack{flex:1;height:5px;border-radius:3px;background:rgba(255,255,255,.08);overflow:hidden;min-width:120px}
+  .seqtrack i{display:block;height:100%;width:52%;background:var(--amber)}
+  .seq{display:flex;flex-direction:column}
+  .step{display:flex;gap:12px;position:relative;padding-bottom:12px}
+  .step:not(:last-child)::before{content:"";position:absolute;left:13px;top:30px;bottom:2px;width:2px;background:var(--line-2)}
+  .sn{width:28px;height:28px;border-radius:50%;flex:none;display:flex;align-items:center;justify-content:center;font:600 12px var(--mono);background:var(--panel-2);border:1px solid var(--line-2);color:var(--tx-3);position:relative;z-index:1}
+  .step.done .sn{background:rgba(52,211,153,.15);border-color:rgba(52,211,153,.45);color:var(--good)}
+  .step.now .sn{background:rgba(245,158,11,.18);border-color:var(--amber);color:var(--amber-2)}
+  .step.part .sn{background:rgba(251,191,36,.12);border-color:rgba(251,191,36,.4);color:var(--mid)}
+  .sbody{flex:1;min-width:0;border:1px solid var(--line);border-radius:9px;background:var(--sunk);padding:9px 12px}
+  .step.now .sbody{border-color:rgba(245,158,11,.5);background:rgba(245,158,11,.05)}
+  .sbody .t{display:flex;align-items:center;gap:8px;font-size:13.4px;font-weight:640;flex-wrap:wrap}
+  .sbody .t .chip{margin-left:auto}
+  .sbody .d{font-size:12.2px;color:var(--tx-2);margin-top:2px;line-height:1.5}
+  .sbody .d b{color:var(--tx);font-weight:600}
+  .scta{display:flex;gap:8px;margin-top:8px;flex-wrap:wrap}
+
+  /* scorecard */
+  .crit{border:1px solid var(--line);border-radius:9px;background:var(--sunk);padding:10px 12px;margin-bottom:8px}
+  .crit .t{display:flex;align-items:center;gap:8px;font-size:13.4px;font-weight:640}
+  .crit .t small{font-family:var(--mono);font-size:10px;color:var(--tx-3);font-weight:500}
+  .dots{margin-left:auto;display:flex;gap:5px}
+  .dot{width:22px;height:22px;border-radius:6px;border:1px solid var(--line-2);background:rgba(255,255,255,.03);display:flex;align-items:center;justify-content:center;font:600 11px var(--mono);color:var(--tx-3);cursor:pointer}
+  .dot.onn{background:rgba(245,158,11,.2);border-color:var(--amber);color:var(--amber-2)}
+  .crit .hint{font-size:11.8px;color:var(--tx-3);margin-top:4px}
+  .crit .ev{margin-top:7px;border:1px dashed var(--line-2);border-radius:7px;padding:7px 10px;font-size:12px;color:var(--tx-3)}
+
+  /* candidate timeline + WA */
+  .cwrap{max-width:460px;margin:0 auto}
+  .tl{display:flex;flex-direction:column}
+  .tle{display:flex;gap:11px;position:relative;padding-bottom:14px}
+  .tle:not(:last-child)::before{content:"";position:absolute;left:10px;top:24px;bottom:2px;width:2px;background:var(--line-2)}
+  .tld{width:22px;height:22px;border-radius:50%;flex:none;display:flex;align-items:center;justify-content:center;font:600 10px var(--mono);background:rgba(52,211,153,.15);border:1px solid rgba(52,211,153,.45);color:var(--good);position:relative;z-index:1}
+  .tle.pend .tld{background:rgba(245,158,11,.16);border-color:var(--amber);color:var(--amber-2)}
+  .tlb .a{font-size:13.6px;font-weight:640}
+  .tlb .b{font-size:12.2px;color:var(--tx-2);line-height:1.5}
+  .wa{margin-top:14px;border:1px solid var(--line);border-radius:11px;background:var(--sunk);padding:11px}
+  .wa .wt{font-family:var(--mono);font-size:10px;letter-spacing:.11em;text-transform:uppercase;color:var(--tx-3);margin-bottom:8px}
+  .bub{max-width:88%;background:#1d232c;border:1px solid var(--line);border-radius:11px 11px 11px 4px;padding:8px 11px;font-size:12.8px;color:var(--tx-2);line-height:1.5;margin-bottom:6px}
+  .bub b{color:var(--tx);font-weight:600}
+  .bub.me{margin-left:auto;border-radius:11px 11px 4px 11px;background:rgba(245,158,11,.12);border-color:rgba(245,158,11,.25);color:var(--tx)}
+
+  /* migration + order */
+  .mig td:first-child{color:var(--tx-3)}
+  .mig td:first-child s{text-decoration-color:rgba(248,113,113,.5)}
+  .mig td b{font-weight:640}
+  .order{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+  @media(max-width:860px){.order{grid-template-columns:1fr 1fr}}
+  .ph{border:1px solid var(--line);border-radius:10px;background:var(--panel);padding:12px}
+  .ph .n{font-family:var(--mono);font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--amber)}
+  .ph h4{font-size:14px;font-weight:670;margin:4px 0 3px}
+  .ph p{font-size:12.2px;color:var(--tx-2);line-height:1.5}
+  .foot{margin-top:26px;padding-top:16px;border-top:1px solid var(--line);color:var(--tx-3);font-size:12.6px;max-width:76ch;line-height:1.6}
+  @media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+
+<div class="wrap">
+  <p class="eyebrow">UI resolution · v5 · every login, every tab, full depth</p>
+  <h1>Five logins. One thread of truth.</h1>
+  <p class="lede">Same product, same data — five different front doors. To test that it holds together, follow
+    <b>one thread</b> through every seat: <b>Rahul S. interviewed on Thursday and Ishita hasn't filed the scorecard.</b>
+    The recruiter sees a follow-up. Ishita sees her overdue task. The Head of Talent sees the job stuck at HM feedback.
+    The agency sees their other submissions moving. And Rahul sees "decision pending — with the hiring team."
+    One fact, five renderings. That's the depth test. In v5 <b>every number is a door</b>: funnel stages open
+    their stage lists, every candidate name opens the full profile, and Application Review keeps a quick-reference
+    panel at the bottom so you never lose your place in the queue.</p>
+
+  <h2>Log in as…</h2>
+  <div class="personas" role="tablist" aria-label="Choose a login">
+    <button class="pcard" role="tab" data-p="rec" aria-selected="true">
+      <span class="av">PN</span><span><span class="nm">Priya Nair</span><br><span class="rl">Recruiter</span>
+      <span class="q">"Who needs me today?"</span></span></button>
+    <button class="pcard" role="tab" data-p="hm" aria-selected="false">
+      <span class="av">IC</span><span><span class="nm">Ishita C.</span><br><span class="rl">Hiring Manager</span>
+      <span class="q">"20 minutes a week. Make them count."</span></span></button>
+    <button class="pcard" role="tab" data-p="ta" aria-selected="false">
+      <span class="av">AM</span><span><span class="nm">A. Menon</span><br><span class="rl">Head of Talent / Director</span>
+      <span class="q">"Is the system consistent, and where is it stuck?"</span></span></button>
+    <button class="pcard" role="tab" data-p="ag" aria-selected="false">
+      <span class="av">KT</span><span><span class="nm">Kavitha T.</span><br><span class="rl">Agency partner</span>
+      <span class="q">"Where are my submissions, honestly?"</span></span></button>
+    <button class="pcard" role="tab" data-p="cd" aria-selected="false">
+      <span class="av">RS</span><span><span class="nm">Rahul S.</span><br><span class="rl">Candidate</span>
+      <span class="q">"Did a human even look at me?"</span></span></button>
+  </div>
+
+  <div class="mapnote" style="margin:10px 0 0"><b>Seats are hats, not headcount.</b> In a one-person HR
+    company the same login wears Recruiter + Head of Talent (the CEO or Director) — the rail simply shows the union
+    (Jobs · Candidates · Portfolio · Governance · Analytics · Hiring Setup), and approvals still leave a named trail:
+    you approved your own rubric, on a date, at a version. Nothing about the structure assumes team size.</div>
+
+  <div class="shell">
+    <div class="rail" id="rail" role="tablist" aria-label="App navigation"></div>
+    <div class="stagewrap" id="stage" role="tabpanel" aria-live="polite"></div>
+  </div>
+
+  <h2>Every feature, and where it moves</h2>
+  <p class="sub">Grounded in the 85 recruiter/company routes in the codebase today. Nothing dropped — things move, merge, or stay.</p>
+  <div class="tscroll"><table class="mig">
+    <thead><tr><th>Area</th><th>Feature (today)</th><th>New home</th><th>Change</th></tr></thead>
+    <tbody>
+      <tr><td class="cat" rowspan="5">Working a job</td>
+          <td>8 job tabs<span class="rt2">/recruit/jobs/[id]/*</span></td>
+          <td><b>Job Dashboard</b> — one page</td><td><span class="chip c-warn">merge</span></td></tr>
+      <tr><td>Applications + Matches + Screening review<span class="rt2">/recruit/applications · matches · screening</span></td>
+          <td><b>Application Review</b> inside the job</td><td><span class="chip c-warn">merge</span></td></tr>
+      <tr><td>Pipeline board<span class="rt2">/recruit/pipeline · my-pipeline</span></td>
+          <td><b>Pipeline</b> section of Job Dashboard</td><td><span class="chip c-mute">move</span></td></tr>
+      <tr><td>Interviews: slots, self-schedule, prep, AI notetaker<span class="rt2">interviews · my-availability · Recall</span></td>
+          <td>Job Dashboard + Candidate Profile; availability → user menu</td><td><span class="chip c-mute">move</span></td></tr>
+      <tr><td>Assessments end-to-end<span class="rt2">assessments · share links · templates</span></td>
+          <td>Action-required rows + Candidate Profile; templates → Hiring Setup</td><td><span class="chip c-warn">merge</span></td></tr>
+      <tr><td class="cat" rowspan="4">Deciding</td>
+          <td>Candidate profile + Decision Strip + CV versions<span class="rt2">recruit/candidates/[id]</span></td>
+          <td><b>Kept</b> — gains assessment state + screening answers</td><td><span class="chip c-ok">keep</span></td></tr>
+      <tr><td>FitScore + ICP + market rank + evidence<span class="rt2">fit_scores · v5</span></td>
+          <td>Same scores, surfaced as the <b>evidence pack</b></td><td><span class="chip c-ok">keep</span></td></tr>
+      <tr><td>Offers: e-sign, OTP, BGV<span class="rt2">offers · public sign</span></td>
+          <td>Candidate Profile action; templates → Hiring Setup</td><td><span class="chip c-mute">move</span></td></tr>
+      <tr><td>Feedback + templates<span class="rt2">feedback · feedback-templates</span></td>
+          <td>Scorecard on Candidate Profile; templates → Hiring Setup</td><td><span class="chip c-mute">move</span></td></tr>
+      <tr><td class="cat" rowspan="4">Getting candidates</td>
+          <td>WhatsApp screening (apply + post-shortlist, knockout)<span class="rt2">settings/screening</span></td>
+          <td>Job Setup sequence step; sets library in Hiring Setup</td><td><span class="chip c-mute">move</span></td></tr>
+      <tr><td>Intake: email, apply links, Idibu, Google for Jobs<span class="rt2">intake · job-boards</span></td>
+          <td><b>Channels</b> step in Job Setup</td><td><span class="chip c-mute">move</span></td></tr>
+      <tr><td>Referrals: campaigns, WhatsApp delivery, payouts<span class="rt2">referrals</span></td>
+          <td>Per-job section; payouts → Analytics</td><td><span class="chip c-mute">move</span></td></tr>
+      <tr><td>Bulk CV upload + screening-gate<span class="rt2">company/agency uploads</span></td>
+          <td><b>Add candidates</b> on Job Dashboard; gate visible as pipeline state</td><td><span class="chip c-warn">merge</span></td></tr>
+      <tr><td class="cat" rowspan="3">Upstream</td>
+          <td>Requisitions: approve, delegate, templates<span class="rt2">hiring-requests · approvals</span></td>
+          <td><b>New job</b> flow; chains → Hiring Setup</td><td><span class="chip c-mute">move</span></td></tr>
+      <tr><td>JD editor + bias detector<span class="rt2">jobs/[id]/edit</span></td>
+          <td>Step 1 of Job Setup sequence</td><td><span class="chip c-mute">move</span></td></tr>
+      <tr><td>Rubric & Ideal Profile wizard, India templates<span class="rt2">jobs/[id]/scoring</span></td>
+          <td>Step 2 of the sequence; <b>shared library</b> in Hiring Setup</td><td><span class="chip c-warn">merge</span></td></tr>
+      <tr><td class="cat" rowspan="2">Other seats</td>
+          <td>Hiring-manager tree<span class="rt2">company/* (504-line scroll, no nav)</span></td>
+          <td>Same surfaces, <b>role-scoped</b> — Ishita's login above</td><td><span class="chip c-warn">merge</span></td></tr>
+      <tr><td>Agency tree<span class="rt2">agency/* (9 pages)</span></td>
+          <td>Same surfaces scoped to client jobs — Kavitha's login above</td><td><span class="chip c-warn">merge</span></td></tr>
+      <tr><td class="cat" rowspan="4">Org & insight</td>
+          <td>Analytics + QoH + saved searches<span class="rt2">analytics</span></td>
+          <td><b>Analytics</b> + fairness report; saved views</td><td><span class="chip c-ok">keep</span></td></tr>
+      <tr><td>Agent (read-only Q&A)<span class="rt2">/recruit/agent</span></td>
+          <td><b>Ask box</b> (⌘K) on every screen</td><td><span class="chip c-warn">merge</span></td></tr>
+      <tr><td>Team, billing, privacy, audit, webhooks<span class="rt2">company/settings/*</span></td>
+          <td><b>Org settings</b> — unchanged</td><td><span class="chip c-ok">keep</span></td></tr>
+      <tr><td>Voice screening (flag off) · talent-scout signals<span class="rt2">flagged</span></td>
+          <td>Screening step / sourcing view when enabled</td><td><span class="chip c-mute">later</span></td></tr>
+    </tbody>
+  </table></div>
+  <div class="mapnote"><b>One route tree, not three:</b> today <code>recruit/*</code>, <code>company/*</code> and
+    <code>agency/*</code> are parallel page trees maintained separately. In this resolution they collapse into the
+    surfaces above and <b>role decides what each seat sees</b>, not which URLs exist. Candidate portal, public pages
+    and platform admin unchanged.</div>
+
+  <h2>Build order</h2>
+  <p class="sub">Each phase ships alone behind the existing plan-document flag. Old routes redirect — no bookmark dies.</p>
+  <div class="order">
+    <div class="ph"><div class="n">Phase 1</div><h4>Jobs + Job Dashboard</h4><p>The spine: Jobs list home, one Job Dashboard replaces the 8 tabs, guided Job Setup sequence.</p></div>
+    <div class="ph"><div class="n">Phase 2</div><h4>Application Review</h4><p>The queue. Reject requires a reason → fairness report + Talent Pool.</p></div>
+    <div class="ph"><div class="n">Phase 3</div><h4>Seats</h4><p>Role-scoped views for HM and agency on the same surfaces; candidate status page.</p></div>
+    <div class="ph"><div class="n">Phase 4</div><h4>Candidates + Hiring Setup</h4><p>Grouped candidates, Talent Pool, org libraries (shared rubrics — the big unlock).</p></div>
+  </div>
+
+  <p class="foot">All names fictional; numbers mirror real shapes (380-CV batches, WhatsApp screening, approved rubrics).
+  The one thread — Rahul's overdue scorecard — appears in every seat so you can verify the same fact renders correctly
+  five ways. Nothing ships until this page is approved; the branch <code>claude/ui-v2-jobs-spine</code> is cut and waiting.</p>
+</div>
+
+<script>
+  const stage = document.getElementById("stage");
+  const rail = document.getElementById("rail");
+  const pcards = [...document.querySelectorAll(".pcard")];
+
+  const head = (t, s, r) => `<div class="shead"><span class="t">${t}</span><span class="s">${s}</span><span class="r">${r}</span></div>`;
+  const row = (tone, num, a, b, cta, pri, goto) => `
+    <div class="row ${tone}"><div class="num">${num}</div>
+      <div class="rt"><div class="a">${a}</div><div class="b">${b}</div></div>
+      <button class="go${pri ? " pri" : ""}"${goto ? ` data-goto="${goto}"` : ""}>${cta}</button></div>`;
+  const qr = (cls, s, n, g, a, r) => `
+    <div class="qr ${cls}" data-goto="rec:profile"><span class="qs">${s}</span><span class="qn">${n}</span>
+      <span class="pips"><span class="pip g">${g}</span><span class="pip a">${a}</span><span class="pip r">${r}</span></span></div>`;
+  const insight = (txt) => `<div class="insight"><b>↳</b><p>${txt}</p></div>`;
+  const antabs = (on) => `<div class="subtabs">${[
+    ["rec:analytics","Org overview"],["rec:an-trends","Trends"],
+    ["rec:an-jobs","By job"],["rec:an-quality","Quality & fairness"]]
+    .map(([k,l]) => `<button class="subtab${on===k?" on":""}" data-goto="${k}">${l}</button>`).join("")}</div>`;
+  const spark = (vals, capL, capR, cls) => `<div class="spark">${vals.map((v,i) =>
+    `<i class="${i===vals.length-1?"hi":""}${cls?" "+cls:""}" style="height:${v}%"></i>`).join("")}</div>
+    <div class="sparkcap"><span>${capL}</span><span>${capR}</span></div>`;
+
+  // Rubric detail — shared body: recruiter sees it under Hiring Setup, Head of Talent under Governance.
+  const RUBRIC_BODY = (backGoto) => `
+      <div class="pane">
+        <div class="stats">
+          <div class="stat"><div class="k">Status</div><div class="v v-good">v3 live</div><div class="d">approved · A. Menon · 12 Jul</div></div>
+          <div class="stat"><div class="k">Used by</div><div class="v">4<small> jobs</small></div><div class="d">SBE · Data Eng · EM · Platform</div></div>
+          <div class="stat"><div class="k">Scored with it</div><div class="v">570</div><div class="d">candidates · scores stamped v3</div></div>
+          <div class="stat"><div class="k">Clear rate</div><div class="v v-mid">19<small>%</small></div><div class="d">healthy band 15–30%</div></div>
+        </div>
+        <div class="lbl">Weights — what the score is made of</div>
+        <div class="tscroll"><table>
+          <thead><tr><th>Dimension</th><th class="n">Weight</th><th>What counts as evidence</th></tr></thead>
+          <tbody>
+            <tr><td class="rn">Outcomes & impact</td><td class="n">40%</td><td>Shipped systems, scale numbers, incidents owned — quoted lines, not titles</td></tr>
+            <tr><td class="rn">Core skills</td><td class="n">25%</td><td>Distributed systems, Postgres beyond CRUD, K8s in production</td></tr>
+            <tr><td class="rn">Domain</td><td class="n">15%</td><td>Marketplace / fintech backend exposure</td></tr>
+            <tr><td class="rn">Logistics fit</td><td class="n">12%</td><td>Notice ≤60d · CTC in band · location</td></tr>
+            <tr><td class="rn">Education signals</td><td class="n">8%</td><td>Deliberately low — outcomes outweigh pedigree</td></tr>
+          </tbody>
+        </table></div>
+        <div class="lbl sp">Thresholds & versions</div>
+        <div class="cards2">
+          <div class="sc2"><h4>Score bands</h4><div class="d">Calibrated; same number everywhere it appears.</div>
+            <div class="it"><b>≥ 75</b> — clears, advance recommended<span class="m">green</span></div>
+            <div class="it"><b>60–74</b> — human judgement zone<span class="m">amber</span></div>
+            <div class="it"><b>&lt; 60</b> — below bar → Talent Pool with reason<span class="m">red</span></div></div>
+          <div class="sc2"><h4>Version history</h4><div class="d">Changes require re-approval; old scores keep their version stamp.</div>
+            <div class="it"><b>v3</b> · outcomes ↑ 32→40%, education ↓ 15→8%<span class="m">12 Jul · A. Menon</span></div>
+            <div class="it"><b>v2</b> · added on-call knockout<span class="m">2 Jun</span></div>
+            <div class="it"><b>v1</b> · initial from India template<span class="m">14 May</span></div></div>
+        </div>
+        <div class="acts" style="border:0;padding-top:6px">
+          <button class="go pri">Propose change (goes to approval)</button>
+          <button class="go">Clone for a new job</button>
+          <button class="go" data-goto="${backGoto}">← Back</button>
+        </div>
+        ${insight(`One rubric, four jobs, one calibration conversation. Weights follow the evidence-based redesign
+          (outcomes over pedigree — Sackett 2022/23: experience-years predict poorly). Every score row stores the
+          version that produced it, so "why did she get 79?" is answerable months later — that lineage is the audit
+          trail the fairness report leans on.`)}
+      </div>`;
+  const crit = (name, hint, lvl) => `
+    <div class="crit"><div class="t">${name}<small>from Backend rubric v3</small>
+      <span class="dots">${[1,2,3,4].map(i=>`<span class="dot${lvl===i?" onn":""}">${i}</span>`).join("")}</span></div>
+      <div class="hint">${hint}</div>
+      <div class="ev">Evidence — quote what you heard, not an impression…</div></div>`;
+
+  const SCREENS = {
+    /* ── RECRUITER · Priya ─────────────────────────── */
+    "rec:jobs": { rail:"rec:jobs",
+      html: head("Jobs", "· 12 open", `median 34 days open &nbsp;<button class="go pri" data-goto="rec:jobsetup">+ New job</button>`) + `
+      <div class="pane">
+        <div class="tscroll"><table>
+          <thead><tr><th>Job</th><th class="n">Days</th><th>Blocker</th><th>Rubric</th><th class="n">Pipeline</th></tr></thead>
+          <tbody>
+            <tr data-goto="rec:job"><td class="rn">Senior Backend Engineer</td><td class="n">34</td>
+              <td><span class="chip c-warn">18 to review · HM feedback ×2</span></td>
+              <td>A. Menon · shared by 4 jobs</td><td class="n">312 → 84 → 18 → 6 → 1</td></tr>
+            <tr data-goto="rec:job"><td class="rn">Data Engineer</td><td class="n">51</td>
+              <td><span class="chip c-bad">Nobody clears the rubric</span></td>
+              <td>A. Menon · shared by 4 jobs</td><td class="n">96 → 22 → 9 → 0 → 0</td></tr>
+            <tr data-goto="rec:job"><td class="rn">Product Designer</td><td class="n">19</td>
+              <td><span class="chip c-ok">On track</span></td>
+              <td>S. Rao · 20 Jul</td><td class="n">143 → 41 → 8 → 3 → 0</td></tr>
+            <tr data-goto="rec:jobsetup"><td class="rn">QA Lead</td><td class="n">63</td>
+              <td><span class="chip c-bad">No rubric — generic scoring</span></td>
+              <td><span class="chip c-bad">None · finish setup</span></td><td class="n">201 → — → 2 → 0 → 0</td></tr>
+          </tbody>
+        </table></div>
+        ${insight(`Blockers are <b>computed, never typed</b>: red = no approved rubric or nobody clears it; amber = a
+          human is the bottleneck. The thread starts here: <b>"HM feedback ×2"</b> on row one is Ishita's overdue
+          scorecards for Rahul S. and Anjali M. Click QA Lead and you land directly in its unfinished setup sequence.`)}
+      </div>` },
+
+    "rec:job": { rail:"rec:jobs",
+      html: head("Senior Backend Engineer", "· Bangalore · rubric by A. Menon", `34 days open &nbsp;<button class="go pri" data-goto="rec:upload">+ Add candidates</button> <button class="go" data-goto="rec:jobs">← Jobs</button>`) + `
+      <div class="pane"><div class="roomgrid">
+        <div>
+          <div class="funnel">
+            <div class="fs" data-goto="rec:stage-applied"><div class="k">Applied</div><div class="n">312</div><div class="d">+18 this week · open list</div></div>
+            <div class="fs ok" data-goto="rec:stage-screened"><div class="k">Screened</div><div class="n">84</div><div class="d">WhatsApp · auto · open list</div></div>
+            <div class="fs warn" data-goto="rec:review"><div class="k">Review</div><div class="n">18</div><div class="d">action required</div></div>
+            <div class="fs bad" data-goto="rec:stage-interview"><div class="k">Interview</div><div class="n">6</div><div class="d">2 stalled 4d · open list</div></div>
+            <div class="fs ok" data-goto="rec:stage-offer"><div class="k">Offer</div><div class="n">1</div><div class="d">out 2 days · open</div></div>
+          </div>
+          <div class="lbl">Action required</div>
+          <div class="rows">
+            ${row("hot",18,"Applications to review","6 clear the rubric outright. Oldest has waited 2 days.","Review",true,"rec:review")}
+            ${row("bad",2,"Interview feedback overdue — Ishita C.","Rahul S. and Anjali M., interviewed Thursday. Scorecards empty.","Follow up",false,"rec:stage-interview")}
+            ${row("warn",1,"Assessment submitted, unreviewed","Vikram R. · submitted Sunday 11:40pm.","Score it",false,"rec:profile")}
+            ${row("calm",4,"Awaiting response 3+ days","Passed screening, no reply since. One tap follows up on WhatsApp.","Follow up all",false,"rec:stage-screened")}
+            ${row("warn",3,"Uploaded but not yet scored","Bulk upload finished 10:12. Scoring runs automatically — or push it now.","Score now",false,"rec:upload")}
+          </div>
+          ${insight(`Rows are data the product already stores, <b>pointed at whoever must act</b>. The red row is the
+            thread: the same overdue scorecard appears as Ishita's task in her login, as a "stuck at HM feedback" flag
+            in A. Menon's portfolio, and as "decision pending" in Rahul's status page.`)}
+        </div>
+        <div class="setup">
+          <h4>Job Setup</h4>
+          <div class="st">Configured once. <button class="go" data-goto="rec:jobsetup" style="margin-top:6px;display:block">Open the sequence →</button></div>
+          <div class="si ok"><i>✓</i><span><b>Job description</b> · bias-checked</span><span class="m">12 Jun</span></div>
+          <div class="si ok"><i>✓</i><span><b>Rubric & Ideal Profile</b></span><span class="m">A. Menon</span></div>
+          <div class="si ok"><i>✓</i><span><b>Screening</b> · 5 Qs, 2 knockout</span><span class="m">edit</span></div>
+          <div class="si ok"><i>✓</i><span><b>Interview plan</b> · 3 stages</span><span class="m">edit</span></div>
+          <div class="si ok"><i>✓</i><span><b>Scorecard</b> · v2</span><span class="m">edit</span></div>
+          <div class="si miss"><i>—</i><span><b>Assessment</b> · none</span><span class="m">add</span></div>
+          <div class="si ok"><i>✓</i><span><b>Channels</b> · 4 live</span><span class="m">view</span></div>
+        </div>
+      </div></div>` },
+
+    "rec:review": { rail:"rec:jobs",
+      html: head("Application Review", "· Senior Backend Engineer · oldest first",
+        `12 of 18 remaining &nbsp;<button class="go" data-goto="rec:job">← Job</button>`) + `
+      <div class="pane"><div class="tri">
+        <div class="q">
+          <div class="qh"><span>Queue</span><span>6 done</span></div>
+          ${qr("done","88","Rahul S.",4,2,0)}${qr("done","84","Ananya K.",3,2,1)}
+          ${qr("on","79","Dev P.",3,1,1)}${qr("done","74","Meera J.",2,3,1)}
+          ${qr("","69","Vikram R.",2,1,3)}${qr("","61","Sana M.",1,2,2)}
+          ${qr("","55","Arjun T.",1,1,3)}${qr("","48","Kavya N.",0,2,4)}
+        </div>
+        <div>
+          <div class="card">
+            <div class="ch">
+              <div class="who"><div class="nm">Dev P.</div><div class="rl">Backend Engineer · Flipkart · 6.2 yrs</div></div>
+              <div class="scores">
+                <div class="sc hero"><div class="k">FitScore</div><div class="n">79</div></div>
+                <div class="sc sub"><div class="k">ICP match</div><div class="n">81%</div></div>
+                <div class="sc sub"><div class="k">Market</div><div class="n">Top 14%</div></div>
+              </div>
+              <div class="vt"><button aria-pressed="true">All</button><button aria-pressed="false">Answers</button><button aria-pressed="false">CV</button></div>
+            </div>
+            <div class="flags">
+              <div class="fc g"><h4><span>✓ Evidence for</span><b>3</b></h4><ul>
+                <li><q>Led migration of order service to Kafka, 40k msg/s</q><cite>CV · Flipkart 2024</cite></li>
+                <li><q>Owned Postgres sharding for 2TB order DB</q><cite>CV · Flipkart 2023</cite></li>
+                <li><q>Yes — comfortable with on-call rotation</q><cite>WhatsApp screening · Q3</cite></li></ul></div>
+              <div class="fc a"><h4><span>⚠ Verify</span><b>1</b></h4><ul>
+                <li>Kubernetes listed but no production incident mentioned<cite>rubric must-have #2</cite></li></ul></div>
+              <div class="fc r"><h4><span>✗ Gaps</span><b>1</b></h4><ul>
+                <li>No payments-domain experience<cite>rubric nice-to-have</cite></li></ul></div>
+            </div>
+            <div class="logi">
+              <div class="lc"><div class="k">Notice</div><div class="v ok">15 days</div></div>
+              <div class="lc"><div class="k">Expected CTC</div><div class="v ok">₹38L · in band</div></div>
+              <div class="lc"><div class="k">Offers in hand</div><div class="v warn">1</div></div>
+              <div class="lc"><div class="k">Location</div><div class="v ok">Bangalore</div></div>
+            </div>
+            <div class="acts">
+              <button class="btn pri">Advance <kbd>A</kbd></button>
+              <button class="btn">Hold <kbd>H</kbd></button>
+              <button class="btn">Reject <kbd>R</kbd></button>
+              <button class="btn" data-goto="rec:profile">Full profile <kbd>↵</kbd></button>
+            </div>
+          </div>
+          <div class="khint"><span><kbd>J</kbd>/<kbd>K</kbd> next / prev</span><span><kbd>V</kbd> cycle view</span>
+            <span>Reject asks a reason → fairness report + Talent Pool · 5-second undo</span></div>
+          <div class="lbl sp">Quick reference — without leaving the queue</div>
+          <div class="grp">
+            <div class="pr"><span class="pn"><b>History</b> · Flipkart 3.1y → Razorpay 2y → Zoho 1.1y</span><span class="pl">no gaps</span></div>
+            <div class="pr"><span class="pn"><b>Activity</b> · applied 3d ago → answered 5/5 in 4 min → scored 79 → queued</span><span class="pl">clean</span></div>
+            <div class="pr"><span class="pn"><b>Notes</b> · "Strong Kafka story — probe K8s" — Priya, today</span><span class="pl">1 note</span></div>
+            <div class="pr" data-goto="rec:profile"><span class="pn" style="color:var(--amber-2);font-weight:600">Open full profile — answers, CV versions, comms log, everything</span><span class="pl">↵</span></div>
+          </div>
+          ${insight(`The <b>evidence pack</b>: quoted CV lines and WhatsApp answers FitScore already stores, organised
+            for / verify / against — reviewers decide in ~15 seconds with evidence attached. The quick-reference strip
+            keeps history, activity and notes at the bottom of the queue; <kbd>↵</kbd> opens the full profile when you
+            need all of it. Bulk actions and the 5-second undo carry over.`)}
+        </div>
+      </div></div>` },
+
+    "rec:jobsetup": { rail:"rec:jobs",
+      html: head("Job Setup — QA Lead", "· guided sequence · resumable",
+        `63 days open &nbsp;<button class="go" data-goto="rec:jobs">← Jobs</button>`) + `
+      <div class="pane">
+        <div class="seqbar"><b>4 of 7 in place</b><span class="seqtrack"><i></i></span>
+          <span>1 gate blocking: <b style="color:var(--amber-2)">rubric approval</b></span></div>
+        <div class="seq">
+          <div class="step done"><div class="sn">✓</div><div class="sbody">
+            <div class="t">Job description <span class="chip c-ok">published · bias-checked</span></div>
+            <div class="d">Same JD editor + bias detector as today. Published 26 May.</div></div></div>
+          <div class="step now"><div class="sn">2</div><div class="sbody">
+            <div class="t">Rubric & Ideal Profile <span class="chip c-bad">not approved — the gate</span></div>
+            <div class="d"><b>201 applicants scored on the generic path for 63 days.</b> Today this failure is silent;
+              here it blocks the sequence in amber until someone acts.</div>
+            <div class="scta"><button class="go pri">Start from Backend rubric v3 · A. Menon</button>
+              <button class="go">Build from scratch</button><button class="go">India templates</button></div></div></div>
+          <div class="step done"><div class="sn">✓</div><div class="sbody">
+            <div class="t">Screening questions <span class="chip c-ok">2 live on WhatsApp</span></div>
+            <div class="d">From the Engineering apply set · 1 knockout.</div></div></div>
+          <div class="step part"><div class="sn">4</div><div class="sbody">
+            <div class="t">Interview plan <span class="chip c-warn">1 of 3 stages has an interviewer</span></div>
+            <div class="d">Stages come from today's pipeline-stages page; assigning owners completes it.</div></div></div>
+          <div class="step"><div class="sn">5</div><div class="sbody">
+            <div class="t">Scorecard <span class="chip c-mute">not attached</span></div>
+            <div class="d">Without one, interview feedback is free-text — attach from the library in one click.</div></div></div>
+          <div class="step"><div class="sn">6</div><div class="sbody">
+            <div class="t">Assessment <span class="chip c-mute">optional · skipped</span></div>
+            <div class="d">Optional steps say so — the sequence never fakes urgency.</div></div></div>
+          <div class="step done"><div class="sn">✓</div><div class="sbody">
+            <div class="t">Channels <span class="chip c-ok">apply link + 2 boards live</span></div>
+            <div class="d">Which is why 201 people applied — intake worked; scoring setup didn't keep up.</div></div></div>
+        </div>
+        ${insight(`<b>Today's setup, kept — just sequenced.</b> The seven pieces are the exact components in the product
+          now. What changes: an order, visible progress, library reuse, and the scoring gate rendered impossible to miss.`)}
+      </div>` },
+
+    "rec:upload": { rail:"rec:jobs",
+      html: head("Add candidates", "· Senior Backend Engineer",
+        `<button class="go" data-goto="rec:job">← Job</button>`) + `
+      <div class="pane">
+        <div class="card" style="margin-bottom:12px;border-style:dashed;text-align:center;padding:24px">
+          <div style="font-weight:650">Drop CVs here — up to 50 per batch</div>
+          <div style="font-size:12.4px;color:var(--tx-3);margin-top:4px">PDF / DOCX · scanned CVs OK · parsed, deduped, screened on WhatsApp, then scored — automatically</div>
+        </div>
+        <div class="lbl">Other ways in — already live for this job</div>
+        <div class="grp">
+          <div class="pr"><span class="pn"><b>Apply link</b> · tigerhire.io/apply/masai?job=sbe</span><span class="pl">copy</span></div>
+          <div class="pr"><span class="pn"><b>Intake email</b> · sbe-masai@intake.tigerhire.io — forward Naukri/portal mails</span><span class="pl">copy</span></div>
+          <div class="pr"><span class="pn"><b>Job boards</b> · Idibu + Google for Jobs</span><span class="pl">posted</span></div>
+          <div class="pr" data-goto="ag:submit"><span class="pn"><b>Agency</b> · TalentBridge has 7 slots open</span><span class="pl">view ↵</span></div>
+        </div>
+        <div class="lbl sp">Scoring — status and control</div>
+        <div class="rows">
+          ${row("warn",3,"Unscored right now","From this morning's upload · queued behind the current batch.","Score now",true)}
+          ${row("calm",84,"Scored against Backend rubric v3","Last run 10:14 · 0 failures · every score stamped v3.","Log")}
+        </div>
+        <div class="rows" style="margin-top:7px">
+          ${row("calm","↻","Re-score after a rubric change","If v4 is approved, all 84 re-score automatically and keep both stamps.","How")}
+        </div>
+        ${insight(`Upload and scoring are one motion, with the machinery visible: dedupe → WhatsApp screening →
+          <b>held until answered</b> → scored → appears in Review. "Score now" exists for impatience, but the row
+          above it is the real promise: nothing stays unscored silently — the reconciliation sweep catches drops.
+          That silent-unscored failure happened in production; this screen is its tombstone.`)}
+      </div>` },
+
+    "rec:stage-applied": { rail:"rec:jobs",
+      html: head("Applied — 312", "· Senior Backend Engineer · newest first",
+        `<button class="go" data-goto="rec:job">← Job</button>`) + `
+      <div class="pane">
+        <input class="search" placeholder="Search 312 applicants by name, source, date…" />
+        <div class="tscroll"><table>
+          <thead><tr><th>Candidate</th><th>Source</th><th>Applied</th><th>Screening state</th></tr></thead>
+          <tbody>
+            <tr><td class="rn">Tejas M.</td><td>WhatsApp apply</td><td>today 09:40</td><td><span class="chip c-warn">questions sent · awaiting answers</span></td></tr>
+            <tr><td class="rn">Nisha V.</td><td>Job board · Idibu</td><td>today 08:15</td><td><span class="chip c-warn">questions sent</span></td></tr>
+            <tr><td class="rn">Ravi K.</td><td>Agency · TalentBridge</td><td>yesterday</td><td><span class="chip c-mute">held — upload waits for answers</span></td></tr>
+            <tr><td class="rn">Imran S.</td><td>Email intake · Naukri</td><td>yesterday</td><td><span class="chip c-ok">answered · queued to score</span></td></tr>
+            <tr><td class="rn">Deepa R.</td><td>Referral · S. Kumar</td><td>2d ago</td><td><span class="chip c-ok">answered · scored 71</span></td></tr>
+            <tr><td class="rn">Dev P.</td><td>WhatsApp apply</td><td>3d ago</td><td><span class="chip c-ok">screened → in review now</span></td></tr>
+            <tr><td class="rn">Kavya N.</td><td>Job board · Google</td><td>3d ago</td><td><span class="chip c-ok">screened → in review</span></td></tr>
+            <tr><td class="rn">Mohit A.</td><td>WhatsApp apply</td><td>3d ago</td><td><span class="chip c-bad">knockout — not eligible to relocate</span></td></tr>
+          </tbody>
+        </table></div>
+        <p class="sub" style="margin-top:8px">…and 304 more · export CSV · every state above is live, not a label someone typed</p>
+        ${insight(`The raw intake, with the machinery visible: who got questions, who answered, who is <b>held</b>
+          (agency uploads wait for screening answers — today that gate is invisible), who hit a knockout and exactly
+          which one. Nobody is un-tracked between "applied" and "screened" any more — that dark zone is where
+          candidates ghost.`)}
+      </div>` },
+
+    "rec:stage-screened": { rail:"rec:jobs",
+      html: head("Screened — 84", "· Senior Backend Engineer · via WhatsApp",
+        `<button class="go" data-goto="rec:job">← Job</button>`) + `
+      <div class="pane">
+        <div class="tscroll"><table>
+          <thead><tr><th>Candidate</th><th class="n">FitScore</th><th>Knockouts</th><th class="n">Notice</th><th class="n">Expected CTC</th><th>State</th></tr></thead>
+          <tbody>
+            <tr><td class="rn">Dev P.</td><td class="n">79</td><td><span class="chip c-ok">2/2 passed</span></td><td class="n">15d</td><td class="n">₹38L</td><td><span class="chip c-warn">in review</span></td></tr>
+            <tr><td class="rn">Meera J.</td><td class="n">74</td><td><span class="chip c-ok">2/2</span></td><td class="n">30d</td><td class="n">₹36L</td><td><span class="chip c-warn">in review</span></td></tr>
+            <tr><td class="rn">Vikram R.</td><td class="n">69</td><td><span class="chip c-ok">2/2</span></td><td class="n">90d</td><td class="n">₹52L</td><td><span class="chip c-warn">in review</span></td></tr>
+            <tr><td class="rn">Deepa R.</td><td class="n">71</td><td><span class="chip c-ok">2/2</span></td><td class="n">45d</td><td class="n">₹34L</td><td><span class="chip c-mute">queued</span></td></tr>
+            <tr><td class="rn">Imran S.</td><td class="n">—</td><td><span class="chip c-ok">2/2</span></td><td class="n">30d</td><td class="n">₹40L</td><td><span class="chip c-mute">scoring…</span></td></tr>
+          </tbody>
+        </table></div>
+        <p class="sub" style="margin-top:8px">…and 79 more · sorted by score · answers captured on WhatsApp, filed automatically</p>
+        <div class="acts" style="border:0;padding:0;margin-top:10px">
+          <button class="btn pri" data-goto="rec:review">Review the 18 waiting →</button>
+        </div>
+        ${insight(`Everyone here answered the recruiter's own questions on WhatsApp before any human spent a minute.
+          Notice and CTC arrive as structured fields, not "will confirm on call". This list is the payoff of the
+          screening automation the product already has — it just never had a page.`)}
+      </div>` },
+
+    "rec:stage-interview": { rail:"rec:jobs",
+      html: head("Interview — 6", "· Senior Backend Engineer",
+        `<button class="go" data-goto="rec:job">← Job</button>`) + `
+      <div class="pane">
+        <div class="tscroll"><table>
+          <thead><tr><th>Candidate</th><th class="n">FitScore</th><th>Stage</th><th>When</th><th>Scorecard</th></tr></thead>
+          <tbody>
+            <tr><td class="rn">Rahul S.</td><td class="n">88</td><td>Tech round 2 of 3</td><td>done · Thu 24 Jul</td><td><span class="chip c-bad">overdue 4d — Ishita C.</span></td></tr>
+            <tr><td class="rn">Anjali M.</td><td class="n">82</td><td>Tech round 2 of 3</td><td>done · Thu 24 Jul</td><td><span class="chip c-bad">overdue 4d — Ishita C.</span></td></tr>
+            <tr><td class="rn">Ananya K.</td><td class="n">84</td><td>Tech round 1</td><td>Wed 11:00 · booked</td><td><span class="chip c-mute">after interview</span></td></tr>
+            <tr><td class="rn">Meera J.</td><td class="n">74</td><td>Tech round 1</td><td>Thu 15:30 · booked</td><td><span class="chip c-mute">—</span></td></tr>
+            <tr><td class="rn">Sameer G.</td><td class="n">77</td><td>Tech round 1</td><td><span style="color:var(--mid)">picking a slot · link sent 2d ago</span></td><td><span class="chip c-mute">—</span></td></tr>
+            <tr><td class="rn">Nikhil B.</td><td class="n">75</td><td>Final · panel</td><td>Fri 10:00 · booked</td><td><span class="chip c-mute">—</span></td></tr>
+          </tbody>
+        </table></div>
+        <div class="acts" style="border:0;padding:0;margin-top:10px">
+          <button class="btn">Nudge Ishita on WhatsApp</button><button class="btn">Resend slot link to Sameer</button>
+        </div>
+        ${insight(`Every person, their round, their date, and <b>whose court the ball is in</b>. The two red rows are
+          the thread — same fact Ishita sees as her overdue task. AI notetaker briefs attach per row when Recall is on.`)}
+      </div>` },
+
+    "rec:stage-offer": { rail:"rec:jobs",
+      html: head("Offer — 1", "· Senior Backend Engineer",
+        `<button class="go" data-goto="rec:job">← Job</button>`) + `
+      <div class="pane">
+        <div class="card">
+          <div class="ch">
+            <div class="who"><div class="nm">Priyanka D.</div><div class="rl">Staff Engineer · ₹44L offered · Bangalore</div></div>
+            <div class="scores"><div class="sc hero"><div class="k">FitScore</div><div class="n">91</div></div>
+              <div class="sc sub"><div class="k">Panel verdict</div><div class="n">Strong hire</div></div></div>
+          </div>
+          <div class="tl" style="margin-top:14px">
+            <div class="tle"><div class="tld">✓</div><div class="tlb"><div class="a">Offer approved</div><div class="b">Sun · 2-step chain, 4h total</div></div></div>
+            <div class="tle"><div class="tld">✓</div><div class="tlb"><div class="a">Sent for e-sign</div><div class="b">Mon 09:10 · OTP-gated link</div></div></div>
+            <div class="tle"><div class="tld">✓</div><div class="tlb"><div class="a">Viewed</div><div class="b">Mon 21:34 · viewed twice since</div></div></div>
+            <div class="tle pend"><div class="tld">…</div><div class="tlb"><div class="a">Awaiting signature — day 2</div>
+              <div class="b"><b>Risk:</b> 1 competing offer disclosed at screening. 61% of candidates take the first
+                offer they receive — every idle day is risk. Suggested: founder call today.</div></div></div>
+          </div>
+          <div class="acts"><button class="btn pri">Nudge on WhatsApp</button><button class="btn">Schedule founder call</button>
+            <button class="btn dim">BGV starts automatically on signature</button></div>
+        </div>
+        ${insight(`The offer stage is where India loses 30% of hires, so it gets a timeline, not a status chip:
+          approved → sent → <b>viewed twice</b> → idle, with the competing-offer risk surfaced from screening data the
+          product already captured. Viewed-but-unsigned for 2 days is a different situation than never-opened.`)}
+      </div>` },
+
+    "rec:profile": { rail:"rec:jobs",
+      html: head("Dev P.", "· Backend Engineer · Flipkart · 6.2 yrs · Bangalore",
+        `applied 3d ago · via WhatsApp &nbsp;<button class="go" data-goto="rec:review">← Back to review</button>`) + `
+      <div class="pane">
+        <div class="card" style="margin-bottom:12px">
+          <div class="ch">
+            <div class="who"><div class="nm">Clears the rubric — recommend interview</div>
+              <div class="rl">Calibrated verdict · same number everywhere it appears</div></div>
+            <div class="scores">
+              <div class="sc hero"><div class="k">FitScore</div><div class="n">79</div></div>
+              <div class="sc sub"><div class="k">ICP match</div><div class="n">81%</div></div>
+              <div class="sc sub"><div class="k">Market</div><div class="n">Top 14%</div></div>
+            </div>
+          </div>
+          <div class="acts">
+            <button class="btn pri">Advance to interview</button><button class="btn">Hold</button>
+            <button class="btn">Reject…</button><button class="btn dim">Draft offer (after interviews)</button>
+          </div>
+        </div>
+        <div class="roomgrid">
+          <div>
+            <div class="lbl">Screening answers — WhatsApp, 13 Jul, took 4 min</div>
+            <div class="grp" style="padding:2px 12px">
+              <div class="qa"><span class="ques">Notice period?</span><span class="ans">15 days <small>knockout: pass (≤60d)</small></span></div>
+              <div class="qa"><span class="ques">Expected CTC?</span><span class="ans">₹38L <small>band ₹35–45L · in band</small></span></div>
+              <div class="qa"><span class="ques">Current location & relocation?</span><span class="ans">Bangalore, no relocation needed</span></div>
+              <div class="qa"><span class="ques">Comfortable with on-call?</span><span class="ans">"Yes — ran a weekly rotation at Flipkart" <small>knockout: pass</small></span></div>
+              <div class="qa"><span class="ques">Offers in hand?</span><span class="ans">1 · decision expected in ~2 weeks</span></div>
+            </div>
+            <div class="lbl sp">Evidence vs rubric — exact quotes from CV v2</div>
+            <div class="flags">
+              <div class="fc g"><h4><span>✓ For</span><b>3</b></h4><ul>
+                <li><q>Led migration of order service to Kafka, 40k msg/s</q><cite>CV v2 · Flipkart 2024</cite></li>
+                <li><q>Owned Postgres sharding for 2TB order DB</q><cite>CV v2 · Flipkart 2023</cite></li>
+                <li><q>On-call rotation ownership</q><cite>WhatsApp Q4</cite></li></ul></div>
+              <div class="fc a"><h4><span>⚠ Verify</span><b>1</b></h4><ul>
+                <li>Kubernetes listed, no production incident described — probe depth in round 1<cite>must-have #2</cite></li></ul></div>
+              <div class="fc r"><h4><span>✗ Gaps</span><b>1</b></h4><ul>
+                <li>No payments-domain experience<cite>nice-to-have</cite></li></ul></div>
+            </div>
+            <div class="lbl sp">Work history</div>
+            <div class="grp">
+              <div class="pr"><span class="pn"><b>Flipkart</b> — Backend Engineer II</span><span class="pl">2022 – now · 3.1 yrs</span></div>
+              <div class="pr"><span class="pn"><b>Razorpay</b> — Software Engineer</span><span class="pl">2020 – 2022 · 2.0 yrs</span></div>
+              <div class="pr"><span class="pn"><b>Zoho</b> — Member of Technical Staff</span><span class="pl">2019 – 2020 · 1.1 yrs</span></div>
+            </div>
+          </div>
+          <div>
+            <div class="setup" style="margin-bottom:10px">
+              <h4>Activity</h4><div class="st">everything, timestamped</div>
+              <div class="si ok"><i>·</i><span>Applied via WhatsApp</span><span class="m">26 Jul 14:02</span></div>
+              <div class="si ok"><i>·</i><span>Screening answered (5/5)</span><span class="m">26 Jul 14:06</span></div>
+              <div class="si ok"><i>·</i><span>Scored 79 · v5 rubric</span><span class="m">26 Jul 14:07</span></div>
+              <div class="si ok"><i>·</i><span>Entered review queue</span><span class="m">26 Jul</span></div>
+              <div class="si miss"><i>·</i><span>In review — you, now</span><span class="m">today</span></div>
+            </div>
+            <div class="setup" style="margin-bottom:10px">
+              <h4>CV versions</h4><div class="st">quotes cite the version they came from</div>
+              <div class="si ok"><i>v2</i><span>dev-p-2026.pdf</span><span class="m">26 Jul · view</span></div>
+              <div class="si miss"><i>v1</i><span>dev-p-2025.pdf</span><span class="m">12 Mar · view</span></div>
+            </div>
+            <div class="setup" style="margin-bottom:10px">
+              <h4>Comms log</h4><div class="st">WhatsApp · full thread</div>
+              <div class="si ok"><i>→</i><span>Screening questions sent</span><span class="m">26 Jul</span></div>
+              <div class="si ok"><i>←</i><span>5 answers received</span><span class="m">26 Jul</span></div>
+              <div class="si ok"><i>→</i><span>"You're in review" ack</span><span class="m">26 Jul</span></div>
+            </div>
+            <div class="setup">
+              <h4>Notes & assessment</h4><div class="st"></div>
+              <div class="si ok"><i>✎</i><span>"Strong Kafka story — probe K8s" — Priya</span><span class="m">today</span></div>
+              <div class="si miss"><i>—</i><span>No assessment assigned</span><span class="m">assign</span></div>
+            </div>
+          </div>
+        </div>
+        ${insight(`The full profile: <b>today's Candidate Profile + Decision Strip, kept</b>, with everything the other
+          screens summarise — full screening Q&A, evidence with CV-version citations, activity, comms, notes — on one
+          page. Every candidate name anywhere in the app opens this. The quick-reference panel at the bottom of
+          Application Review is this page's summary, so you rarely need to leave the queue.`)}
+      </div>` },
+
+    "rec:candidates": { rail:"rec:candidates",
+      html: head("Candidates", "· everyone your org can access", "grouped by job · search refines") + `
+      <div class="pane">
+        <input class="search" placeholder="Search name, skill, company… (refines — never required to browse)" />
+        <div class="grp">
+          <div class="gh"><span class="t">Senior Backend Engineer</span><span class="c">109 in process</span><span class="bar">rubric: A. Menon</span></div>
+          <div class="pr" data-goto="rec:profile"><span class="pscore" style="color:var(--good)">88</span><span class="pn">Rahul S. — interviewed Thu, feedback pending</span><span class="pl">2h ago</span></div>
+          <div class="pr" data-goto="rec:profile"><span class="pscore" style="color:var(--good)">84</span><span class="pn">Ananya K. — shortlisted, awaiting slots</span><span class="pl">1d ago</span></div>
+          <div class="pr" data-goto="rec:profile"><span class="pscore" style="color:var(--mid)">79</span><span class="pn">Dev P. — in review now · open profile</span><span class="pl">↵</span></div>
+          <div class="pr" data-goto="rec:profile"><span class="pscore" style="color:var(--mid)">74</span><span class="pn">Meera J. — interview Thu · via TalentBridge</span><span class="pl">2d ago</span></div>
+        </div>
+        <div class="grp">
+          <div class="gh"><span class="t">Data Engineer</span><span class="c">31 in process</span><span class="bar">rubric: A. Menon</span></div>
+          <div class="pr" data-goto="rec:profile"><span class="pscore" style="color:var(--mid)">71</span><span class="pn">Farhan A. — top scorer, below threshold (75)</span><span class="pl">4d ago</span></div>
+        </div>
+        <div class="grp">
+          <div class="gh"><span class="t">Talent pool</span><span class="c">210 people</span><span class="bar">rejected with reason · reusable</span></div>
+          <div class="pr" data-goto="rec:pool"><span class="pscore" style="color:var(--tx-3)">—</span><span class="pn" style="color:var(--amber-2);font-weight:600">By reason: CTC (74) · location (58) · experience (61) · other (17) — open the pool</span><span class="pl">↵</span></div>
+        </div>
+        ${insight(`Grouped by job <b>by default</b> — answers "who do I have for this job" with zero filter setup.
+          Every name opens the full profile. Someone rejected on CTC is the first sourcing call when a job opens
+          with a higher band — that's the pool, one click down.`)}
+      </div>` },
+
+    "rec:pool": { rail:"rec:candidates",
+      html: head("Talent pool — 210", "· rejected with a reason, reusable",
+        `<button class="go" data-goto="rec:candidates">← Candidates</button>`) + `
+      <div class="pane">
+        <div class="subtabs">
+          <button class="subtab on">CTC · 74</button><button class="subtab">Experience · 61</button>
+          <button class="subtab">Location · 58</button><button class="subtab">Other · 17</button>
+        </div>
+        <div class="tscroll"><table>
+          <thead><tr><th>Candidate</th><th class="n">Score then</th><th>Rejected from</th><th>Reason detail</th><th class="n">When</th><th>Fit for</th></tr></thead>
+          <tbody>
+            <tr data-goto="rec:profile"><td class="rn">Rohit E.</td><td class="n">81</td><td>Backend Engineer II</td><td>Asked ₹40L · band was ₹28–34L</td><td class="n">May</td><td><span class="chip c-ok">SBE — band fits now</span></td></tr>
+            <tr data-goto="rec:profile"><td class="rn">Shruti P.</td><td class="n">77</td><td>Backend Engineer II</td><td>Asked ₹38L</td><td class="n">Jun</td><td><span class="chip c-ok">SBE — band fits</span></td></tr>
+            <tr data-goto="rec:profile"><td class="rn">Karan L.</td><td class="n">74</td><td>Platform Engineer</td><td>Asked ₹45L</td><td class="n">Jun</td><td><span class="chip c-warn">EM — stretch</span></td></tr>
+            <tr data-goto="rec:profile"><td class="rn">Divya S.</td><td class="n">72</td><td>Data Analyst</td><td>Asked ₹30L · band ₹22–26L</td><td class="n">Apr</td><td><span class="chip c-mute">no open match</span></td></tr>
+          </tbody>
+        </table></div>
+        <div class="acts" style="border:0;padding-top:10px">
+          <button class="btn pri">Invite Rohit + Shruti to SBE on WhatsApp</button>
+          <button class="btn dim">Consent is re-confirmed on invite (DPDP)</button>
+        </div>
+        ${insight(`380 CVs per job is an asset only if rejects stay usable. Because every reject carries a structured
+          reason, the pool is <b>queryable by why</b>: open a ₹35–45L job and the CTC-rejected 74 are instant pipeline
+          — already screened, already scored once. Re-engagement runs on WhatsApp and re-confirms consent, which keeps
+          the DPDP story clean.`)}
+      </div>` },
+
+    "rec:analytics": { rail:"rec:analytics",
+      html: head("Analytics — Org overview", "· quarter to date", "export CSV · schedule weekly email") + `
+      <div class="pane">${"" /* SHRM/LinkedIn standard TA metric set */}
+        ${antabs("rec:analytics")}
+        <div class="stats">
+          <div class="stat"><div class="k">Time to fill</div><div class="v v-good">34<small> days</small></div><div class="d">req open → accept · India median 45</div></div>
+          <div class="stat"><div class="k">Time to hire</div><div class="v v-good">21<small> days</small></div><div class="d">first touch → accept</div></div>
+          <div class="stat"><div class="k">Offer acceptance</div><div class="v v-mid">71<small>%</small></div><div class="d">market drop-rate 30%+</div></div>
+          <div class="stat"><div class="k">Fill rate</div><div class="v">14<small>/18 reqs</small></div><div class="d">78% QTD · 3 reqs aging &gt;45d</div></div>
+        </div>
+        <div class="stats">
+          <div class="stat"><div class="k">Cost per hire</div><div class="v">₹41k</div><div class="d">blended · agency-only ₹1.9L</div></div>
+          <div class="stat"><div class="k">Screened automatically</div><div class="v">78<small>%</small></div><div class="d">of 840 applicants org-wide</div></div>
+          <div class="stat"><div class="k">Candidate reply rate</div><div class="v v-good">61<small>%</small></div><div class="d">WhatsApp · industry 15–30% on phone</div></div>
+          <div class="stat"><div class="k">Reqs per recruiter</div><div class="v">4.0</div><div class="d">healthy band 4–7 · max 6 (Priya)</div></div>
+        </div>
+        <div class="lbl">Source of hire — where offers actually come from</div>
+        <div class="tscroll"><table>
+          <thead><tr><th>Source</th><th class="n">Applicants</th><th class="n">Hires</th><th class="n">Conversion</th><th class="n">Cost / hire</th><th>Note</th></tr></thead>
+          <tbody>
+            <tr><td class="rn">Referrals</td><td class="n">96</td><td class="n">3</td><td class="n">3.1% <span class="up">best</span></td><td class="n">₹25k payout</td><td>Highest conversion — under-invested</td></tr>
+            <tr><td class="rn">Agency (TalentBridge)</td><td class="n">74</td><td class="n">2</td><td class="n">2.7%</td><td class="n">₹1.9L</td><td>Good conversion, 4.6× blended cost</td></tr>
+            <tr><td class="rn">WhatsApp apply</td><td class="n">318</td><td class="n">5</td><td class="n">1.6%</td><td class="n">₹8k</td><td>Volume + cheapest</td></tr>
+            <tr><td class="rn">Job boards (Idibu, Google)</td><td class="n">202</td><td class="n">2</td><td class="n">1.0%</td><td class="n">₹34k</td><td></td></tr>
+            <tr><td class="rn">Email intake (incl. Naukri)</td><td class="n">150</td><td class="n">0</td><td class="n">0% <span class="dn">▼</span></td><td class="n">—</td><td>Volume without conversion — review quality</td></tr>
+          </tbody>
+        </table></div>
+        <div class="lbl sp">Offer outcomes this quarter</div>
+        <div class="rows">
+          ${row("calm",10,"Offers extended","7 accepted · median 1.8 days to signature (OTP e-sign)","Detail")}
+          ${row("warn",3,"Offers lost","Compensation ×2 · counteroffer ×1 — comp losses cluster in Data Engineering","Detail")}
+        </div>
+        ${insight(`This is the <b>standard TA metric set</b> (SHRM / LinkedIn Talent benchmarks): time-to-fill AND
+          time-to-hire (different clocks), acceptance, fill rate, cost per hire, source of hire, recruiter load. Every
+          number drills to the rows behind it — no vanity aggregates. The two India-specific additions: WhatsApp reply
+          rate as a first-class metric, and offer-loss reasons, because a 30% drop market is won at the offer stage.`)}
+      </div>` },
+
+    "rec:an-trends": { rail:"rec:analytics",
+      html: head("Analytics — Trends", "· last 12 weeks / 6 months", "export CSV") + `
+      <div class="pane">
+        ${antabs("rec:an-trends")}
+        <div class="cards2">
+          <div class="sc2"><h4>Applications per week</h4><div class="d">All jobs, all sources · 12 weeks</div>
+            ${spark([34,42,38,55,61,48,70,64,58,77,82,74],"w18","this week · 74")}</div>
+          <div class="sc2"><h4>Median time to fill</h4><div class="d">By month · the wager metric</div>
+            ${spark([100,92,86,74,68,61],"Feb · 51d","Jul · 34d","g")}</div>
+          <div class="sc2"><h4>Hires vs plan</h4><div class="d">Monthly · plan = 3/mo</div>
+            ${spark([33,66,66,100,66,100],"Feb · 1","Jul · 3","g")}</div>
+          <div class="sc2"><h4>Offer acceptance</h4><div class="d">By month · %</div>
+            ${spark([58,64,60,68,72,71],"Feb · 58%","Jul · 71%")}</div>
+        </div>
+        <div class="lbl sp">Stage velocity — where days go, trend vs last quarter</div>
+        <div class="tscroll"><table>
+          <thead><tr><th>Stage</th><th class="n">Median days now</th><th class="n">Last quarter</th><th class="n">Δ</th><th>Driver</th></tr></thead>
+          <tbody>
+            <tr><td class="rn">Apply → screened</td><td class="n">0.4</td><td class="n">2.1</td><td class="n"><span class="up">−81%</span></td><td>WhatsApp screening automated</td></tr>
+            <tr><td class="rn">Screened → reviewed</td><td class="n">2.0</td><td class="n">6.5</td><td class="n"><span class="up">−69%</span></td><td>Application Review queue</td></tr>
+            <tr><td class="rn">Review → interview</td><td class="n">4.8</td><td class="n">5.1</td><td class="n"><span class="up">−6%</span></td><td>Self-schedule links</td></tr>
+            <tr><td class="rn">Interview → decision</td><td class="n">3.4</td><td class="n">2.9</td><td class="n"><span class="dn">+17%</span></td><td>HM scorecards late — the org's slowest step</td></tr>
+            <tr><td class="rn">Decision → offer out</td><td class="n">1.1</td><td class="n">1.4</td><td class="n"><span class="up">−21%</span></td><td>Templates + approval chain</td></tr>
+          </tbody>
+        </table></div>
+        ${insight(`Snapshots hide direction — <b>trend is the report a leadership meeting actually uses</b>. The
+          time-to-fill fall (51→34 days) is the product's proof-of-value chart, and the one regression (interview →
+          decision, +17%) points at exactly the thread every seat in this prototype sees: HM scorecards arriving late.`)}
+      </div>` },
+
+    "rec:an-jobs": { rail:"rec:analytics",
+      html: head("Analytics — By job", "· role-level funnel & conversion", "export CSV") + `
+      <div class="pane">
+        ${antabs("rec:an-jobs")}
+        <div class="lbl">Stage conversion, org-wide vs benchmark</div>
+        <div class="tscroll"><table>
+          <thead><tr><th>Pass-through</th><th class="n">Yours</th><th class="n">Benchmark</th><th>Read</th></tr></thead>
+          <tbody>
+            <tr><td class="rn">Apply → screened</td><td class="n">27%</td><td class="n">~30%</td><td>Healthy — knockouts doing their job</td></tr>
+            <tr><td class="rn">Screened → shortlist</td><td class="n">21%</td><td class="n">~25%</td><td>Rubric slightly stricter than market</td></tr>
+            <tr><td class="rn">Shortlist → interview</td><td class="n">33%</td><td class="n">~30%</td><td>Healthy</td></tr>
+            <tr><td class="rn">Interview → offer</td><td class="n">33%</td><td class="n">~25%</td><td><span class="up">Strong</span> — shortlists are accurate</td></tr>
+            <tr><td class="rn">Offer → joined</td><td class="n">71%</td><td class="n">~85% global</td><td><span class="dn">India drop-market</span> — speed is the lever</td></tr>
+          </tbody>
+        </table></div>
+        <div class="lbl sp">Per job — is it the bar, the sourcing, or the process?</div>
+        <div class="tscroll"><table>
+          <thead><tr><th>Job</th><th class="n">Days open</th><th class="n">Applicants</th><th class="n">Clear rubric</th><th class="n">Apply→Interview</th><th>Best source</th><th>Diagnosis</th></tr></thead>
+          <tbody>
+            <tr><td class="rn">Senior Backend Engineer</td><td class="n">34</td><td class="n">312</td><td class="n">22%</td><td class="n">1.9%</td><td>Referrals</td><td><span class="chip c-ok">process — HM feedback lag</span></td></tr>
+            <tr><td class="rn">Data Engineer</td><td class="n">51</td><td class="n">96</td><td class="n">0%</td><td class="n">0%</td><td>—</td><td><span class="chip c-bad">the bar — nobody clears it; recalibrate or re-source</span></td></tr>
+            <tr><td class="rn">Product Designer</td><td class="n">19</td><td class="n">143</td><td class="n">29%</td><td class="n">2.1%</td><td>WhatsApp</td><td><span class="chip c-ok">healthy</span></td></tr>
+            <tr><td class="rn">QA Lead</td><td class="n">63</td><td class="n">201</td><td class="n">—</td><td class="n">1.0%</td><td>Job boards</td><td><span class="chip c-bad">no rubric — data unusable until approved</span></td></tr>
+            <tr><td class="rn">Engineering Manager</td><td class="n">28</td><td class="n">88</td><td class="n">18%</td><td class="n">2.3%</td><td>Referrals</td><td><span class="chip c-warn">offer risk — 1 competing</span></td></tr>
+          </tbody>
+        </table></div>
+        ${insight(`Role-level is where analytics earns its keep: the same three numbers per job — clear-rate, funnel
+          conversion, days — separate <b>three different diseases</b>. Data Engineer has applicants but 0% clear the
+          rubric: that's a bar problem, not sourcing. QA Lead has no rubric, so its numbers are marked unusable rather
+          than silently wrong. SBE converts fine but stalls at feedback: process. One table, three different fixes.`)}
+      </div>` },
+
+    "rec:an-quality": { rail:"rec:analytics",
+      html: head("Analytics — Quality & fairness", "· did we hire well, and fairly", "export CSV · audit trail") + `
+      <div class="pane">
+        ${antabs("rec:an-quality")}
+        <div class="stats">
+          <div class="stat"><div class="k">Quality of hire</div><div class="v v-good">8.1<small>/10</small></div><div class="d">90-day pulse · 12 hires</div></div>
+          <div class="stat"><div class="k">90-day retention</div><div class="v v-good">92<small>%</small></div><div class="d">11 of 12 · 1 regret exit</div></div>
+          <div class="stat"><div class="k">HM satisfaction</div><div class="v">4.2<small>/5</small></div><div class="d">post-hire survey</div></div>
+          <div class="stat"><div class="k">FitScore validity</div><div class="v">r = .34</div><div class="d">score vs 90-day QoH · n=12, early</div></div>
+        </div>
+        <div class="lbl">Fairness — adverse-impact monitoring</div>
+        <div class="tscroll"><table>
+          <thead><tr><th>Check</th><th>Status</th><th>Detail</th></tr></thead>
+          <tbody>
+            <tr><td class="rn">Selection-ratio parity (4/5ths rule)</td><td><span class="chip c-ok">within bounds</span></td>
+                <td>All monitored cohorts ≥ 0.87 ratio this quarter, every funnel stage</td></tr>
+            <tr><td class="rn">Score → advance consistency</td><td><span class="chip c-ok">consistent</span></td>
+                <td>Advance decisions track calibrated score bands; 3 documented overrides, all with notes</td></tr>
+            <tr><td class="rn">Reject reasons coverage</td><td><span class="chip c-warn">94%</span></td>
+                <td>6% of rejects predate reason-capture — backfilled as "unspecified"</td></tr>
+            <tr><td class="rn">Knockout question review</td><td><span class="chip c-warn">1 flagged</span></td>
+                <td>"Immediate joiner only" knockout on 2 jobs — screens out notice-period candidates; review intent</td></tr>
+          </tbody>
+        </table></div>
+        <div class="lbl sp">Reject reasons this quarter (from Application Review)</div>
+        <div class="rows">
+          ${row("calm",74,"Compensation fit","Largest bucket — these are Talent Pool candidates for higher-band roles","Pool")}
+          ${row("calm",61,"Experience depth","Concentrated in Data Engineer — consistent with its 0% clear-rate","View")}
+          ${row("calm",58,"Location / relocation","","View")}
+          ${row("calm",17,"Other (noted)","Free-text reasons, all auditable","View")}
+        </div>
+        ${insight(`For an AI-scoring product this tab is the licence to operate: <b>adverse-impact monitoring is the
+          first question enterprise procurement asks</b>, and the EU AI Act's human-oversight rules land August 2026.
+          Everything here derives from two disciplines the new UI enforces — every reject carries a reason, and every
+          override is documented. QoH and predictive validity already exist in the product; they move from a buried
+          report to the tab a CHRO opens.`)}
+      </div>` },
+
+    "rec:setup": { rail:"rec:setup",
+      html: head("Hiring Setup", "· org level", "libraries, not per-job repetition") + `
+      <div class="pane"><div class="cards2">
+        <div class="sc2"><h4>Rubric library</h4><div class="d">One rubric, many jobs. Versioned, named approver. Click to open.</div>
+          <div class="it" data-goto="rec:setup-rubric" style="cursor:pointer"><b>Backend rubric v3</b> · A. Menon<span class="m">4 jobs · open ↵</span></div>
+          <div class="it"><b>Design rubric v1</b> · S. Rao<span class="m">1 job</span></div>
+          <div class="it" data-goto="rec:jobsetup" style="cursor:pointer"><b>QA Lead</b> · <span style="color:var(--low)">no rubric</span><span class="m">finish setup ↵</span></div></div>
+        <div class="sc2"><h4>Screening question sets</h4><div class="d">WhatsApp, at apply or post-shortlist.</div>
+          <div class="it"><b>Engineering apply set</b> · 5 Qs, 2 knockout<span class="m">3 jobs</span></div>
+          <div class="it"><b>Post-shortlist deep-dive</b> · 4 Qs<span class="m">2 jobs</span></div></div>
+        <div class="sc2"><h4>Interview kits</h4><div class="d">Stages, scorecards, assessment templates.</div>
+          <div class="it"><b>Backend loop</b> · 3 stages + scorecard v2<span class="m">edit</span></div>
+          <div class="it"><b>Assessment library</b> · 2 templates<span class="m">edit</span></div></div>
+        <div class="sc2"><h4>Offers & requisitions</h4><div class="d">Letter templates, approval chains.</div>
+          <div class="it"><b>Offer letter</b> · 2 templates, OTP-gated sign<span class="m">edit</span></div>
+          <div class="it"><b>Requisition workflow</b> · 2-step approval<span class="m">edit</span></div></div>
+        <div class="sc2"><h4>Channels</h4><div class="d">Where candidates come from.</div>
+          <div class="it"><b>WhatsApp</b> · connected · 61% reply<span class="m">health</span></div>
+          <div class="it"><b>Email intake · job boards</b> · active<span class="m">config</span></div></div>
+        <div class="sc2"><h4>Team</h4><div class="d">Hiring roles only.</div>
+          <div class="it"><b>3 recruiters · 4 HMs · 1 agency</b><span class="m">manage</span></div></div>
+        <div class="sc2" data-goto="rec:integrations" style="cursor:pointer"><h4>Integrations ↵</h4><div class="d">Every connection, its health, and its last event — one page.</div>
+          <div class="it"><b>WhatsApp · Email · Notetaker · Boards · Webhooks</b><span class="m">2 warnings</span></div></div>
+        <div class="sc2"><h4>Org admin</h4><div class="d">Kept separate from hiring config on purpose.</div>
+          <div class="it"><b>Billing & plan</b><span class="m">open</span></div>
+          <div class="it"><b>Permissions & roles</b><span class="m">open</span></div>
+          <div class="it"><b>Audit log</b> · every admin action, immutable<span class="m">open</span></div>
+          <div class="it"><b>Privacy & retention</b> · DPDP schedules, erasure queue<span class="m">open</span></div>
+          <div class="it"><b>Compensation bands</b><span class="m">open</span></div></div>
+      </div>
+      ${insight(`Two kinds of settings, kept apart: <b>Hiring Setup</b> is what a TA lead touches (rubrics, questions,
+        kits); <b>Org admin</b> is what an owner touches (billing, permissions, audit, privacy). Platform admin —
+        feature flags, org onboarding, cost observability — stays super-admin only and unchanged.`)}
+      </div>` },
+
+    "rec:integrations": { rail:"rec:setup",
+      html: head("Integrations", "· Hiring Setup › Integrations", `2 warnings &nbsp;<button class="go" data-goto="rec:setup">← Hiring Setup</button>`) + `
+      <div class="pane">
+        <div class="lbl">Channels & services — live health, not a logo wall</div>
+        <div class="tscroll"><table>
+          <thead><tr><th>Integration</th><th>Status</th><th>Last event</th><th>Detail</th></tr></thead>
+          <tbody>
+            <tr><td class="rn">WhatsApp Cloud API</td><td><span class="chip c-ok">connected</span></td><td>inbound · 2 min ago</td><td>61% reply rate · webhook verified · durable queue on</td></tr>
+            <tr><td class="rn">Email — Resend</td><td><span class="chip c-ok">connected</span></td><td>delivery · 11 min ago</td><td>Outbound enabled · failed sends alert, never fake-success</td></tr>
+            <tr><td class="rn">Intake email (incl. Naukri)</td><td><span class="chip c-ok">active</span></td><td>CV parsed · 1 h ago</td><td>150 CVs this quarter · per-job addresses</td></tr>
+            <tr><td class="rn">AI notetaker — Recall</td><td><span class="chip c-warn">balance low</span></td><td>bot joined · Thu</td><td>$5 left — top up before next panel round</td></tr>
+            <tr><td class="rn">Job boards — Idibu</td><td><span class="chip c-ok">posted</span></td><td>sync · 06:00</td><td>2 boards live for SBE</td></tr>
+            <tr><td class="rn">Google for Jobs</td><td><span class="chip c-ok">indexed</span></td><td>crawl · yesterday</td><td>Structured JobPosting valid</td></tr>
+            <tr><td class="rn">Background jobs — Inngest</td><td><span class="chip c-ok">healthy</span></td><td>score-batch · 10:14</td><td>0 stuck runs · reconciliation sweep nightly</td></tr>
+            <tr><td class="rn">Outbound webhooks</td><td><span class="chip c-warn">1 endpoint failing</span></td><td>offer.signed · 09:30</td><td>41 delivered / 3 retried / 1 dead-lettered → replay</td></tr>
+            <tr><td class="rn">Voice screening — Bolna</td><td><span class="chip c-mute">off</span></td><td>—</td><td>Flag-gated · enable per org when validated</td></tr>
+          </tbody>
+        </table></div>
+        <div class="acts" style="border:0;padding-top:10px">
+          <button class="btn pri">Add webhook endpoint</button><button class="btn">Rotate API key</button>
+          <button class="btn">Replay dead-lettered</button>
+        </div>
+        ${insight(`Integration failures are the silent killers — this session alone found a webhook secret with a URL
+          pasted into it, a dead cron, and a $5 notetaker balance. One page with <b>status + last event + the specific
+          number that matters</b> turns "is it plugged in?" from archaeology into a glance. Warnings escalate to
+          WhatsApp for the org owner.`)}
+      </div>` },
+
+    "rec:setup-rubric": { rail:"rec:setup",
+      html: head("Backend rubric v3", "· Hiring Setup › Rubric library", "approved · A. Menon · 12 Jul")
+        + RUBRIC_BODY("rec:setup") },
+
+    /* ── HIRING MANAGER · Ishita ───────────────────── */
+    "hm:week": { rail:"hm:week",
+      html: head("Your week", "· Ishita C. · Hiring Manager", "Tue 29 Jul") + `
+      <div class="pane">
+        <div class="lbl">Owed by you</div>
+        <div class="rows">
+          ${row("bad",2,"Scorecards overdue — interviewed Thursday","Rahul S. and Anjali M. for Senior Backend Engineer. The job is stalled on you.","Fill now",true,"hm:scorecard")}
+          ${row("warn",1,"Decision needed","Dev P. cleared review at 79 — advance to interview? Priya flagged him for you.","Decide",false,"hm:job")}
+        </div>
+        <div class="lbl sp">Coming up</div>
+        <div class="rows">
+          ${row("calm",2,"Interviews next week","Ananya K. (Wed 11:00) and Meera J. (Thu 15:30) — briefs arrive the morning of.","Open brief",false,"hm:brief")}
+        </div>
+        <div class="lbl sp">Your jobs</div>
+        <div class="rows">
+          ${row("warn",34,"Senior Backend Engineer — 34 days open","1 offer out · 6 in interviews · waiting on your 2 scorecards.","Open",false,"hm:job")}
+          ${row("calm",28,"Engineering Manager — 28 days open","Offer out 4 days; candidate has 1 competing offer.","Open",false,"hm:job")}
+        </div>
+        ${insight(`An HM gets <b>20 minutes a week</b> — this is all of it. No queue, no setup, no nav to learn:
+          what you owe, what's coming, your jobs. The WhatsApp reminder Ishita gets deep-links <b>straight into the
+          scorecard</b>, not to a login page. Today she gets a 504-line scroll with no navigation at all.`)}
+      </div>` },
+
+    "hm:scorecard": { rail:"hm:week",
+      html: head("Scorecard — Rahul S.", "· Senior Backend Engineer · interviewed Thu 24 Jul",
+        `overdue 4 days &nbsp;<button class="go" data-goto="hm:week">← Your week</button>`) + `
+      <div class="pane">
+        ${crit("Distributed systems depth","4 = designed & operated at scale · 1 = conceptual only",3)}
+        ${crit("Data modelling","4 = led schema evolution under load · 1 = CRUD only",0)}
+        ${crit("Ownership & incident maturity","4 = ran postmortems, owned SLOs · 1 = escalated everything",0)}
+        ${crit("Communication","4 = crisp, structured, honest about gaps · 1 = vague",0)}
+        <div class="acts">
+          <button class="btn pri">Strong hire</button><button class="btn">Hire</button>
+          <button class="btn">No hire</button><span class="khint" style="margin:0">Verdict requires all four criteria rated</span>
+        </div>
+        ${insight(`Criteria come <b>from the same rubric candidates were scored against</b> — the bar A. Menon approved
+          is the bar the interview measures. Structured ratings feed Quality-of-Hire and the fairness report; free-text
+          "good guy, hire" cannot. This is today's feedback-template feature with the rubric wired in.`)}
+      </div>` },
+
+    "hm:job": { rail:"hm:week",
+      html: head("Senior Backend Engineer", "· your view", `34 days open &nbsp;<button class="go" data-goto="hm:week">← Your week</button>`) + `
+      <div class="pane">
+        <div class="funnel">
+          <div class="fs"><div class="k">Applied</div><div class="n">312</div><div class="d">handled for you</div></div>
+          <div class="fs ok"><div class="k">Screened</div><div class="n">84</div><div class="d">auto</div></div>
+          <div class="fs ok"><div class="k">Review</div><div class="n">18</div><div class="d">with Priya</div></div>
+          <div class="fs bad" data-goto="hm:scorecard"><div class="k">Interview</div><div class="n">6</div><div class="d">2 waiting on you ↵</div></div>
+          <div class="fs ok"><div class="k">Offer</div><div class="n">1</div><div class="d">out 2 days</div></div>
+        </div>
+        <div class="lbl">The shortlist — people you may meet · click a name</div>
+        <div class="grp">
+          <div class="pr" data-goto="hm:scorecard"><span class="pscore" style="color:var(--good)">88</span><span class="pn">Rahul S. — interviewed, your scorecard pending</span><span class="pl">act ↵</span></div>
+          <div class="pr" data-goto="hm:brief"><span class="pscore" style="color:var(--good)">84</span><span class="pn">Ananya K. — interview Wed 11:00</span><span class="pl">brief ↵</span></div>
+          <div class="pr"><span class="pscore" style="color:var(--mid)">79</span><span class="pn">Dev P. — cleared review, awaiting your go</span><span class="pl">decide</span></div>
+        </div>
+        ${insight(`Same job, <b>scoped to what an HM can act on</b>: the shortlist, their interviews, their decisions.
+          Review is labelled "with Priya" — visible but not theirs. Same route, different role — not a separate
+          <code>company/*</code> page tree to maintain.`)}
+      </div>` },
+
+    "hm:brief": { rail:"hm:week",
+      html: head("Interview brief — Ananya K.", "· Tech round 1 · Wed 11:00 · 45 min · Meet link attached",
+        `<button class="go" data-goto="hm:week">← Your week</button>`) + `
+      <div class="pane">
+        <div class="lbl">Who you're meeting</div>
+        <div class="card" style="margin-bottom:12px">
+          <div class="ch">
+            <div class="who"><div class="nm">Ananya K.</div><div class="rl">Senior Software Engineer · Swiggy · 5.8 yrs · Bangalore</div></div>
+            <div class="scores"><div class="sc hero"><div class="k">FitScore</div><div class="n">84</div></div>
+              <div class="sc sub"><div class="k">ICP match</div><div class="n">86%</div></div></div>
+          </div>
+        </div>
+        <div class="lbl">Your round's job — verify what the CV claims</div>
+        <div class="flags">
+          <div class="fc g"><h4><span>Already evidenced</span><b>2</b></h4><ul>
+            <li><q>Rebuilt order allocation service — p99 from 900ms to 210ms</q><cite>CV · Swiggy 2025</cite></li>
+            <li><q>On-call lead for delivery platform</q><cite>WhatsApp Q4</cite></li></ul></div>
+          <div class="fc a"><h4><span>Probe in your round</span><b>2</b></h4><ul>
+            <li>Postgres sharding claimed, no scale numbers — ask for the hardest migration<cite>must-have #1</cite></li>
+            <li>Team-lead title 8 months — real scope or title inflation?<cite>ICP signal</cite></li></ul></div>
+          <div class="fc r"><h4><span>Off-limits</span><b>·</b></h4><ul>
+            <li>Compensation — hidden from panel to keep rounds unbiased; recruiter owns it</li></ul></div>
+        </div>
+        <div class="lbl sp">Suggested questions — from the rubric, not generic</div>
+        <div class="grp">
+          <div class="pr"><span class="pn">"Walk me through the sharding decision at Swiggy — what broke first, and what would you do differently?"</span><span class="pl">must-have #1</span></div>
+          <div class="pr"><span class="pn">"Tell me about a page you owned end-to-end during an incident."</span><span class="pl">ownership</span></div>
+        </div>
+        <div class="acts"><button class="btn pri">Open scorecard (unlocks at 11:45)</button><button class="btn dim">AI notetaker joins automatically</button></div>
+        ${insight(`The brief is <b>generated from the rubric + evidence already on file</b>: what's proven, what your
+          round must probe, what's off-limits. Interviewers stop re-asking what WhatsApp already answered — the #1
+          candidate complaint about panel interviews. Arrives on WhatsApp the morning of; scorecard unlocks when the
+          interview ends.`)}
+      </div>` },
+
+    /* ── HEAD OF TALENT · A. Menon ─────────────────── */
+    "ta:portfolio": { rail:"ta:portfolio",
+      html: head("Portfolio", "· A. Menon · Head of Talent", "12 open jobs · Q3") + `
+      <div class="pane">
+        <div class="stats">
+          <div class="stat"><div class="k">Open jobs</div><div class="v">12</div><div class="d">3 opened this month</div></div>
+          <div class="stat"><div class="k">Median days open</div><div class="v v-mid">34</div><div class="d">target 30 · India median 45</div></div>
+          <div class="stat"><div class="k">Rubric coverage</div><div class="v v-low">9<small>/12</small></div><div class="d">3 jobs scoring generic</div></div>
+          <div class="stat"><div class="k">Offer accept</div><div class="v v-good">71<small>%</small></div><div class="d">up from 64% last quarter</div></div>
+        </div>
+        <div class="lbl">Where each job is stuck</div>
+        <div class="tscroll"><table>
+          <thead><tr><th>Job</th><th class="n">Days</th><th>Stuck at</th><th>Owner</th></tr></thead>
+          <tbody>
+            <tr data-goto="rec:job"><td class="rn">Senior Backend Engineer</td><td class="n">34</td>
+              <td><span class="chip c-warn">HM feedback — Ishita C., 4 days</span></td><td>Priya N.</td></tr>
+            <tr><td class="rn">Data Engineer</td><td class="n">51</td>
+              <td><span class="chip c-bad">Nobody clears the rubric — revisit bar or sourcing</span></td><td>Priya N.</td></tr>
+            <tr data-goto="rec:jobsetup"><td class="rn">QA Lead</td><td class="n">63</td>
+              <td><span class="chip c-bad">No rubric approved — 201 scored generic</span></td><td>unassigned</td></tr>
+            <tr><td class="rn">Engineering Manager</td><td class="n">28</td>
+              <td><span class="chip c-warn">Offer aging 4 days · candidate has 1 competing</span></td><td>Priya N.</td></tr>
+          </tbody>
+        </table></div>
+        ${insight(`The thread from the other seats rolls up here: Ishita's overdue scorecard is <b>"stuck at HM
+          feedback, 4 days"</b> with a name on it. Every blocker has an owner — this screen is where a Head of Talent
+          earns the budget conversation, and it does not exist in the product today.`)}
+      </div>` },
+
+    "ta:gov": { rail:"ta:gov",
+      html: head("Governance", "· rubrics & approvals", "your sign-off queue") + `
+      <div class="pane">
+        <div class="lbl">Waiting on you</div>
+        <div class="rows">
+          ${row("hot",1,"Rubric awaiting approval","Product Marketing rubric v1 — drafted by Priya N. Nothing scores properly until you sign.","Review & approve",true,"ta:rubric")}
+          ${row("bad",1,"Job with no rubric — 63 days","QA Lead: 201 applicants on generic scoring. Assign an owner or approve a template.","Fix",false,"rec:jobsetup")}
+        </div>
+        <div class="lbl sp">Rubric library — click to open</div>
+        <div class="cards2">
+          <div class="sc2" data-goto="ta:rubric" style="cursor:pointer"><h4>Backend rubric v3 ↵</h4><div class="d">Approved by you · 12 Jul</div>
+            <div class="it"><b>Used by 4 jobs</b> — SBE, Data Eng, EM, Platform<span class="m">open</span></div>
+            <div class="it"><b>v2 → v3 change</b>: outcomes weighted over years-of-exp<span class="m">diff</span></div></div>
+          <div class="sc2"><h4>Design rubric v1</h4><div class="d">Approved by S. Rao · 20 Jul</div>
+            <div class="it"><b>Used by 1 job</b> — Product Designer<span class="m">history</span></div></div>
+        </div>
+        ${insight(`Approval is already real in the product (<code>approved_by</code>, <code>approved_at</code>) — this
+          screen makes it a <b>queue with consequences visible</b>: what's blocked, for how long, on whom. One rubric
+          across 4 jobs means one calibration conversation, not four.`)}
+      </div>` },
+
+    "ta:rubric": { rail:"ta:gov",
+      html: head("Backend rubric v3", "· Governance › Rubric library", "approved by you · 12 Jul")
+        + RUBRIC_BODY("ta:gov") },
+
+    /* ── AGENCY · Kavitha ──────────────────────────── */
+    "ag:jobs": { rail:"ag:jobs",
+      html: head("Client jobs", "· TalentBridge · partner of Masai School", "2 open briefs") + `
+      <div class="pane">
+        <div class="rows">
+          ${row("hot",2,"Senior Backend Engineer — Masai School","₹35–45L · Bangalore · rubric provided. Your submissions: 3 active, 1 closed.","Submit CVs",true,"ag:submit")}
+          ${row("calm",1,"Data Engineer — Masai School","₹28–36L · Bangalore · 1 submission active.","Submit CVs",false,"ag:submit")}
+        </div>
+        <div class="lbl sp">The brief — what "good" means here</div>
+        <div class="card">
+          <div class="lbl" style="margin-top:0">From Backend rubric v3 · shared with you read-only</div>
+          <div class="flags">
+            <div class="fc g"><h4><span>Must have</span><b>3</b></h4><ul>
+              <li>Distributed systems at real scale</li><li>Postgres beyond CRUD</li><li>On-call ownership</li></ul></div>
+            <div class="fc a"><h4><span>Screening asks</span><b>5</b></h4><ul>
+              <li>Notice · CTC · location · on-call · offers in hand</li></ul></div>
+            <div class="fc r"><h4><span>Auto-held</span><b>·</b></h4><ul>
+              <li>Uploads wait until the candidate answers screening on WhatsApp</li></ul></div>
+          </div>
+        </div>
+        ${insight(`Agencies see the <b>rubric as a brief</b> — must-haves and screening questions, read-only. Better
+          submissions in, fewer wasted CVs. The upload gate that exists today (held until screening answers) is shown
+          as a state, not a mystery.`)}
+      </div>` },
+
+    "ag:subs": { rail:"ag:subs",
+      html: head("Your submissions", "· Senior Backend Engineer", `4 total &nbsp;<button class="go" data-goto="ag:jobs">← Client jobs</button>`) + `
+      <div class="pane">
+        <div class="grp">
+          <div class="pr" data-goto="ag:candidate"><span class="pscore" style="color:var(--mid)">74</span><span class="pn">Meera J. — interview booked Thu 15:30 · open ↵</span><span class="pl"><span class="chip c-ok">interview</span></span></div>
+          <div class="pr" data-goto="ag:candidate"><span class="pscore" style="color:var(--mid)">61</span><span class="pn">Sana M. — in review, day 1 · open ↵</span><span class="pl"><span class="chip c-warn">in review</span></span></div>
+          <div class="pr"><span class="pscore" style="color:var(--tx-3)">—</span><span class="pn">Ravi K. — held: screening answers pending on WhatsApp</span><span class="pl"><span class="chip c-mute">held</span></span></div>
+          <div class="pr"><span class="pscore" style="color:var(--low)">55</span><span class="pn">Arjun T. — not selected · compensation fit</span><span class="pl"><span class="chip c-bad">closed</span></span></div>
+        </div>
+        ${insight(`Honest status, bounded detail: agencies see <b>where each submission is and the reject-reason
+          category</b> — never other agencies' candidates, internal notes, or scores vs other applicants. "Held" makes
+          the screening gate visible, so the agency chases the candidate instead of emailing Priya. Today this is 9
+          disconnected pages; here it is one list with the truth on it.`)}
+      </div>` },
+
+    "ag:submit": { rail:"ag:jobs",
+      html: head("Submit candidates", "· Senior Backend Engineer · Masai School",
+        `7 slots left of 10 &nbsp;<button class="go" data-goto="ag:jobs">← Client jobs</button>`) + `
+      <div class="pane">
+        <div class="card" style="margin-bottom:12px;border-style:dashed;text-align:center;padding:26px">
+          <div style="font-weight:650">Drop CVs here — up to 10 per batch</div>
+          <div style="font-size:12.4px;color:var(--tx-3);margin-top:4px">PDF / DOCX · parsed automatically · scanned CVs OK</div>
+        </div>
+        <div class="lbl">What happens to each CV — visible, not a black box</div>
+        <div class="seq">
+          <div class="step done"><div class="sn">1</div><div class="sbody">
+            <div class="t">Parse & duplicate check</div>
+            <div class="d">Checked against the org's existing candidates. <b>Duplicates are flagged to you immediately</b> —
+              no wasted slot, no ownership dispute later. Ownership window: 30 days from clean submission.</div></div></div>
+          <div class="step done"><div class="sn">2</div><div class="sbody">
+            <div class="t">Candidate answers screening on WhatsApp</div>
+            <div class="d">The client's 5 questions go to the candidate directly. The CV is <b>held</b> until they
+              answer — you can see who's stuck and chase them (it's your relationship).</div></div></div>
+          <div class="step done"><div class="sn">3</div><div class="sbody">
+            <div class="t">Scored against the client's rubric</div>
+            <div class="d">Same bar as every other source — agency CVs get no penalty and no favour.</div></div></div>
+          <div class="step done"><div class="sn">4</div><div class="sbody">
+            <div class="t">Appears in Your submissions with live status</div>
+            <div class="d">In review → interview → offer, or closed with a reason category. You see movement the
+              moment it happens, not when someone remembers to email you.</div></div></div>
+        </div>
+        ${insight(`Every rule an agency normally learns by being burned is <b>printed on the page</b>: duplicate
+          policy, ownership window, slot count, the held state. The gate exists in the product today — uploads wait
+          for screening answers — but it's invisible, so agencies email the recruiter. Here it's a status they can
+          act on themselves.`)}
+      </div>` },
+
+    "ag:candidate": { rail:"ag:subs",
+      html: head("Meera J.", "· your submission · Senior Backend Engineer",
+        `submitted 2d ago &nbsp;<button class="go" data-goto="ag:subs">← Your submissions</button>`) + `
+      <div class="pane"><div class="cwrap" style="max-width:560px;margin:0">
+        <div class="tl">
+          <div class="tle"><div class="tld">✓</div><div class="tlb"><div class="a">Submitted</div>
+            <div class="b">Sun · clean — no duplicate · ownership until 26 Aug</div></div></div>
+          <div class="tle"><div class="tld">✓</div><div class="tlb"><div class="a">Screening answered</div>
+            <div class="b">Sun · 5/5 on WhatsApp · both knockouts passed</div></div></div>
+          <div class="tle"><div class="tld">✓</div><div class="tlb"><div class="a">Scored & queued</div>
+            <div class="b">Mon · meets the client's bar</div></div></div>
+          <div class="tle"><div class="tld">✓</div><div class="tlb"><div class="a">Advanced to interview</div>
+            <div class="b">Tue · reviewed in 2 days</div></div></div>
+          <div class="tle pend"><div class="tld">…</div><div class="tlb"><div class="a">Interview — Thu 15:30, booked</div>
+            <div class="b">Scheduled directly with her on WhatsApp. Scorecard and outcome will appear here.</div></div></div>
+        </div>
+        <div class="lbl sp">What you can and can't see — by design</div>
+        <div class="grp">
+          <div class="pr"><span class="pn">✓ Her status, stage, and timing — live</span><span class="pl">always</span></div>
+          <div class="pr"><span class="pn">✓ Close reasons, category-level ("compensation fit")</span><span class="pl">always</span></div>
+          <div class="pr"><span class="pn">✗ Her score vs other candidates, internal notes, other agencies' submissions</span><span class="pl">never</span></div>
+        </div>
+        ${insight(`Bounded transparency: enough truth that the agency never needs to email "any update?", strict
+          walls around competitive information. The visibility boundary is stated on the page instead of discovered
+          through awkward calls.`)}
+      </div></div>` },
+
+    /* ── CANDIDATE · Rahul ─────────────────────────── */
+    "cd:status": { rail:"cd:status",
+      html: head("Your application", "· Senior Backend Engineer · Masai School", "also on WhatsApp") + `
+      <div class="pane"><div class="cwrap">
+        <div class="tl">
+          <div class="tle"><div class="tld">✓</div><div class="tlb"><div class="a">Applied</div>
+            <div class="b">12 Jul · via WhatsApp</div></div></div>
+          <div class="tle"><div class="tld">✓</div><div class="tlb"><div class="a">Screening questions</div>
+            <div class="b">13 Jul · 5 questions, took you 4 minutes</div></div></div>
+          <div class="tle"><div class="tld">✓</div><div class="tlb"><div class="a">Profile reviewed</div>
+            <div class="b">15 Jul · AI prepared the summary, <b>a recruiter read it and moved you forward</b></div></div></div>
+          <div class="tle"><div class="tld">✓</div><div class="tlb"><div class="a">Interview</div>
+            <div class="b">24 Jul · 45 min with the engineering panel</div></div></div>
+          <div class="tle pend"><div class="tld">…</div><div class="tlb"><div class="a">Decision — with the hiring team</div>
+            <div class="b">Feedback is being collected. Expect an answer by <b>Fri 1 Aug</b>. If it's a no, you'll be
+              told, with a reason — <b>a person makes this call, not a machine.</b></div></div></div>
+        </div>
+        <div class="wa">
+          <div class="wt">The same thing, on WhatsApp</div>
+          <div class="bub"><b>TigerHire · Masai School</b><br>Update on Senior Backend Engineer: your interview
+            feedback is being collected. You'll hear by Fri, 1 Aug. Reply STATUS anytime.</div>
+          <div class="bub me">STATUS</div>
+          <div class="bub">Interview done ✓ · Decision pending · You're 1 of 6 at this stage.</div>
+        </div>
+        ${insight(`63% of candidates have now faced an AI interview; <b>38% walked away</b> from opaque processes, and
+          68% were never told AI was involved. This page does the opposite of the market: says what the AI did, says a
+          human decides, gives a date, and answers STATUS on the channel Indians actually use. Candidate experience is
+          offer-acceptance economics, not politeness — 61% take the first offer they get.`)}
+      </div></div>` },
+
+    "cd:data": { rail:"cd:data",
+      html: head("Your data", "· what Masai School holds about you", "DPDP rights · plain language") + `
+      <div class="pane"><div class="cwrap">
+        <div class="lbl">On file</div>
+        <div class="grp">
+          <div class="pr"><span class="pn"><b>CV</b> · rahul-s-2026.pdf</span><span class="pl">view · replace</span></div>
+          <div class="pr"><span class="pn"><b>Screening answers</b> · 5, given 13 Jul</span><span class="pl">view</span></div>
+          <div class="pr"><span class="pn"><b>Interview notes</b> · held by the hiring team</span><span class="pl">summary on request</span></div>
+        </div>
+        <div class="lbl sp">Consent — what you've agreed to</div>
+        <div class="grp">
+          <div class="pr"><span class="pn">✓ Processing for <b>this application</b></span><span class="pl">given 12 Jul</span></div>
+          <div class="pr"><span class="pn">✓ Contact on WhatsApp about this application</span><span class="pl">given 12 Jul</span></div>
+          <div class="pr"><span class="pn">✗ Marketing / other roles — <b>not given</b>, and nothing is sent</span><span class="pl">change</span></div>
+        </div>
+        <div class="lbl sp">Your rights</div>
+        <div class="rows">
+          ${row("calm","⤓","Download everything","Your CV, answers, and application history as a file. Instant.","Download")}
+          ${row("calm","✕","Delete my data","Removes your CV, answers, and profile after the process closes. Takes effect in 7 days; you get a confirmation.","Request")}
+        </div>
+        ${insight(`Trust is the differentiator in a market where 68% of candidates are never told AI was involved.
+          Erasure and retention already exist in the product (privacy-retention cron, CV storage cleanup) — this page
+          just makes rights visible and self-serve, in plain language, before DPDP audits make it mandatory.`)}
+      </div></div>` },
+  };
+
+  const PERSONAS = {
+    rec: { seat:"Recruiter · Masai School", def:"rec:jobs", items:[
+      {k:"rec:jobs",label:"Jobs",badge:"3"},{k:"rec:candidates",label:"Candidates"},
+      {k:"rec:analytics",label:"Analytics"},{k:"rec:setup",label:"Hiring Setup"}],
+      foot:"Full surface. Application Review and Job Setup live inside each job." },
+    hm:  { seat:"Hiring Manager", def:"hm:week", items:[
+      {k:"hm:week",label:"Your week",badge:"3"},{k:"hm:job",label:"Your jobs"}],
+      foot:"Deliberately small: what you owe, your interviews, your jobs. Nothing else." },
+    ta:  { seat:"Head of Talent", def:"ta:portfolio", items:[
+      {k:"ta:portfolio",label:"Portfolio"},{k:"ta:gov",label:"Governance",badge:"2"},
+      {k:"rec:analytics",label:"Analytics"}],
+      foot:"The system view: every job's blocker with an owner, plus the rubric sign-off queue." },
+    ag:  { seat:"Agency · TalentBridge", def:"ag:jobs", items:[
+      {k:"ag:jobs",label:"Client jobs"},{k:"ag:subs",label:"Your submissions",badge:"1"}],
+      foot:"Client briefs and honest submission status. Nothing about other agencies or org internals." },
+    cd:  { seat:"Candidate", def:"cd:status", items:[
+      {k:"cd:status",label:"Your application"},{k:"cd:data",label:"Your data"}],
+      foot:"One page, mirrored on WhatsApp. A human makes the decision — and the page says so." }
+  };
+
+  let currentPersona = "rec";
+
+  function renderRail(p) {
+    const P = PERSONAS[p];
+    rail.innerHTML = `<div class="mark">Tiger<span>Hire</span></div>
+      <div class="seat">${P.seat}</div>` +
+      (p === "cd" ? "" : `<div class="ask">Ask anything <kbd>⌘K</kbd></div>`) +
+      P.items.map(it => `<button class="nav" role="tab" data-k="${it.k}">${it.label}${it.badge ? ` <span class="b">${it.badge}</span>` : ""}</button>`).join("") +
+      `<div class="railfoot">${P.foot}</div>`;
+    rail.querySelectorAll(".nav").forEach(btn => btn.addEventListener("click", () => select(btn.dataset.k)));
+  }
+
+  function select(k) {
+    const scr = SCREENS[k];
+    rail.querySelectorAll(".nav").forEach(t => t.setAttribute("aria-selected", String(t.dataset.k === scr.rail)));
+    stage.innerHTML = scr.html;
+    stage.querySelectorAll("[data-goto]").forEach(el => el.addEventListener("click", () => select(el.dataset.goto)));
+  }
+
+  function setPersona(p) {
+    currentPersona = p;
+    pcards.forEach(c => c.setAttribute("aria-selected", String(c.dataset.p === p)));
+    renderRail(p);
+    select(PERSONAS[p].def);
+  }
+
+  pcards.forEach(c => c.addEventListener("click", () => setPersona(c.dataset.p)));
+  setPersona("rec");
+</script>
+
+</body></html>

@@ -1,0 +1,314 @@
+/* Homepage v2 — bespoke pieces (hero pile, live demo, evidence card, proof).
+   Layout/typography otherwise uses Tailwind + existing marketing components. */
+
+.mono {
+  font-family: ui-monospace, "SF Mono", "Cascadia Mono", Menlo, monospace;
+}
+
+/* ---------- hero pile ---------- */
+.pileHead {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  margin-bottom: 10px;
+}
+.pileCount {
+  font-family: ui-monospace, "SF Mono", Menlo, monospace;
+  font-size: 30px;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+}
+.cvrow {
+  height: 34px;
+  border-radius: 7px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 0 12px;
+  margin-bottom: 7px;
+  font-family: ui-monospace, "SF Mono", Menlo, monospace;
+  font-size: 12px;
+  color: var(--text-subtle);
+  transition: border-color 0.4s ease;
+}
+.cvrowDot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--text-subtle);
+  flex: none;
+  opacity: 0.5;
+}
+.cvrowBar {
+  flex: 1;
+  height: 5px;
+  border-radius: 3px;
+  background: rgba(255, 255, 255, 0.06);
+}
+.cvrowScore {
+  margin-left: auto;
+  font-variant-numeric: tabular-nums;
+}
+.bandStrong {
+  border-color: rgba(52, 211, 153, 0.45);
+}
+.bandStrong .cvrowDot {
+  background: #34d399;
+  opacity: 1;
+}
+.bandStrong .cvrowScore {
+  color: #34d399;
+}
+.bandMid {
+  border-color: rgba(251, 191, 36, 0.35);
+}
+.bandMid .cvrowDot {
+  background: #fbbf24;
+  opacity: 1;
+}
+.bandMid .cvrowScore {
+  color: #fbbf24;
+}
+.bandLow {
+  border-color: rgba(248, 113, 113, 0.25);
+}
+.bandLow .cvrowDot {
+  background: #f87171;
+  opacity: 0.8;
+}
+.bandLow .cvrowScore {
+  color: #f87171;
+  opacity: 0.85;
+}
+
+.guaranteeLine {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 22px;
+  font-family: ui-monospace, "SF Mono", Menlo, monospace;
+  font-size: 13px;
+  color: var(--text-muted);
+  border: 1px dashed rgba(245, 158, 11, 0.4);
+  background: var(--accent-muted);
+  border-radius: 8px;
+  padding: 10px 16px;
+}
+
+/* ---------- demo ---------- */
+.demoShell {
+  margin-top: 48px;
+  background: var(--bg-elevated);
+  border: 1px solid var(--border-interactive);
+  border-radius: 18px;
+  overflow: hidden;
+}
+.demoBar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 13px 20px;
+  border-bottom: 1px solid var(--border);
+  font-family: ui-monospace, "SF Mono", Menlo, monospace;
+  font-size: 12px;
+  color: var(--text-subtle);
+}
+.demoBody {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  min-height: 460px;
+}
+@media (max-width: 900px) {
+  .demoBody {
+    grid-template-columns: 1fr;
+  }
+}
+.demoLeft {
+  padding: 28px;
+  border-right: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+@media (max-width: 900px) {
+  .demoLeft {
+    border-right: none;
+    border-bottom: 1px solid var(--border);
+  }
+}
+.demoTextarea {
+  flex: 1;
+  min-height: 230px;
+  resize: vertical;
+  background: var(--bg);
+  color: var(--text-muted);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 16px;
+  font-family: ui-monospace, "SF Mono", Menlo, monospace;
+  font-size: 13px;
+  line-height: 1.7;
+}
+.demoRight {
+  padding: 28px;
+}
+
+.rubricRow {
+  display: grid;
+  grid-template-columns: 1fr 52px 1fr;
+  align-items: center;
+  gap: 14px;
+  padding: 9px 0;
+  border-bottom: 1px solid var(--border);
+}
+.rubricRow:last-of-type {
+  border-bottom: none;
+}
+.rubricWeight {
+  font-family: ui-monospace, "SF Mono", Menlo, monospace;
+  font-size: 13px;
+  color: var(--accent);
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+.meter {
+  height: 6px;
+  border-radius: 3px;
+  background: rgba(255, 255, 255, 0.07);
+  overflow: hidden;
+}
+.meterFill {
+  display: block;
+  height: 100%;
+  background: var(--accent);
+  border-radius: 3px;
+  transition: width 0.8s cubic-bezier(0.2, 0.7, 0.2, 1);
+}
+.approvedNote {
+  margin-top: 18px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-family: ui-monospace, "SF Mono", Menlo, monospace;
+  font-size: 12.5px;
+  color: #34d399;
+  background: rgba(52, 211, 153, 0.08);
+  border: 1px solid rgba(52, 211, 153, 0.3);
+  border-radius: 8px;
+  padding: 10px 14px;
+}
+
+/* ---------- evidence card ---------- */
+.ecard {
+  border: 1px solid var(--border-interactive);
+  border-radius: 14px;
+  background: var(--surface);
+  padding: 20px;
+}
+.verdictPill {
+  margin-left: auto;
+  font-family: ui-monospace, "SF Mono", Menlo, monospace;
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  padding: 5px 11px;
+  border-radius: 999px;
+  background: rgba(52, 211, 153, 0.12);
+  color: #34d399;
+  border: 1px solid rgba(52, 211, 153, 0.35);
+  white-space: nowrap;
+}
+.verdictPillMuted {
+  background: rgba(251, 191, 36, 0.1);
+  color: #fbbf24;
+  border-color: rgba(251, 191, 36, 0.3);
+}
+.statBox {
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 12px;
+  text-align: center;
+}
+.statValue {
+  font-family: ui-monospace, "SF Mono", Menlo, monospace;
+  font-size: 22px;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+}
+.flagOk {
+  color: #34d399;
+}
+.flagWarn {
+  color: #fbbf24;
+}
+.flagMiss {
+  color: #f87171;
+}
+.whyQuote {
+  font-size: 13.5px;
+  color: var(--text-muted);
+  border-left: 3px solid var(--accent);
+  padding: 4px 0 4px 14px;
+  margin-bottom: 14px;
+}
+.rankRow {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-family: ui-monospace, "SF Mono", Menlo, monospace;
+  font-size: 12.5px;
+  color: var(--text-muted);
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 8px 12px;
+}
+.rankTop {
+  border-color: rgba(245, 158, 11, 0.4);
+}
+.rankSelected,
+.rankRow.rankSelected {
+  background: var(--surface-hover);
+  border-color: var(--accent);
+  color: var(--text);
+}
+.scoreStrong {
+  color: #34d399;
+}
+.scoreMid {
+  color: #fbbf24;
+}
+.scoreLow {
+  color: #f87171;
+}
+
+/* ---------- proof ---------- */
+.proofBig {
+  font-family: ui-monospace, "SF Mono", Menlo, monospace;
+  font-size: 68px;
+  font-weight: 600;
+  line-height: 1;
+  color: var(--accent);
+  letter-spacing: -0.02em;
+  font-variant-numeric: tabular-nums;
+}
+.proofUnit {
+  font-size: 22px;
+  color: var(--text-subtle);
+}
+
+/* ---------- wager ---------- */
+.wagerCard {
+  margin-top: 44px;
+  border: 1px solid rgba(245, 158, 11, 0.35);
+  border-radius: 20px;
+  background: var(--bg-elevated);
+  padding: 44px;
+}
+@media (max-width: 900px) {
+  .wagerCard {
+    padding: 28px;
+  }
+}

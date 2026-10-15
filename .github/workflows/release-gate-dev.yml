@@ -1,0 +1,60 @@
+name: Dev release gate
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [dev]
+
+concurrency:
+  group: release-gate-dev-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  gate:
+    name: Static verification (not release approval)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 24
+          cache: npm
+      - run: npm ci
+      - run: SKIP_E2E=1 npm run release-gate:dev
+
+  gate-e2e-smoke:
+    name: Release gate + E2E smoke
+    runs-on: ubuntu-latest
+    env:
+      NODE_OPTIONS: --max-old-space-size=6144
+      OUTBOUND_NOTIFICATIONS_ENABLED: "false"
+      EMAIL_MODE: sandbox
+      WHATSAPP_MODE: sandbox
+      VERCEL_ENV: preview
+      CRON_SECRET: release-test-local-only
+      E2E_APPLY_ORG_SLUG: ${{ secrets.E2E_APPLY_ORG_SLUG }}
+      NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}
+      NEXT_PUBLIC_SUPABASE_ANON_KEY: ${{ secrets.NEXT_PUBLIC_SUPABASE_ANON_KEY }}
+      SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+      # Required by the release gate; missing credentials fail the job.
+      SEED_DEMO_PASSWORD: ${{ secrets.SEED_DEMO_PASSWORD }}
+      # e2e/brief11-plan-smoke.spec.ts asserts Brief 11/12 plan-document nav —
+      # "no Interviews for a hiring manager" is true ONLY with this flag on
+      # (see tests/unit/plan-document-nav.test.ts: "removes Interviews from
+      # recruiter, leadership, and HM top nav when flag is on"). Without it CI
+      # ran those specs against non-plan-document nav, where a HM legitimately
+      # sees Interviews, and the failure read as a nav regression. `true` is the
+      # documented default (.env.example) and what docs/SETUP_AND_HOME_E2E_TESTING.md
+      # tells developers to set.
+      FF_PLAN_DOCUMENT: "true"
+      NEXT_PUBLIC_FF_PLAN_DOCUMENT: "true"
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 24
+          cache: npm
+      - run: npm ci
+      - run: npx playwright install --with-deps chromium
+      - run: node scripts/assert-ci-preview.mjs
+      - run: npm run release-gate:dev

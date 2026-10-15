@@ -1,0 +1,32 @@
+[
+  {
+    "id": "artifact_01",
+    "class": "artifact_rich",
+    "text": "She owned migration of 9 payment services to a new event bus, reduced checkout failure rate from 2.4% to 0.7% in two quarters, and documented the rollback runbook used in two incidents."
+  },
+  {
+    "id": "artifact_02",
+    "class": "artifact_rich",
+    "text": "As team lead she shipped the referral identity rewrite in 6 weeks, coordinated 3 squads, and closed 14 P0/P1 defects with post-release error rate under 0.2%."
+  },
+  {
+    "id": "artifact_03",
+    "class": "artifact_rich",
+    "text": "He redesigned the scoring pipeline, added a 4-stage validation rubric, and improved precision-at-10 from 0.41 to 0.58 on our weekly benchmark across 1,200 profiles."
+  },
+  {
+    "id": "adjective_01",
+    "class": "adjective_heavy",
+    "text": "She is brilliant, hardworking, proactive, and always exceeds expectations in every project."
+  },
+  {
+    "id": "adjective_02",
+    "class": "adjective_heavy",
+    "text": "He is a great communicator and an amazing teammate who consistently brings positive energy."
+  },
+  {
+    "id": "adjective_03",
+    "class": "adjective_heavy",
+    "text": "They are outstanding and highly reliable, and I would strongly recommend them to anyone."
+  }
+]

@@ -1,0 +1,1 @@
+export const FEEDBACK_SIGNAL_THRESHOLD = 200;

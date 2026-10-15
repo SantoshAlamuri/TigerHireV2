@@ -1,0 +1,84 @@
+# Mutating API routes without in-file Zod heuristics; remove when route adds z. / .safeParse.
+src/app/api/admin/agents/route.ts
+src/app/api/admin/costs/sync/route.ts
+src/app/api/admin/feature-flags/route.ts
+src/app/api/admin/scrape/route.ts
+src/app/api/agency/backfill-pipeline/route.ts
+src/app/api/agency/candidates/erase-data/route.ts
+src/app/api/agency/reprocess-candidates/route.ts
+src/app/api/agency/rescore-candidates/route.ts
+src/app/api/agency/upload-profile/bulk/route.ts
+src/app/api/agency/upload-profile/route.ts
+src/app/api/apply/route.ts
+src/app/api/auth/ensure-profile/route.ts
+src/app/api/auth/link/route.ts
+src/app/api/auth/logout/route.ts
+src/app/api/auth/seed-demo-users/route.ts
+src/app/api/auth/sso/route.ts
+src/app/api/auth/test-login/route.ts
+src/app/api/billing/portal/route.ts
+src/app/api/candidates/[id]/resumes/[versionId]/route.ts
+src/app/api/candidates/[id]/resumes/route.ts
+src/app/api/candidates/upload-resume/route.ts
+src/app/api/debug/test-resume-parse/route.ts
+src/app/api/debug/test-upload-e2e/route.ts
+src/app/api/email-preferences/route.ts
+src/app/api/hiring-requests/[id]/route.ts
+src/app/api/invites/[token]/route.ts
+src/app/api/jobs/[id]/feedback/route.ts
+src/app/api/jobs/[id]/feedback-templates/route.ts
+src/app/api/jobs/[id]/interviews/book/route.ts
+src/app/api/jobs/[id]/interviews/cancel/route.ts
+src/app/api/jobs/[id]/interviews/reschedule/route.ts
+src/app/api/jobs/[id]/orchestrator/approve/route.ts
+src/app/api/jobs/[id]/orchestrator/route.ts
+src/app/api/jobs/[id]/pipeline/approve/route.ts
+src/app/api/jobs/[id]/pipeline/request-interview/route.ts
+src/app/api/jobs/[id]/pipeline-stages/route.ts
+src/app/api/jobs/parse-jd-url/route.ts
+src/app/api/jobs/upload-jd/route.ts
+src/app/api/messages/[conversationId]/route.ts
+src/app/api/messages/route.ts
+src/app/api/offers/[id]/send/route.ts
+src/app/api/saved-searches/[id]/route.ts
+src/app/api/saved-searches/route.ts
+src/app/api/seed/finstack/route.ts
+src/app/api/test-whatsapp/route.ts
+src/app/api/webhooks/stripe/route.ts
+
+# --- Mutating routes that read NO request body (no payload to validate). ---
+# Cron jobs: authenticated by CRON_SECRET header; input (if any) is a query param, not a body.
+src/app/api/billing/screening-monthly/route.ts
+src/app/api/cron/assessment-reminders/route.ts
+src/app/api/cron/cleanup/route.ts
+src/app/api/cron/cost-sync/route.ts
+src/app/api/cron/embed/route.ts
+src/app/api/cron/fitscore-daily-metrics/route.ts
+src/app/api/cron/idempotency-reap/route.ts
+src/app/api/cron/job-alerts/route.ts
+src/app/api/cron/orchestrator-watchdog/route.ts
+src/app/api/cron/prescreen-sweep/route.ts
+src/app/api/cron/privacy-retention/route.ts
+src/app/api/cron/process-signals/route.ts
+src/app/api/cron/reminders/route.ts
+src/app/api/cron/score-batch/route.ts
+src/app/api/cron/trust/route.ts
+src/app/api/cron/unscored-reconciliation/route.ts
+src/app/api/cron/user-count-monitor/route.ts
+src/app/api/cron/whatsapp-session-reap/route.ts
+src/app/api/jobs/sync/route.ts
+# Param-only POSTs: act on a resource identified by the path param; no request body.
+src/app/api/candidates/me/parse-resume/route.ts
+src/app/api/interview-slots/[id]/resend-invites/route.ts
+src/app/api/jobs/[id]/copy/route.ts
+src/app/api/jobs/[id]/feedback-templates/generate/route.ts
+src/app/api/jobs/[id]/pipeline/repair-stage-links/route.ts
+src/app/api/jobs/[id]/scoring-setup/auto/route.ts
+src/app/api/settings/org/outbound-webhooks/deliveries/[id]/replay/route.ts
+src/app/api/tasks/slot-picker/[requestId]/resend/route.ts
+# HTML form POST confirmed via single-use token in the path param; no JSON body.
+src/app/api/approvals/action/[token]/route.ts
+# idibu webhooks: thin delegators to handleIdibuWebhookRequest. idibu is not in the current
+# plan, so left as-is (no validation changes); revisit when the integration is picked back up.
+src/app/api/webhooks/idibu/route.ts
+src/app/api/webhooks/idibu/[organisationId]/route.ts

@@ -1,0 +1,14 @@
+Technical Scrum Master — AI-powered hiring platform
+
+We need a Technical Scrum Master to lead a cross-functional engineering team (backend, frontend, ML). You will own sprint execution, backlog refinement, and release planning for a team of 10–14 engineers targeting an aggressive product launch.
+
+Must-have:
+- 5+ years as Scrum Master in software product companies; strong grasp of Scrum and Kanban
+- Hands-on comfort with CI/CD, cloud (AWS or GCP), and modern web stacks (e.g. Next.js, APIs)
+- Experience partnering with product and engineering leads on technical trade-offs and dependency management
+- Excellent stakeholder communication; able to surface risks early
+
+Nice-to-have:
+- SAFe or large-ART experience; Jira/Azure DevOps; exposure to security or compliance initiatives
+
+Location: Hybrid — Bangalore / remote within India.

@@ -1,0 +1,8 @@
+# UTF-16 encoded file — Prettier fails with "File appears to be binary"
+src/lib/mock/data_original.ts
+
+# PRD export embeds TS snippets with generics; Prettier HTML parser treats `Array<{` as tags.
+docs/TigerHirePRD_V5.html
+
+# Pinned copy of the approved UI spec — an exact artifact, never reformatted
+tests/fixtures/approved-ui-spec.html

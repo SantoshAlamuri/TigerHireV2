@@ -1,0 +1,11 @@
+candidate_id,candidate_name,current_path,current_score,hybrid_v2_score,three_stage_score,v1_score,score_spread,max_agreement_pair,skipped,skip_reason
+a4126b48-b841-4bbf-b9aa-0b94c8c24893,SAMEERULLA SHARIEF,hybrid_v2,34,33,44,64,31,hybrid_v2+three_stage (Δ11),no,
+77eaffe4-97fa-4563-ae83-766c6188b04d,Samikshya Nath,hybrid_v2,61,63,4,42,59,hybrid_v2+v1_stage2 (Δ21),no,
+5aba4e7d-916e-44f8-bbce-bde6023b6204,K MADHU SUDHAN REDDY,hybrid_v2,38,48,20,,,,yes,v1_stage2: LLM returned invalid or truncated JSON. Try again or shorten the resume content.
+2a5e07eb-4244-4d9b-b393-9d989d0d6749,Krushali Vadaliya,hybrid_v2,59,64,4,,,,yes,v1_stage2: LLM returned invalid or truncated JSON. Try again or shorten the resume content.
+8dfff985-fb45-45e4-bfa3-fe3d501ddff0,K SAI GANESH,hybrid_v2,52,54,3,,,,yes,v1_stage2: LLM returned invalid or truncated JSON. Try again or shorten the resume content.
+0707856b-2219-460f-8654-51f5798a132b,KUSUMA R,hybrid_v2,47,59,4,47,55,hybrid_v2+v1_stage2 (Δ12),no,
+78ec3bc5-2904-4a11-b313-b74b3a2db855,Meghana,hybrid_v2,65,60,46,,,,yes,v1_stage2: LLM returned invalid or truncated JSON. Try again or shorten the resume content.
+6bd97149-8d09-43f5-93ee-a4673589deb8,KALLEVI JAYKUMAR,hybrid_v2,30,33,15,,,,yes,v1_stage2: LLM returned invalid or truncated JSON. Try again or shorten the resume content.
+72b7824c-2f18-43ac-8bf8-b2c5c3448e86,Madan H S,hybrid_v2,42,45,4,,,,yes,v1_stage2: LLM returned invalid or truncated JSON. Try again or shorten the resume content.
+ea3b7abd-5504-4e00-abb5-6a8df5d2c73f,Niranjan Bhat,hybrid_v2,15,21,20,,,,yes,v1_stage2: LLM returned invalid or truncated JSON. Try again or shorten the resume content.

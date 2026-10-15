@@ -1,0 +1,119 @@
+◇ injected env (27) from .env.local // tip: ⌘ custom filepath { path: '/custom/path/.env' }
+◇ injected env (0) from .env // tip: ⌘ suppress logs { quiet: true }
+
+=== Rescore FitScore for all candidates on one job ===
+
+Job:          QA Engineer (861e8c58-9c72-4c46-8534-a02207a35cbc)
+Candidates:   34 unique (pipeline ∪ applications)
+Dry run:      no (writes fit_scores)
+
+[INFO] metric.scoring.path_used {"path":"hybrid"}
+[INFO] [anthropic] callClaude start {"label":"fitscore-hybrid-extraction-verdict","model":"claude-haiku-4-5","temperature":0.2}
+[INFO] [vision-fallback] Sending PDF to Claude for verbatim extraction {"sizeBytes":211665}
+[INFO] [anthropic] callClaudeWithUserContent start {"label":"vision-fallback-resume","model":"claude-sonnet-4-6"}
+[INFO] [vision-fallback] Sending PDF to Claude for verbatim extraction {"sizeBytes":85197}
+[INFO] [anthropic] callClaudeWithUserContent start {"label":"vision-fallback-resume","model":"claude-sonnet-4-6"}
+[INFO] [vision-fallback] Sending PDF to Claude for verbatim extraction {"sizeBytes":78264}
+[INFO] [anthropic] callClaudeWithUserContent start {"label":"vision-fallback-resume","model":"claude-sonnet-4-6"}
+[INFO] [vision-fallback] Sending PDF to Claude for verbatim extraction {"sizeBytes":556511}
+[INFO] [anthropic] callClaudeWithUserContent start {"label":"vision-fallback-resume","model":"claude-sonnet-4-6"}
+[INFO] [anthropic] callClaude done {"label":"fitscore-hybrid-extraction-verdict","durationMs":12989,"inputTokens":3074,"outputTokens":1208,"cacheCreationInputTokens":0,"cacheReadInputTokens":0}
+[INFO] [anthropic] callClaude start {"label":"fitscore-hybrid-extraction-verdict","model":"claude-haiku-4-5","temperature":0.2}
+[INFO] [anthropic] callClaudeWithUserContent done {"label":"vision-fallback-resume","durationMs":15176,"inputTokens":4079,"outputTokens":887,"cacheCreationInputTokens":0,"cacheReadInputTokens":0,"responseLength":3494}
+[INFO] [vision-fallback] Extracted text from PDF {"length":3494,"inputTokens":4079,"outputTokens":887}
+[INFO] [anthropic] callClaude start {"label":"fitscore-hybrid-extraction-verdict","model":"claude-haiku-4-5","temperature":0.2}
+[INFO] [anthropic] callClaudeWithUserContent done {"label":"vision-fallback-resume","durationMs":21402,"inputTokens":2510,"outputTokens":1008,"cacheCreationInputTokens":0,"cacheReadInputTokens":0,"responseLength":4043}
+[INFO] [vision-fallback] Extracted text from PDF {"length":4043,"inputTokens":2510,"outputTokens":1008}
+[INFO] [anthropic] callClaude start {"label":"fitscore-hybrid-extraction-verdict","model":"claude-haiku-4-5","temperature":0.2}
+[INFO] [anthropic] callClaude done {"label":"fitscore-hybrid-extraction-verdict","durationMs":11583,"inputTokens":3120,"outputTokens":1168,"cacheCreationInputTokens":0,"cacheReadInputTokens":0}
+[INFO] [vision-fallback] Sending PDF to Claude for verbatim extraction {"sizeBytes":513796}
+[INFO] [anthropic] callClaudeWithUserContent start {"label":"vision-fallback-resume","model":"claude-sonnet-4-6"}
+[INFO] [anthropic] callClaude done {"label":"fitscore-hybrid-extraction-verdict","durationMs":12872,"inputTokens":2363,"outputTokens":1343,"cacheCreationInputTokens":0,"cacheReadInputTokens":0}
+[INFO] [anthropic] callClaude start {"label":"fitscore-hybrid-extraction-verdict","model":"claude-haiku-4-5","temperature":0.2}
+[INFO] [anthropic] callClaudeWithUserContent done {"label":"vision-fallback-resume","durationMs":28804,"inputTokens":4475,"outputTokens":1429,"cacheCreationInputTokens":0,"cacheReadInputTokens":0,"responseLength":5603}
+[INFO] [vision-fallback] Extracted text from PDF {"length":5603,"inputTokens":4475,"outputTokens":1429}
+[INFO] [anthropic] callClaude start {"label":"fitscore-hybrid-extraction-verdict","model":"claude-haiku-4-5","temperature":0.2}
+[INFO] [anthropic] callClaude done {"label":"fitscore-hybrid-extraction-verdict","durationMs":10059,"inputTokens":2489,"outputTokens":1116,"cacheCreationInputTokens":0,"cacheReadInputTokens":0}
+[INFO] [anthropic] callClaudeWithUserContent done {"label":"vision-fallback-resume","durationMs":33495,"inputTokens":4380,"outputTokens":1324,"cacheCreationInputTokens":0,"cacheReadInputTokens":0,"responseLength":5270}
+[INFO] [vision-fallback] Extracted text from PDF {"length":5270,"inputTokens":4380,"outputTokens":1324}
+[INFO] [anthropic] callClaude start {"label":"fitscore-hybrid-extraction-verdict","model":"claude-haiku-4-5","temperature":0.2}
+[INFO] [vision-fallback] Sending PDF to Claude for verbatim extraction {"sizeBytes":98607}
+[INFO] [anthropic] callClaudeWithUserContent start {"label":"vision-fallback-resume","model":"claude-sonnet-4-6"}
+[INFO] [anthropic] callClaude done {"label":"fitscore-hybrid-extraction-verdict","durationMs":11518,"inputTokens":2409,"outputTokens":1207,"cacheCreationInputTokens":0,"cacheReadInputTokens":0}
+[INFO] [anthropic] callClaude done {"label":"fitscore-hybrid-extraction-verdict","durationMs":12650,"inputTokens":2939,"outputTokens":1253,"cacheCreationInputTokens":0,"cacheReadInputTokens":0}
+[WARN] [parseHybridExtractionJson] failed to parse extraction JSON {"rawLength":4980}
+[INFO] [anthropic] callClaude start {"label":"fitscore-hybrid-extraction-verdict","model":"claude-haiku-4-5","temperature":0.2}
+[INFO] [vision-fallback] Sending PDF to Claude for verbatim extraction {"sizeBytes":170244}
+[INFO] [anthropic] callClaudeWithUserContent start {"label":"vision-fallback-resume","model":"claude-sonnet-4-6"}
+[INFO] [anthropic] callClaude done {"label":"fitscore-hybrid-extraction-verdict","durationMs":12430,"inputTokens":2799,"outputTokens":1241,"cacheCreationInputTokens":0,"cacheReadInputTokens":0}
+[INFO] [anthropic] callClaude start {"label":"fitscore-hybrid-extraction-verdict","model":"claude-haiku-4-5","temperature":0.2}
+[INFO] [anthropic] callClaudeWithUserContent done {"label":"vision-fallback-resume","durationMs":11932,"inputTokens":2395,"outputTokens":783,"cacheCreationInputTokens":0,"cacheReadInputTokens":0,"responseLength":3233}
+[INFO] [vision-fallback] Extracted text from PDF {"length":3233,"inputTokens":2395,"outputTokens":783}
+[INFO] [anthropic] callClaude start {"label":"fitscore-hybrid-extraction-verdict","model":"claude-haiku-4-5","temperature":0.2}
+[INFO] [anthropic] callClaude done {"label":"fitscore-hybrid-extraction-verdict","durationMs":12103,"inputTokens":2985,"outputTokens":1237,"cacheCreationInputTokens":0,"cacheReadInputTokens":0}
+[INFO] [vision-fallback] Sending PDF to Claude for verbatim extraction {"sizeBytes":353666}
+[INFO] [anthropic] callClaudeWithUserContent start {"label":"vision-fallback-resume","model":"claude-sonnet-4-6"}
+[INFO] [anthropic] callClaude done {"label":"fitscore-hybrid-extraction-verdict","durationMs":11966,"inputTokens":2845,"outputTokens":1234,"cacheCreationInputTokens":0,"cacheReadInputTokens":0}
+[INFO] [anthropic] callClaude done {"label":"fitscore-hybrid-extraction-verdict","durationMs":12289,"inputTokens":2296,"outputTokens":1253,"cacheCreationInputTokens":0,"cacheReadInputTokens":0}
+[INFO] [anthropic] callClaude start {"label":"fitscore-hybrid-extraction-verdict","model":"claude-haiku-4-5","temperature":0.2}
+[INFO] [vision-fallback] Sending PDF to Claude for verbatim extraction {"sizeBytes":514902}
+[INFO] [anthropic] callClaudeWithUserContent start {"label":"vision-fallback-resume","model":"claude-sonnet-4-6"}
+[INFO] [anthropic] callClaude done {"label":"fitscore-hybrid-extraction-verdict","durationMs":12939,"inputTokens":2342,"outputTokens":1247,"cacheCreationInputTokens":0,"cacheReadInputTokens":0}
+[INFO] [anthropic] callClaudeWithUserContent done {"label":"vision-fallback-resume","durationMs":44598,"inputTokens":6821,"outputTokens":2116,"cacheCreationInputTokens":0,"cacheReadInputTokens":0,"responseLength":8941}
+[INFO] [vision-fallback] Extracted text from PDF {"length":8941,"inputTokens":6821,"outputTokens":2116}
+[INFO] [anthropic] callClaude start {"label":"fitscore-hybrid-extraction-verdict","model":"claude-haiku-4-5","temperature":0.2}
+[INFO] [fetch-resume-text] Fetched resume text from storage {"candidateId":"7c29793e-fd7b-433b-b0b0-c2765bae7b7c","length":4253}
+[INFO] [vision-fallback] Sending PDF to Claude for verbatim extraction {"sizeBytes":144295}
+[INFO] [anthropic] callClaudeWithUserContent start {"label":"vision-fallback-resume","model":"claude-sonnet-4-6"}
+[INFO] [anthropic] callClaudeWithUserContent done {"label":"vision-fallback-resume","durationMs":37637,"inputTokens":6436,"outputTokens":1774,"cacheCreationInputTokens":0,"cacheReadInputTokens":0,"responseLength":7315}
+[INFO] [vision-fallback] Extracted text from PDF {"length":7315,"inputTokens":6436,"outputTokens":1774}
+[INFO] [anthropic] callClaude start {"label":"fitscore-hybrid-extraction-verdict","model":"claude-haiku-4-5","temperature":0.2}
+[INFO] [anthropic] callClaude done {"label":"fitscore-hybrid-extraction-verdict","durationMs":11853,"inputTokens":3634,"outputTokens":1177,"cacheCreationInputTokens":0,"cacheReadInputTokens":0}
+[INFO] [vision-fallback] Sending PDF to Claude for verbatim extraction {"sizeBytes":26709}
+[INFO] [anthropic] callClaudeWithUserContent start {"label":"vision-fallback-resume","model":"claude-sonnet-4-6"}
+[INFO] [anthropic] callClaudeWithUserContent done {"label":"vision-fallback-resume","durationMs":29932,"inputTokens":4433,"outputTokens":1269,"cacheCreationInputTokens":0,"cacheReadInputTokens":0,"responseLength":5221}
+[INFO] [vision-fallback] Extracted text from PDF {"length":5221,"inputTokens":4433,"outputTokens":1269}
+[INFO] [anthropic] callClaude start {"label":"fitscore-hybrid-extraction-verdict","model":"claude-haiku-4-5","temperature":0.2}
+[INFO] [anthropic] callClaude done {"label":"fitscore-hybrid-extraction-verdict","durationMs":11630,"inputTokens":3253,"outputTokens":1149,"cacheCreationInputTokens":0,"cacheReadInputTokens":0}
+[INFO] [anthropic] callClaude start {"label":"fitscore-hybrid-extraction-verdict","model":"claude-haiku-4-5","temperature":0.2}
+[INFO] [anthropic] callClaudeWithUserContent done {"label":"vision-fallback-resume","durationMs":37154,"inputTokens":6159,"outputTokens":1492,"cacheCreationInputTokens":0,"cacheReadInputTokens":0,"responseLength":5634}
+[INFO] [vision-fallback] Extracted text from PDF {"length":5634,"inputTokens":6159,"outputTokens":1492}
+[INFO] [anthropic] callClaude start {"label":"fitscore-hybrid-extraction-verdict","model":"claude-haiku-4-5","temperature":0.2}
+[INFO] [anthropic] callClaudeWithUserContent done {"label":"vision-fallback-resume","durationMs":18991,"inputTokens":2726,"outputTokens":1086,"cacheCreationInputTokens":0,"cacheReadInputTokens":0,"responseLength":4416}
+[INFO] [vision-fallback] Extracted text from PDF {"length":4416,"inputTokens":2726,"outputTokens":1086}
+[INFO] [anthropic] callClaude start {"label":"fitscore-hybrid-extraction-verdict","model":"claude-haiku-4-5","temperature":0.2}
+[INFO] [anthropic] callClaude done {"label":"fitscore-hybrid-extraction-verdict","durationMs":10769,"inputTokens":2757,"outputTokens":1080,"cacheCreationInputTokens":0,"cacheReadInputTokens":0}
+[INFO] [anthropic] callClaude done {"label":"fitscore-hybrid-extraction-verdict","durationMs":9638,"inputTokens":2204,"outputTokens":1090,"cacheCreationInputTokens":0,"cacheReadInputTokens":0}
+[INFO] [anthropic] callClaude start {"label":"fitscore-hybrid-extraction-verdict","model":"claude-haiku-4-5","temperature":0.2}
+[INFO] [vision-fallback] Sending PDF to Claude for verbatim extraction {"sizeBytes":266905}
+[INFO] [anthropic] callClaudeWithUserContent start {"label":"vision-fallback-resume","model":"claude-sonnet-4-6"}
+[INFO] [anthropic] callClaude done {"label":"fitscore-hybrid-extraction-verdict","durationMs":10059,"inputTokens":2511,"outputTokens":1164,"cacheCreationInputTokens":0,"cacheReadInputTokens":0}
+[INFO] [anthropic] callClaude start {"label":"fitscore-hybrid-extraction-verdict","model":"claude-haiku-4-5","temperature":0.2}
+[INFO] [anthropic] callClaude done {"label":"fitscore-hybrid-extraction-verdict","durationMs":14048,"inputTokens":3011,"outputTokens":1356,"cacheCreationInputTokens":0,"cacheReadInputTokens":0}
+[INFO] [anthropic] callClaude start {"label":"fitscore-hybrid-extraction-verdict","model":"claude-haiku-4-5","temperature":0.2}
+[INFO] [anthropic] callClaudeWithUserContent done {"label":"vision-fallback-resume","durationMs":22657,"inputTokens":4087,"outputTokens":877,"cacheCreationInputTokens":0,"cacheReadInputTokens":0,"responseLength":3876}
+[INFO] [vision-fallback] Extracted text from PDF {"length":3876,"inputTokens":4087,"outputTokens":877}
+[INFO] [anthropic] callClaude start {"label":"fitscore-hybrid-extraction-verdict","model":"claude-haiku-4-5","temperature":0.2}
+[INFO] [anthropic] callClaude done {"label":"fitscore-hybrid-extraction-verdict","durationMs":9931,"inputTokens":2250,"outputTokens":1092,"cacheCreationInputTokens":0,"cacheReadInputTokens":0}
+[INFO] [vision-fallback] Sending PDF to Claude for verbatim extraction {"sizeBytes":101776}
+[INFO] [anthropic] callClaudeWithUserContent start {"label":"vision-fallback-resume","model":"claude-sonnet-4-6"}
+[INFO] [anthropic] callClaude done {"label":"fitscore-hybrid-extraction-verdict","durationMs":10938,"inputTokens":2557,"outputTokens":1231,"cacheCreationInputTokens":0,"cacheReadInputTokens":0}
+[INFO] [anthropic] callClaude start {"label":"fitscore-hybrid-extraction-verdict","model":"claude-haiku-4-5","temperature":0.2}
+[INFO] [anthropic] callClaude done {"label":"fitscore-hybrid-extraction-verdict","durationMs":13456,"inputTokens":3057,"outputTokens":1271,"cacheCreationInputTokens":0,"cacheReadInputTokens":0}
+[INFO] [anthropic] callClaude done {"label":"fitscore-hybrid-extraction-verdict","durationMs":11755,"inputTokens":2360,"outputTokens":1293,"cacheCreationInputTokens":0,"cacheReadInputTokens":0}
+[INFO] [vision-fallback] Sending PDF to Claude for verbatim extraction {"sizeBytes":181212}
+[INFO] [anthropic] callClaudeWithUserContent start {"label":"vision-fallback-resume","model":"claude-sonnet-4-6"}
+[INFO] [vision-fallback] Sending PDF to Claude for verbatim extraction {"sizeBytes":4071}
+[INFO] [anthropic] callClaudeWithUserContent start {"label":"vision-fallback-resume","model":"claude-sonnet-4-6"}
+[INFO] [anthropic] callClaude done {"label":"fitscore-hybrid-extraction-verdict","durationMs":13355,"inputTokens":3736,"outputTokens":1288,"cacheCreationInputTokens":0,"cacheReadInputTokens":0}
+[INFO] [anthropic] callClaude start {"label":"fitscore-hybrid-extraction-verdict","model":"claude-haiku-4-5","temperature":0.2}
+[INFO] [anthropic] callClaudeWithUserContent done {"label":"vision-fallback-resume","durationMs":20169,"inputTokens":2432,"outputTokens":898,"cacheCreationInputTokens":0,"cacheReadInputTokens":0,"responseLength":3450}
+[INFO] [vision-fallback] Extracted text from PDF {"length":3450,"inputTokens":2432,"outputTokens":898}
+[INFO] [anthropic] callClaude start {"label":"fitscore-hybrid-extraction-verdict","model":"claude-haiku-4-5","temperature":0.2}
+[INFO] [anthropic] callClaudeWithUserContent done {"label":"vision-fallback-resume","durationMs":33951,"inputTokens":5963,"outputTokens":1291,"cacheCreationInputTokens":0,"cacheReadInputTokens":0,"responseLength":5519}
+[INFO] [vision-fallback] Extracted text from PDF {"length":5519,"inputTokens":5963,"outputTokens":1291}
+[INFO] [anthropic] callClaude start {"label":"fitscore-hybrid-extraction-verdict","model":"claude-haiku-4-5","temperature":0.2}
+[INFO] [anthropic] callClaudeWithUserContent done {"label":"vision-fallback-resume","durationMs":17640,"inputTokens":2339,"outputTokens":760,"cacheCreationInputTokens":0,"cacheReadInputTokens":0,"responseLength":2855}
+[INFO] [vision-fallback] Extracted text from PDF {"length":2855,"inputTokens":2339,"outputTokens":760}
+[INFO] [anthropic] callClaude start {"label":"fitscore-hybrid-extraction-verdict","model":"claude-haiku-4-5","temperature":0.2}
+[INFO] [anthropic] callClaude done {"label":"fitscore-hybrid-extraction-verdict","durationMs":11859,"inputTokens":3782,"outputTokens":1177,"cacheCreationInputTokens":0,"cacheReadInputTokens":0}

@@ -1,0 +1,2480 @@
+🐯
+
+__TigerHire__
+
+__PRODUCT REQUIREMENTS DOCUMENT__
+
+__V5  —  DEFINITIVE  —  Supersedes V1 · V2 · ADR · All Previous Versions__
+
+*Architecture · Security · Testing · Observability · Employee Referrals · Cursor Audit*
+
+__Document__
+
+TigerHire PRD V5 — Definitive
+
+__Supersedes__
+
+V1 PRD · V2 PRD · ADR · All sprint notes
+
+__Date__
+
+February 2026
+
+__Stack__
+
+Next\.js 15 · Supabase\+pgvector · Claude API · OpenAI · WhatsApp · Stripe
+
+__New in V5__
+
+Security hardening · Architecture standards · Testing plan · Observability · Employee referrals · Cursor audit prompt
+
+__Launch__
+
+2 April 2026  —  40\-day sprint
+
+__What V5 Adds Over V2__
+
+SECURITY: RLS policies, RBAC guard layer, PII handling, input validation, secrets audit
+
+ARCHITECTURE: Service layer pattern, no logic in API routes, agent isolation
+
+TESTING: Unit \+ integration \+ E2E plan with Cursor\-ready test generation prompts
+
+OBSERVABILITY: Structured logging, agent cost tracking, error alerting, dashboards
+
+EMPLOYEE REFERRALS: Full schema, routes, UI, flows for internal referral portal
+
+CURSOR AUDIT: TigerHire\-specific audit prompt — run on codebase before beta
+
+COST MODEL: Revised with re\-rank pass \+ sonnet summaries\. ₹15K/month budget\.
+
+# __1\. Architecture Standards__
+
+The original prototype risk is logic scattered across API routes, agents calling each other directly, and UI components fetching from the database\. V5 enforces a clean three\-layer architecture before a single line of agent code is written\.
+
+## __1\.1 Three\-Layer Rule__
+
+__Mandatory Layer Separation__
+
+LAYER 1 — API Routes \(src/app/api/\)
+
+  Role: receive request, validate input with Zod, call service layer, return response\.
+
+  Rule: ZERO business logic\. ZERO database calls\. ZERO agent calls\.
+
+  Wrong: const \{ data \} = await supabase\.from\('candidates'\)\.select\(\)
+
+  Right: const candidate = await CandidateService\.getById\(id\)
+
+LAYER 2 — Service Layer \(src/lib/services/\)
+
+  Role: all business logic lives here\. Calls repositories and agents\.
+
+  Rule: no HTTP objects \(Request/Response\)\. Pure TypeScript functions\.
+
+  Files: CandidateService\.ts, JobService\.ts, FitScoreService\.ts, etc\.
+
+LAYER 3 — Repository Layer \(src/lib/repositories/\)
+
+  Role: all Supabase calls live here\. Nothing else\.
+
+  Rule: no business logic\. Returns typed domain objects\.
+
+  Files: CandidateRepository\.ts, JobRepository\.ts, FitScoreRepository\.ts
+
+AGENTS \(src/lib/agents/\)
+
+  Role: Claude API calls, WhatsApp sends, embedding generation\.
+
+  Rule: agents are called by services only\. Never by API routes directly\.
+
+  Rule: every agent is independently testable with mocked dependencies\.
+
+## __1\.2 Folder Structure — Final__
+
+__/src — V5 Folder Structure__
+
+src/
+
+  app/
+
+    \(public\)/                  \-\- landing, pricing, about
+
+    \(auth\)/                    \-\- login, register, role\-select, invite
+
+    \(candidate\)/               \-\- candidate dashboard
+
+    \(recruiter\)/               \-\- recruiter dashboard \+ ATS
+
+    \(employee\)/                \-\- employee referral portal \(new in V5\)
+
+    \(admin\)/                   \-\- internal admin
+
+    api/
+
+      webhooks/whatsapp/       \-\- inbound handler
+
+      webhooks/stripe/         \-\- payment events
+
+      agents/                  \-\- trigger endpoints \(thin wrappers only\)
+
+      jobs/                    \-\- JD CRUD
+
+      candidates/              \-\- candidate CRUD \+ unlock
+
+      fitscores/               \-\- score retrieval
+
+      pipeline/                \-\- ATS pipeline management
+
+      employees/               \-\- employee invite \+ referral routes \(new\)
+
+      cron/                    \-\- scheduled tasks
+
+  lib/
+
+    services/                  \-\- ALL business logic \(new layer\)
+
+      CandidateService\.ts
+
+      JobService\.ts
+
+      FitScoreService\.ts
+
+      ReferralService\.ts
+
+      EmployeeService\.ts       \-\- new in V5
+
+      VouchService\.ts
+
+    repositories/              \-\- ALL Supabase calls \(new layer\)
+
+      CandidateRepository\.ts
+
+      JobRepository\.ts
+
+      FitScoreRepository\.ts
+
+      EmployeeRepository\.ts    \-\- new in V5
+
+    agents/                    \-\- Claude \+ OpenAI \+ WhatsApp
+
+      scout\.ts
+
+      fitscore\.ts
+
+      vouch\.ts
+
+      verify\.ts
+
+      scheduler\.ts
+
+      rerank\.ts                \-\- new in V5 \(Claude re\-rank pass\)
+
+    embeddings/generate\.ts
+
+    fitscore/
+
+      vector\-search\.ts
+
+      sql\-score\.ts
+
+      rerank\.ts
+
+    whatsapp/
+
+      handler\.ts
+
+      sessions\.ts
+
+      send\.ts
+
+      media\.ts
+
+    security/                  \-\- new in V5
+
+      rbac\.ts                  \-\- role permission guards
+
+      pii\.ts                   \-\- PII masking helpers
+
+      validate\.ts              \-\- Zod schemas for all inputs
+
+    observability/             \-\- new in V5
+
+      logger\.ts                \-\- structured logging
+
+      metrics\.ts               \-\- cost and performance tracking
+
+      alerts\.ts                \-\- error alerting
+
+    supabase/
+
+      client\.ts  server\.ts  service\.ts  middleware\.ts
+
+  types/                       \-\- shared TypeScript interfaces
+
+  \_\_tests\_\_/                   \-\- all test files mirror src/ structure
+
+__⚡ CURSOR — ARCHITECTURE: __*Refactor API routes to service layer pattern*
+
+// Cursor instruction — run on each API route file
+
+// @codebase
+
+//
+
+// Refactor all files in src/app/api/ to follow this pattern:
+
+// 1\. API route does ONLY: parse request body, validate with Zod, call service, return response
+
+// 2\. Move all Supabase calls from API routes into src/lib/repositories/
+
+// 3\. Move all business logic from API routes into src/lib/services/
+
+// 4\. Agents must only be called from service layer, never from API routes directly
+
+// 5\. Each service function must be a pure async TypeScript function with no HTTP types
+
+//
+
+// Example — BEFORE \(wrong\):
+
+// export async function POST\(req\) \{
+
+//   const body = await req\.json\(\)
+
+//   const \{ data \} = await supabase\.from\('candidates'\)\.insert\(body\)
+
+//   await triggerScoutAgent\(data\)
+
+//   return NextResponse\.json\(data\)
+
+// \}
+
+//
+
+// Example — AFTER \(correct\):
+
+// export async function POST\(req\) \{
+
+//   const body = CreateCandidateSchema\.parse\(await req\.json\(\)\)
+
+//   const candidate = await CandidateService\.create\(body\)
+
+//   return NextResponse\.json\(candidate\)
+
+// \}
+
+// // All DB calls in CandidateRepository\.create\(\)
+
+// // All agent triggers in CandidateService\.create\(\)
+
+# __2\. Security — Zero Trust__
+
+HR platforms handle PII, salary data, and employment history\. A single authorization flaw exposes candidate data to the wrong recruiter or company\. Every security control here is mandatory before beta, not nice\-to\-have\.
+
+## __2\.1 Critical Findings — Fix Before First User__
+
+__SEVERITY__
+
+__FINDING__
+
+__FIX__
+
+__CRITICAL__
+
+No Zod validation on any API route — raw req\.json\(\) passed to DB
+
+Add Zod schema for every POST/PUT body\. See validate\.ts below\.
+
+__CRITICAL__
+
+RLS disabled on some tables — any authenticated user can read all candidates
+
+Enable RLS on all tables\. Policy: candidates only visible to their own company's recruiters\.
+
+__CRITICAL__
+
+SUPABASE\_SERVICE\_ROLE\_KEY used in client\-side code risk
+
+Service role key must only exist in server\-side API routes and agent files\. Never in components\.
+
+__CRITICAL__
+
+Active employees visible in external shortlists — no SQL guard
+
+Add employment\_status \!= active\_employee filter to match\_candidates\_for\_job pgvector function\.
+
+__HIGH__
+
+Candidate phone numbers returned in recruiter shortlist before unlock
+
+Mask PII fields until unlock\. See pii\.ts below\.
+
+__HIGH__
+
+No rate limiting on WhatsApp webhook — open to spam flood
+
+Add rate limiting: max 10 requests per phone per minute using Upstash Redis or Supabase RLS\.
+
+__HIGH__
+
+Agent logs store full CV text — PII in logs
+
+Store candidate\_id reference only in agent\_logs\. Never store raw CV text in logs\.
+
+__MEDIUM__
+
+No CSRF protection on state\-changing API routes
+
+Use Supabase auth tokens — verify on every mutating request\.
+
+__MEDIUM__
+
+WhatsApp webhook secret not validated on every request
+
+Check WHATSAPP\_WEBHOOK\_SECRET header on every POST\. Return 403 if missing\.
+
+__LOW__
+
+Error messages return stack traces in production
+
+Set NODE\_ENV=production\. Catch all errors and return generic message with correlation ID only\.
+
+## __2\.2 RBAC — Role Permission Matrix__
+
+__Action__
+
+__candidate\_free__
+
+__recruiter__
+
+__company\_admin__
+
+__employee__
+
+__super\_admin__
+
+View own profile
+
+✓
+
+—
+
+—
+
+✓
+
+✓
+
+View shortlist for own company JDs
+
+—
+
+✓
+
+✓
+
+—
+
+✓
+
+Unlock candidate contact
+
+—
+
+✓ \(costs credit\)
+
+✓
+
+—
+
+✓
+
+Post JD
+
+—
+
+✓
+
+✓
+
+—
+
+✓
+
+Refer external candidate
+
+—
+
+—
+
+—
+
+✓
+
+✓
+
+View all company employees
+
+—
+
+—
+
+✓
+
+—
+
+✓
+
+Invite employee to portal
+
+—
+
+—
+
+✓
+
+—
+
+✓
+
+Mark employee as resigned
+
+—
+
+—
+
+✓
+
+✓ \(self\)
+
+✓
+
+View agent logs
+
+—
+
+—
+
+—
+
+—
+
+✓
+
+View cost metrics
+
+—
+
+—
+
+✓ \(own\)
+
+—
+
+✓
+
+__⚡ CURSOR — SECURITY: __*src/lib/security/rbac\.ts — Role guard middleware*
+
+// Use this guard at the top of every API route
+
+import \{ createClient \} from '@/lib/supabase/server';
+
+import \{ NextRequest, NextResponse \} from 'next/server';
+
+type Role = 'candidate\_free'|'recruiter'|'company\_admin'|'employee'|'super\_admin';
+
+export async function requireRole\(
+
+  req: NextRequest,
+
+  allowedRoles: Role\[\]
+
+\): Promise<\{ userId: string; role: Role; companyId?: string \} | NextResponse> \{
+
+  const supabase = createClient\(\);
+
+  const \{ data: \{ user \} \} = await supabase\.auth\.getUser\(\);
+
+  if \(\!user\) return NextResponse\.json\(\{ error: 'Unauthenticated' \}, \{ status: 401 \}\);
+
+  const \{ data: profile \} = await supabase
+
+    \.from\('users'\)
+
+    \.select\('role, company\_id'\)
+
+    \.eq\('id', user\.id\)
+
+    \.single\(\);
+
+  if \(\!profile || \!allowedRoles\.includes\(profile\.role as Role\)\) \{
+
+    return NextResponse\.json\(\{ error: 'Forbidden' \}, \{ status: 403 \}\);
+
+  \}
+
+  return \{ userId: user\.id, role: profile\.role as Role, companyId: profile\.company\_id \};
+
+\}
+
+// Usage in API route:
+
+// const auth = await requireRole\(req, \['recruiter','company\_admin'\]\);
+
+// if \(auth instanceof NextResponse\) return auth; // forbidden
+
+// const \{ userId, companyId \} = auth; // safe to use
+
+__⚡ CURSOR — SECURITY: __*src/lib/security/pii\.ts — Mask before unlock*
+
+// Mask sensitive fields until recruiter unlocks candidate
+
+export function maskCandidateForShortlist\(candidate: any, isUnlocked: boolean\) \{
+
+  if \(isUnlocked\) return candidate;
+
+  return \{
+
+    \.\.\.candidate,
+
+    phone: null,               // never show until unlocked
+
+    email: null,               // never show until unlocked
+
+    full\_name: maskName\(candidate\.full\_name\),  // 'Rahul S\.' not 'Rahul Sharma'
+
+    cv\_url: null,              // never expose storage URL until unlocked
+
+    linkedin\_url: null,        // never show LinkedIn until unlocked
+
+  \};
+
+\}
+
+function maskName\(name: string | null\): string \{
+
+  if \(\!name\) return 'Candidate';
+
+  const parts = name\.trim\(\)\.split\(' '\);
+
+  if \(parts\.length === 1\) return parts\[0\]\[0\] \+ '•••';
+
+  return parts\[0\] \+ ' ' \+ parts\[1\]\[0\] \+ '\.';
+
+\}
+
+// Apply in FitScoreRepository\.getShortlistForJob\(\):
+
+// return fitscores\.map\(fs => \(\{
+
+//   \.\.\.fs,
+
+//   candidates: maskCandidateForShortlist\(fs\.candidates, fs\.unlocked\)
+
+// \}\)\);
+
+__⚡ CURSOR — SECURITY: __*src/lib/security/validate\.ts — Zod schemas*
+
+import \{ z \} from 'zod';
+
+export const CreateJobSchema = z\.object\(\{
+
+  title: z\.string\(\)\.min\(3\)\.max\(200\),
+
+  description: z\.string\(\)\.min\(50\)\.max\(10000\),
+
+  seniority\_level: z\.enum\(\['intern','junior','mid','senior','lead','head','director','c\-suite'\]\),
+
+  location: z\.string\(\)\.max\(100\),
+
+  remote\_policy: z\.enum\(\['onsite','hybrid','remote','flexible'\]\),
+
+  salary\_min: z\.number\(\)\.int\(\)\.min\(0\)\.max\(10000\)\.optional\(\),
+
+  salary\_max: z\.number\(\)\.int\(\)\.min\(0\)\.max\(10000\)\.optional\(\),
+
+  employment\_type: z\.enum\(\['full\_time','contract','part\_time'\]\),
+
+\}\);
+
+export const UnlockCandidateSchema = z\.object\(\{
+
+  candidate\_id: z\.string\(\)\.uuid\(\),
+
+  job\_id: z\.string\(\)\.uuid\(\),
+
+\}\);
+
+export const ReferCandidateSchema = z\.object\(\{
+
+  candidate\_phone: z\.string\(\)\.regex\(/^\\\+?\[1\-9\]\\d\{9,14\}$/\),
+
+  candidate\_name: z\.string\(\)\.min\(2\)\.max\(100\),
+
+  job\_id: z\.string\(\)\.uuid\(\),
+
+\}\);
+
+export const InviteEmployeeSchema = z\.object\(\{
+
+  email: z\.string\(\)\.email\(\),
+
+  full\_name: z\.string\(\)\.min\(2\)\.max\(100\),
+
+\}\);
+
+// Use in every API route POST handler:
+
+// const body = CreateJobSchema\.parse\(await req\.json\(\)\)
+
+// Throws ZodError automatically — catch and return 400
+
+# __3\. Database Schema — V5 Complete__
+
+Run all migrations in order\. Migrations 1\-23 from V1/V2\. Migrations 24\-29 from ADR \(pgvector, taxonomy, seniority matrix, salary bands, SQL FitScore\)\. Migrations 30\-34 are new in V5 for employee referrals\.
+
+## __3\.1 V5 New Tables — Employee Referral Layer__
+
+__⚡ CURSOR — MIGRATION 30: __*Employee status columns \+ employee\_invites table*
+
+\-\- Add employment columns to candidates
+
+alter table candidates add column if not exists
+
+  employment\_status text default 'external';
+
+  \-\- external | active\_employee | resigned | alumni
+
+alter table candidates add column if not exists
+
+  employer\_company\_id uuid references companies\(id\);
+
+alter table candidates add column if not exists
+
+  resignation\_declared\_at timestamptz;
+
+alter table candidates add column if not exists
+
+  profile\_unlocked\_at timestamptz;
+
+  \-\- set 48h after resignation\_declared\_at, or by admin
+
+\-\- Add company\_id to users for role routing
+
+alter table users add column if not exists
+
+  company\_id uuid references companies\(id\);
+
+\-\- Employee invite tracking
+
+create table if not exists employee\_invites \(
+
+  id uuid primary key default gen\_random\_uuid\(\),
+
+  company\_id uuid references companies\(id\) not null,
+
+  email text not null,
+
+  full\_name text,
+
+  invite\_token text unique not null default encode\(gen\_random\_bytes\(32\), 'hex'\),
+
+  invited\_by uuid references users\(id\),
+
+  accepted\_at timestamptz,
+
+  expires\_at timestamptz default now\(\) \+ interval '7 days',
+
+  created\_at timestamptz default now\(\)
+
+\);
+
+\-\- Index for invite token lookup
+
+create index if not exists idx\_employee\_invites\_token
+
+  on employee\_invites\(invite\_token\);
+
+\-\- Index for company employee lookup
+
+create index if not exists idx\_candidates\_employer
+
+  on candidates\(employer\_company\_id\) where employment\_status = 'active\_employee';
+
+__⚡ CURSOR — MIGRATION 31: __*Employee referrals table \+ resignation audit log*
+
+\-\- Employee referrals \(extends referrals table concept\)
+
+create table if not exists employee\_referrals \(
+
+  id uuid primary key default gen\_random\_uuid\(\),
+
+  referrer\_id uuid references users\(id\) not null,
+
+  referrer\_company\_id uuid references companies\(id\) not null,
+
+  candidate\_id uuid references candidates\(id\),
+
+  job\_id uuid references jobs\(id\) not null,
+
+  candidate\_phone text not null,
+
+  candidate\_name text not null,
+
+  status text default 'invited',
+
+  \-\- invited | cv\_received | scored | shortlisted | interviewed | hired | rejected
+
+  referral\_bonus\_eligible boolean default false,
+
+  referral\_bonus\_paid\_at timestamptz,
+
+  created\_at timestamptz default now\(\),
+
+  updated\_at timestamptz default now\(\)
+
+\);
+
+\-\- Resignation audit log
+
+create table if not exists resignation\_events \(
+
+  id uuid primary key default gen\_random\_uuid\(\),
+
+  candidate\_id uuid references candidates\(id\) not null,
+
+  declared\_by text not null,  \-\- 'self' | 'admin'
+
+  declared\_by\_user\_id uuid references users\(id\),
+
+  disputed boolean default false,
+
+  disputed\_by uuid references users\(id\),
+
+  disputed\_at timestamptz,
+
+  dispute\_reason text,
+
+  profile\_unlock\_scheduled\_at timestamptz,
+
+  profile\_unlocked\_at timestamptz,
+
+  created\_at timestamptz default now\(\)
+
+\);
+
+__⚡ CURSOR — MIGRATION 32: __*RLS policies for employee data isolation*
+
+\-\- Enable RLS
+
+alter table employee\_invites enable row level security;
+
+alter table employee\_referrals enable row level security;
+
+alter table resignation\_events enable row level security;
+
+\-\- Only company admins can see their own invites
+
+create policy 'company\_admin\_invites' on employee\_invites
+
+  for all using \(
+
+    company\_id in \(
+
+      select company\_id from users where id = auth\.uid\(\)
+
+      and role in \('company\_admin','super\_admin'\)
+
+    \)
+
+  \);
+
+\-\- Employees can only see their own referrals
+
+create policy 'employee\_own\_referrals' on employee\_referrals
+
+  for select using \(referrer\_id = auth\.uid\(\)\);
+
+\-\- Company admins see all referrals for their company
+
+create policy 'admin\_company\_referrals' on employee\_referrals
+
+  for all using \(
+
+    referrer\_company\_id in \(
+
+      select company\_id from users where id = auth\.uid\(\)
+
+      and role in \('company\_admin','super\_admin'\)
+
+    \)
+
+  \);
+
+\-\- CRITICAL: active employees never appear in external shortlists
+
+\-\- Update match\_candidates\_for\_job to include this guard:
+
+\-\- add to WHERE clause:
+
+\-\- and \(
+
+\-\-   c\.employment\_status \!= 'active\_employee'
+
+\-\-   or c\.employer\_company\_id = \(select company\_id from jobs where id = p\_job\_id\)
+
+\-\- \)
+
+__⚡ CURSOR — MIGRATION 33: __*48\-hour resignation unlock cron function*
+
+\-\- Scheduled function: run every hour via cron
+
+\-\- Unlocks profiles where 48h has passed since resignation and no dispute
+
+create or replace function process\_pending\_resignations\(\)
+
+returns void as $$
+
+begin
+
+  update candidates c
+
+  set
+
+    employment\_status = 'alumni',
+
+    profile\_unlocked\_at = now\(\)
+
+  from resignation\_events re
+
+  where
+
+    re\.candidate\_id = c\.id
+
+    and re\.disputed = false
+
+    and re\.profile\_unlock\_scheduled\_at <= now\(\)
+
+    and re\.profile\_unlocked\_at is null
+
+    and c\.employment\_status = 'resigned';
+
+  \-\- Mark resignation events as completed
+
+  update resignation\_events
+
+  set profile\_unlocked\_at = now\(\)
+
+  where
+
+    disputed = false
+
+    and profile\_unlock\_scheduled\_at <= now\(\)
+
+    and profile\_unlocked\_at is null;
+
+end;
+
+$$ language plpgsql;
+
+# __4\. Employee Referral Portal__
+
+## __4\.1 Flow Overview__
+
+__Employee Journey — End to End__
+
+STEP 1 — Invite
+
+  Company Admin opens position in dashboard\.
+
+  Clicks 'Invite Team to Refer' — enters employee emails\.
+
+  TigerHire sends email with unique invite link\.
+
+  Employee clicks link, creates account, linked to company automatically\.
+
+STEP 2 — Profile Setup
+
+  Employee drops CV via WhatsApp \(same flow as any candidate\)\.
+
+  Profile created with employment\_status: active\_employee\.
+
+  Profile visible internally to Company Admin for succession planning\.
+
+  Profile locked from all external recruiter shortlists\.
+
+  Employee sees banner: 'Your profile is live\. Visible externally when you leave\.'
+
+STEP 3 — Referral
+
+  Employee logs in to portal at tigerhire\.io/refer\.
+
+  Sees their company's open positions\.
+
+  Clicks 'Refer Someone' on any position\.
+
+  Enters candidate name \+ WhatsApp number\.
+
+  Scout Agent fires — candidate gets WhatsApp welcome with position context\.
+
+  Same FitScore flow as any referral\.
+
+STEP 4 — Track
+
+  Employee sees real\-time status of all referrals\.
+
+  Notified when referral is shortlisted or hired\.
+
+  Referral strength score on their dashboard\.
+
+STEP 5 — Resignation
+
+  Employee clicks 'I have resigned' in dashboard\.
+
+  Company Admin notified: '48 hours to dispute if incorrect\.'
+
+  After 48 hours with no dispute: profile unlocked, appears in external pool\.
+
+  Employee status changes from active\_employee to alumni\.
+
+  FitScore runs against external JDs automatically\.
+
+## __4\.2 Employee Portal Routes__
+
+__⚡ CURSOR — SPRINT 3: __*src/app/\(employee\)/refer/page\.tsx — Employee referral portal*
+
+'use client';
+
+import \{ useState, useEffect \} from 'react';
+
+import \{ Button \} from '@/components/ui/button';
+
+import \{ Input \} from '@/components/ui/input';
+
+import \{ Card \} from '@/components/ui/card';
+
+import \{ Badge \} from '@/components/ui/badge';
+
+export default function EmployeeReferralPortal\(\) \{
+
+  const \[jobs, setJobs\] = useState<any\[\]>\(\[\]\);
+
+  const \[myReferrals, setMyReferrals\] = useState<any\[\]>\(\[\]\);
+
+  const \[referring, setReferring\] = useState<string | null>\(null\);
+
+  const \[form, setForm\] = useState\(\{ candidate\_name: '', candidate\_phone: '' \}\);
+
+  useEffect\(\(\) => \{
+
+    fetch\('/api/employees/open\-positions'\)\.then\(r=>r\.json\(\)\)\.then\(d=>setJobs\(d\.jobs||\[\]\)\);
+
+    fetch\('/api/employees/my\-referrals'\)\.then\(r=>r\.json\(\)\)\.then\(d=>setMyReferrals\(d\.referrals||\[\]\)\);
+
+  \}, \[\]\);
+
+  const submitReferral = async \(jobId: string\) => \{
+
+    await fetch\('/api/employees/refer', \{
+
+      method: 'POST',
+
+      headers: \{ 'Content\-Type': 'application/json' \},
+
+      body: JSON\.stringify\(\{ \.\.\.form, job\_id: jobId \}\)
+
+    \}\);
+
+    setReferring\(null\);
+
+    setForm\(\{ candidate\_name: '', candidate\_phone: '' \}\);
+
+    alert\('Referral sent\! Candidate will receive WhatsApp shortly\.'\);
+
+  \};
+
+  return \(
+
+    <div className='max\-w\-4xl mx\-auto p\-6'>
+
+      <h1 className='text\-2xl font\-bold text\-gray\-900 mb\-2'>Refer a Colleague</h1>
+
+      <p className='text\-gray\-500 mb\-6'>Open positions at your company\.</p>
+
+      <div className='space\-y\-4 mb\-10'>
+
+        \{jobs\.map\(job => \(
+
+          <Card key=\{job\.id\} className='p\-5 border\-l\-4 border\-orange\-500'>
+
+            <div className='flex justify\-between items\-start'>
+
+              <div>
+
+                <h3 className='font\-bold text\-gray\-900'>\{job\.title\}</h3>
+
+                <p className='text\-sm text\-gray\-500'>\{job\.location\} · \{job\.seniority\_level\}</p>
+
+              </div>
+
+              <Button onClick=\{\(\) => setReferring\(job\.id\)\}
+
+                className='bg\-orange\-500 hover:bg\-orange\-600'>
+
+                Refer Someone
+
+              </Button>
+
+            </div>
+
+            \{referring === job\.id && \(
+
+              <div className='mt\-4 flex gap\-3'>
+
+                <Input placeholder='Candidate name'
+
+                  value=\{form\.candidate\_name\}
+
+                  onChange=\{e => setForm\(f => \(\{\.\.\.f, candidate\_name: e\.target\.value\}\)\)\} />
+
+                <Input placeholder='\+91XXXXXXXXXX'
+
+                  value=\{form\.candidate\_phone\}
+
+                  onChange=\{e => setForm\(f => \(\{\.\.\.f, candidate\_phone: e\.target\.value\}\)\)\} />
+
+                <Button onClick=\{\(\) => submitReferral\(job\.id\)\}
+
+                  className='bg\-green\-600 hover:bg\-green\-700'>Send</Button>
+
+                <Button variant='ghost' onClick=\{\(\) => setReferring\(null\)\}>Cancel</Button>
+
+              </div>
+
+            \)\}
+
+          </Card>
+
+        \)\)\}
+
+      </div>
+
+      <h2 className='text\-xl font\-bold mb\-4'>My Referrals</h2>
+
+      <div className='space\-y\-2'>
+
+        \{myReferrals\.map\(ref => \(
+
+          <div key=\{ref\.id\} className='flex justify\-between items\-center p\-4 border rounded\-lg'>
+
+            <div>
+
+              <p className='font\-medium'>\{ref\.candidate\_name\}</p>
+
+              <p className='text\-sm text\-gray\-500'>\{ref\.jobs?\.title\}</p>
+
+            </div>
+
+            <span class="badge" data-status="\{ref\.status\}">\{ref\.status\}</span>
+
+          </div>
+
+        \)\)\}
+
+      </div>
+
+    </div>
+
+  \);
+
+\}
+
+## __4\.3 Employee API Routes__
+
+__⚡ CURSOR — SPRINT 3: __*src/app/api/employees/ — Three routes*
+
+// GET /api/employees/open\-positions
+
+// Returns active jobs for the employee's company
+
+export async function GET\(req\) \{
+
+  const auth = await requireRole\(req, \['employee','company\_admin'\]\);
+
+  if \(auth instanceof NextResponse\) return auth;
+
+  const jobs = await JobRepository\.getActiveByCompany\(auth\.companyId\);
+
+  return NextResponse\.json\(\{ jobs \}\);
+
+\}
+
+// POST /api/employees/refer
+
+// Employee submits a referral for a specific open position
+
+export async function POST\(req\) \{
+
+  const auth = await requireRole\(req, \['employee'\]\);
+
+  if \(auth instanceof NextResponse\) return auth;
+
+  const body = ReferCandidateSchema\.parse\(await req\.json\(\)\);
+
+  // Verify job belongs to employee's company
+
+  const job = await JobRepository\.getById\(body\.job\_id\);
+
+  if \(job\.company\_id \!== auth\.companyId\) \{
+
+    return NextResponse\.json\(\{ error: 'Forbidden' \}, \{ status: 403 \}\);
+
+  \}
+
+  // Create referral \+ trigger Scout Agent
+
+  const referral = await EmployeeService\.createReferral\(\{
+
+    referrerId: auth\.userId,
+
+    companyId: auth\.companyId,
+
+    jobId: body\.job\_id,
+
+    candidatePhone: body\.candidate\_phone,
+
+    candidateName: body\.candidate\_name,
+
+  \}\);
+
+  return NextResponse\.json\(\{ referral \}\);
+
+\}
+
+// GET /api/employees/my\-referrals
+
+// Employee sees status of all their referrals
+
+export async function GET\(req\) \{
+
+  const auth = await requireRole\(req, \['employee'\]\);
+
+  if \(auth instanceof NextResponse\) return auth;
+
+  const referrals = await EmployeeRepository\.getReferralsByReferrer\(auth\.userId\);
+
+  return NextResponse\.json\(\{ referrals \}\);
+
+\}
+
+## __4\.4 Resignation Flow__
+
+__⚡ CURSOR — SPRINT 3: __*src/app/api/employees/resign/route\.ts*
+
+// POST /api/employees/resign — employee self\-declares resignation
+
+export async function POST\(req: NextRequest\) \{
+
+  const auth = await requireRole\(req, \['employee'\]\);
+
+  if \(auth instanceof NextResponse\) return auth;
+
+  // 1\. Create resignation event
+
+  const unlockAt = new Date\(Date\.now\(\) \+ 48 \* 60 \* 60 \* 1000\);
+
+  await supabase\.from\('resignation\_events'\)\.insert\(\{
+
+    candidate\_id: auth\.candidateId,
+
+    declared\_by: 'self',
+
+    declared\_by\_user\_id: auth\.userId,
+
+    profile\_unlock\_scheduled\_at: unlockAt\.toISOString\(\),
+
+  \}\);
+
+  // 2\. Update candidate status to resigned \(not yet alumni — 48hr hold\)
+
+  await supabase\.from\('candidates'\)\.update\(\{
+
+    employment\_status: 'resigned',
+
+    resignation\_declared\_at: new Date\(\)\.toISOString\(\),
+
+  \}\)\.eq\('id', auth\.candidateId\);
+
+  // 3\. Notify Company Admin via email
+
+  await notifyAdminOfResignation\(auth\.companyId, auth\.userId, unlockAt\);
+
+  // 4\. Notify candidate of timeline
+
+  await sendWhatsAppMessage\(auth\.phone,
+
+    'Your resignation has been recorded\. Your TigerHire profile will be visible ' \+
+
+    'to external recruiters after 48 hours unless your company raises a dispute\.'
+
+  \);
+
+  return NextResponse\.json\(\{ unlock\_scheduled\_at: unlockAt \}\);
+
+\}
+
+// POST /api/employees/resign/dispute — Company Admin disputes resignation
+
+export async function POST\_DISPUTE\(req: NextRequest\) \{
+
+  const auth = await requireRole\(req, \['company\_admin'\]\);
+
+  if \(auth instanceof NextResponse\) return auth;
+
+  const \{ resignation\_id, reason \} = await req\.json\(\);
+
+  // Mark disputed — profile stays locked
+
+  await supabase\.from\('resignation\_events'\)\.update\(\{
+
+    disputed: true, disputed\_by: auth\.userId,
+
+    disputed\_at: new Date\(\)\.toISOString\(\), dispute\_reason: reason
+
+  \}\)\.eq\('id', resignation\_id\);
+
+  return NextResponse\.json\(\{ disputed: true \}\);
+
+\}
+
+# __5\. FitScore Engine — V5 Final__
+
+Five layers\. Claude touches each entity twice maximum\. The re\-rank pass added in V5 catches edge cases from the SQL formula\. Summaries use claude\-sonnet\-4\-6 not haiku — quality matters here\.
+
+## __5\.1 Layer Summary__
+
+__Layer__
+
+__What__
+
+__Model__
+
+__Frequency__
+
+__Cost/month at scale__
+
+L1
+
+CV \+ JD parse — structured extraction
+
+claude\-sonnet\-4\-6
+
+Once per entity ever
+
+₹5,500 \(10K CVs \+ 500 JDs\)
+
+L2
+
+Skill taxonomy normalisation
+
+SQL function
+
+On every parse
+
+₹0
+
+L3
+
+Vector embedding
+
+text\-embedding\-3\-small
+
+Once per entity ever
+
+₹200
+
+L4
+
+FitScore formula
+
+PostgreSQL function
+
+Event\-driven, per match
+
+₹0
+
+L5
+
+Re\-rank top 10
+
+claude\-sonnet\-4\-6
+
+Per new JD, 10 calls
+
+₹1,000 \(200 JDs/month\)
+
+L6
+
+AI summary \+ flags
+
+claude\-sonnet\-4\-6
+
+Once per shortlist entry, cached
+
+₹3,500
+
+Vouch specificity
+
+Evaluate vouch quality
+
+claude\-haiku
+
+Once per vouch
+
+₹250
+
+TOTAL
+
+—
+
+—
+
+—
+
+~₹14,000/month
+
+## __5\.2 Re\-Rank Pass — New in V5__
+
+__⚡ CURSOR — SPRINT 2: __*src/lib/agents/rerank\.ts — Claude sanity check on top 10*
+
+import Anthropic from '@anthropic\-ai/sdk';
+
+const claude = new Anthropic\(\);
+
+export async function rerankTopCandidates\(
+
+  jobId: string,
+
+  topCandidates: Array<\{ candidateId: string; score: number; cvText: string \}>
+
+\): Promise<Array<\{ candidateId: string; rank: number; adjustment?: string \}>> \{
+
+  const job = await JobRepository\.getById\(jobId\);
+
+  const prompt = \`You are a senior recruiter reviewing pre\-scored candidates\.
+
+The scores were computed by a formula \(skills intersection \+ seniority matrix \+ salary fit\)\.
+
+Your job is to sanity\-check and re\-rank the top 10\. Be honest\. Be specific\.
+
+Return ONLY valid JSON array\. No markdown\.
+
+JOB: $\{job\.title\} | $\{job\.seniority\_level\} | Skills: $\{job\.required\_canonical\_skills?\.join\(', '\)\}
+
+Description: $\{job\.description?\.slice\(0, 500\)\}
+
+CANDIDATES \(formula score shown\):
+
+$\{topCandidates\.map\(\(c,i\) => \`$\{i\+1\}\. Score: $\{c\.score\} | CV: $\{c\.cvText?\.slice\(0,400\)\}\`\)\.join\('\\n\\n'\)\}
+
+Return array of objects in your preferred rank order:
+
+\[\{ "candidateId": "uuid", "rank": 1, "adjustment": "why you moved them up/down or null" \}\]\`,
+
+  const response = await claude\.messages\.create\(\{
+
+    model: 'claude\-sonnet\-4\-6',
+
+    max\_tokens: 1000,
+
+    messages: \[\{ role: 'user', content: prompt \}\]
+
+  \}\);
+
+  const text = response\.content\[0\]\.type === 'text' ? response\.content\[0\]\.text : '\[\]';
+
+  return JSON\.parse\(text\.replace\(/\`\`\`json|\`\`\`/g, ''\)\.trim\(\)\);
+
+\}
+
+# __6\. Testing Strategy__
+
+HR platforms must not have bugs in scoring, payment, or PII handling\. These three areas are tested to the highest standard\. Everything else follows the standard test pyramid\.
+
+## __6\.1 Test Pyramid__
+
+__Layer__
+
+__Type__
+
+__Coverage target__
+
+__Framework__
+
+__Priority__
+
+SQL functions
+
+Unit — test calculate\_fitscore directly in Supabase
+
+100% of score logic paths
+
+pgTAP or manual SQL assertions
+
+CRITICAL
+
+Service layer
+
+Unit — mock repositories, test business logic
+
+80%\+ of all service functions
+
+Jest \+ ts\-jest
+
+CRITICAL
+
+Agent logic
+
+Unit — mock Claude \+ WhatsApp, test flow
+
+All happy \+ unhappy paths
+
+Jest \+ mock Anthropic SDK
+
+HIGH
+
+API routes
+
+Integration — real Supabase test DB, no mocks
+
+All routes: auth \+ response shape
+
+Jest \+ Supertest
+
+HIGH
+
+WhatsApp flow
+
+Integration — mock WhatsApp, real DB
+
+CV drop → FitScore → notify end\-to\-end
+
+Jest
+
+HIGH
+
+Recruiter shortlist
+
+Integration — test PII masking, RBAC
+
+Locked vs unlocked candidate data
+
+Jest \+ Supertest
+
+HIGH
+
+Employee referral
+
+Integration — full refer → scout → score flow
+
+Referral creates candidate \+ score
+
+Jest
+
+HIGH
+
+Resignation lock
+
+Integration — active employee not in shortlist
+
+employment\_status guard in pgvector query
+
+Jest
+
+CRITICAL
+
+E2E
+
+Playwright — real browser, staging DB
+
+Core user journeys only \(see below\)
+
+Playwright
+
+MEDIUM
+
+## __6\.2 Critical Unit Tests — SQL FitScore__
+
+__⚡ CURSOR — TESTING: __*\_\_tests\_\_/sql/fitscore\.test\.sql — Run in Supabase*
+
+\-\- Test 1: Perfect skills match \+ correct seniority = high score
+
+select calculate\_fitscore\(
+
+  \(select id from candidates where phone = '\+91\_test\_senior\_pm'\),
+
+  \(select id from jobs where title = 'Senior Product Manager Test'\)
+
+\) as result;
+
+\-\- Expected: overall\_score >= 80, skills\_score >= 85
+
+\-\- Test 2: Overqualified candidate = penalised seniority score
+
+select calculate\_fitscore\(
+
+  \(select id from candidates where seniority\_level = 'director'\),
+
+  \(select id from jobs where seniority\_level = 'junior'\)
+
+\) as result;
+
+\-\- Expected: seniority\_score <= 20
+
+\-\- Test 3: Salary mismatch = low intent score
+
+\-\- Candidate expects 80L, job budget 20\-30L
+
+\-\- Expected: intent\_score <= 30
+
+\-\- Test 4: Active employee excluded from external shortlist
+
+select count\(\*\) from match\_candidates\_for\_job\(
+
+  \(select id from jobs where company\_id \!= 'test\_company\_id' limit 1\),
+
+  \(select embedding from jobs limit 1\),
+
+  '\{\}',
+
+  100
+
+\) where candidate\_id = \(select id from candidates where employment\_status = 'active\_employee' limit 1\);
+
+\-\- Expected: count = 0
+
+__⚡ CURSOR — TESTING: __*\_\_tests\_\_/services/FitScoreService\.test\.ts*
+
+import \{ FitScoreService \} from '@/lib/services/FitScoreService';
+
+import \{ FitScoreRepository \} from '@/lib/repositories/FitScoreRepository';
+
+import \{ jest \} from '@jest/globals';
+
+jest\.mock\('@/lib/repositories/FitScoreRepository'\);
+
+jest\.mock\('@/lib/agents/rerank'\);
+
+jest\.mock\('@/lib/embeddings/generate'\);
+
+describe\('FitScoreService', \(\) => \{
+
+  describe\('scoreNewCandidate', \(\) => \{
+
+    it\('should not score active employees against external jobs', async \(\) => \{
+
+      const mockCandidate = \{ id: 'c1', employment\_status: 'active\_employee',
+
+        employer\_company\_id: 'company1', embedding: \[\] \};
+
+      // Should return early without calling repository
+
+      await FitScoreService\.scoreNewCandidate\('c1'\);
+
+      expect\(FitScoreRepository\.getTopJobsForCandidate\)\.not\.toHaveBeenCalled\(\);
+
+    \}\);
+
+    it\('should trigger rerank on top 10 candidates for new job', async \(\) => \{
+
+      const \{ rerankTopCandidates \} = require\('@/lib/agents/rerank'\);
+
+      await FitScoreService\.scoreNewJob\('job1'\);
+
+      expect\(rerankTopCandidates\)\.toHaveBeenCalledWith\('job1', expect\.any\(Array\)\);
+
+    \}\);
+
+    it\('should not regenerate cached AI summary', async \(\) => \{
+
+      \(FitScoreRepository\.getFitScore as jest\.Mock\)\.mockResolvedValue\(\{
+
+        summary\_generated: true, ai\_summary: 'existing summary'
+
+      \}\);
+
+      const anthropic = require\('@anthropic\-ai/sdk'\);
+
+      await FitScoreService\.generateSummaryIfNeeded\('c1', 'j1'\);
+
+      expect\(anthropic\.messages\.create\)\.not\.toHaveBeenCalled\(\);
+
+    \}\);
+
+  \}\);
+
+  describe\('PII masking', \(\) => \{
+
+    it\('should mask phone and email for unlinked candidate', \(\) => \{
+
+      const \{ maskCandidateForShortlist \} = require\('@/lib/security/pii'\);
+
+      const masked = maskCandidateForShortlist\(
+
+        \{ full\_name: 'Rahul Sharma', phone: '\+919999999999', email: 'r@gmail\.com' \},
+
+        false
+
+      \);
+
+      expect\(masked\.phone\)\.toBeNull\(\);
+
+      expect\(masked\.email\)\.toBeNull\(\);
+
+      expect\(masked\.full\_name\)\.toBe\('Rahul S\.'\);
+
+    \}\);
+
+  \}\);
+
+\}\);
+
+## __6\.3 E2E — Playwright Core Journeys__
+
+__⚡ CURSOR — TESTING: __*\_\_tests\_\_/e2e/core\-journeys\.spec\.ts — 5 non\-negotiable E2E tests*
+
+// Test 1: WhatsApp CV drop → FitScore reply
+
+// Simulate inbound WhatsApp webhook → verify candidate created → FitScore computed
+
+// Test 2: Recruiter posts JD → shortlist appears within 60 seconds
+
+// POST /api/jobs → verify batch\_score\_job runs → shortlist API returns results
+
+// Test 3: Employee refers candidate → scout fires → candidate gets WhatsApp
+
+// POST /api/employees/refer → verify employee\_referral created → WhatsApp send mocked
+
+// Test 4: Active employee not visible in shortlist for external recruiter
+
+// GET /api/fitscores?job\_id=X → verify no active\_employee candidates in response
+
+// Test 5: Recruiter unlocks candidate → PII revealed → credit deducted
+
+// POST /api/candidates/\[id\]/unlock → verify phone/email now visible → credits reduced
+
+// Run with: npx playwright test
+
+// Runs against: staging environment with seeded test data
+
+// Required: PLAYWRIGHT\_BASE\_URL=https://staging\.tigerhire\.io in \.env\.test
+
+__⚡ CURSOR — TESTING: __*Cursor — generate test suite from service files*
+
+// @codebase
+
+//
+
+// For each file in src/lib/services/, generate a Jest unit test file in \_\_tests\_\_/services/\.
+
+// Rules:
+
+// 1\. Mock all repositories and agents
+
+// 2\. Test every exported function
+
+// 3\. Test happy path \+ at least 2 unhappy paths per function
+
+// 4\. Test all RBAC\-sensitive functions verify role before proceeding
+
+// 5\. Test all PII\-touching functions verify masking is applied
+
+// 6\. Do not test implementation details — test observable behaviour
+
+// 7\. Each test file must be independently runnable with jest \-\-testPathPattern
+
+# __7\. Observability — Logging, Alerts, Cost Tracking__
+
+Two things kill early\-stage platforms: silent failures and runaway costs\. Both are solved here\. Every agent run is logged with cost\. Every error is caught and categorised\. Cost alerts fire before you overspend\.
+
+## __7\.1 Structured Logging__
+
+__⚡ CURSOR — OBSERVABILITY: __*src/lib/observability/logger\.ts — Structured logger*
+
+// All logs are structured JSON\. Never use console\.log in production\.
+
+// Use this logger everywhere\.
+
+type LogLevel = 'info' | 'warn' | 'error' | 'debug';
+
+interface LogEntry \{
+
+  level: LogLevel;
+
+  message: string;
+
+  timestamp: string;
+
+  correlation\_id?: string;
+
+  user\_id?: string;
+
+  agent?: string;
+
+  candidate\_id?: string;
+
+  job\_id?: string;
+
+  duration\_ms?: number;
+
+  tokens\_used?: number;
+
+  cost\_inr?: number;
+
+  error?: string;
+
+  \[key: string\]: any;
+
+\}
+
+export const logger = \{
+
+  info: \(message: string, meta: Partial<LogEntry> = \{\}\) =>
+
+    log\('info', message, meta\),
+
+  warn: \(message: string, meta: Partial<LogEntry> = \{\}\) =>
+
+    log\('warn', message, meta\),
+
+  error: \(message: string, meta: Partial<LogEntry> = \{\}\) =>
+
+    log\('error', message, meta\),
+
+  agent: \(agentName: string, meta: Partial<LogEntry> = \{\}\) =>
+
+    log\('info', \`agent:$\{agentName\}\`, \{ agent: agentName, \.\.\.meta \}\),
+
+\};
+
+function log\(level: LogLevel, message: string, meta: Partial<LogEntry>\) \{
+
+  const entry: LogEntry = \{
+
+    level, message,
+
+    timestamp: new Date\(\)\.toISOString\(\),
+
+    \.\.\.meta,
+
+  \};
+
+  // In production: send to Axiom, Datadog, or Vercel Log Drains
+
+  // In development: pretty\-print to console
+
+  if \(process\.env\.NODE\_ENV === 'production'\) \{
+
+    process\.stdout\.write\(JSON\.stringify\(entry\) \+ '\\n'\);
+
+  \} else \{
+
+    console\.log\(\`\[$\{level\.toUpperCase\(\)\}\] $\{message\}\`, meta\);
+
+  \}
+
+\}
+
+// Usage in agents:
+
+// logger\.agent\('scout', \{ candidate\_id, duration\_ms: 1200, tokens\_used: 800, cost\_inr: 0\.48 \}\);
+
+// logger\.error\('Scout agent failed', \{ candidate\_id, error: err\.message \}\);
+
+## __7\.2 Agent Cost Tracking__
+
+__⚡ CURSOR — OBSERVABILITY: __*src/lib/observability/metrics\.ts — Per\-agent cost tracking*
+
+// Cost constants \(update if API pricing changes\)
+
+const COST = \{
+
+  claude\_sonnet\_input\_per\_1k: 0\.025,   // USD \-> convert to INR
+
+  claude\_sonnet\_output\_per\_1k: 0\.125,
+
+  claude\_haiku\_input\_per\_1k: 0\.00025,
+
+  claude\_haiku\_output\_per\_1k: 0\.00125,
+
+  openai\_embedding\_per\_1k: 0\.00002,
+
+  usd\_to\_inr: 84,
+
+\};
+
+export function calculateClaudeCost\(
+
+  model: string,
+
+  inputTokens: number,
+
+  outputTokens: number
+
+\): number \{
+
+  const isHaiku = model\.includes\('haiku'\);
+
+  const inputCost = isHaiku ? COST\.claude\_haiku\_input\_per\_1k : COST\.claude\_sonnet\_input\_per\_1k;
+
+  const outputCost = isHaiku ? COST\.claude\_haiku\_output\_per\_1k : COST\.claude\_sonnet\_output\_per\_1k;
+
+  const usd = \(inputTokens/1000\)\*inputCost \+ \(outputTokens/1000\)\*outputCost;
+
+  return parseFloat\(\(usd \* COST\.usd\_to\_inr\)\.toFixed\(4\)\);
+
+\}
+
+export async function logAgentRun\(
+
+  supabase: any,
+
+  agent: string,
+
+  trigger: string,
+
+  ref\_id: string | null,
+
+  status: 'success'|'error',
+
+  duration\_ms: number,
+
+  error?: string,
+
+  tokens?: \{ input: number; output: number \},
+
+  model?: string
+
+\) \{
+
+  const cost = tokens && model
+
+    ? calculateClaudeCost\(model, tokens\.input, tokens\.output\)
+
+    : 0;
+
+  await supabase\.from\('agent\_logs'\)\.insert\(\{
+
+    agent\_name: agent, trigger\_type: trigger,
+
+    input\_ref: ref\_id, status,
+
+    tokens\_used: \(tokens?\.input||0\) \+ \(tokens?\.output||0\),
+
+    cost\_inr: cost, duration\_ms,
+
+    error\_message: error || null,
+
+  \}\);
+
+  logger\.agent\(agent, \{ duration\_ms, cost\_inr: cost, status, error \}\);
+
+  // Alert if single agent run cost > ₹50 \(anomaly\)
+
+  if \(cost > 50\) \{
+
+    await sendCostAlert\(agent, cost, ref\_id\);
+
+  \}
+
+\}
+
+## __7\.3 Required Alerts__
+
+__Alert__
+
+__Trigger__
+
+__Channel__
+
+__Action Required__
+
+Agent cost spike
+
+Single run > ₹50
+
+Slack \+ email
+
+Check agent\_logs\. Likely runaway loop\.
+
+Daily cost > ₹800
+
+Aggregate agent\_logs cost > ₹800/day
+
+Email
+
+Review which agents fired\. Check for loops\.
+
+Scout agent error rate > 10%
+
+More than 10% of scout runs in 1hr = error
+
+Slack
+
+WhatsApp CV drop is broken for users\.
+
+FitScore queue lag
+
+Candidate scored > 5 min after CV received
+
+Slack
+
+Check Supabase queue or batch\_score\_job function\.
+
+WhatsApp webhook 5xx
+
+Any 500 response on /api/webhooks/whatsapp
+
+PagerDuty equivalent
+
+Candidates not receiving FitScore\.
+
+Resignation unlock overdue
+
+Profile unlock > 2hrs past scheduled time
+
+Email
+
+process\_pending\_resignations cron may be failing\.
+
+Unlock credit mismatch
+
+Credits deducted but unlock not recorded
+
+Email
+
+Stripe webhook may have failed\.
+
+__⚡ CURSOR — OBSERVABILITY: __*src/app/api/admin/metrics/route\.ts — Cost dashboard API*
+
+// GET /api/admin/metrics — Admin cost and performance dashboard
+
+// Shows daily/weekly/monthly AI spend by agent
+
+export async function GET\(req: NextRequest\) \{
+
+  const auth = await requireRole\(req, \['super\_admin','company\_admin'\]\);
+
+  if \(auth instanceof NextResponse\) return auth;
+
+  const supabase = createClient\(\);
+
+  const \{ searchParams \} = new URL\(req\.url\);
+
+  const days = parseInt\(searchParams\.get\('days'\) || '30'\);
+
+  const \{ data \} = await supabase
+
+    \.from\('agent\_logs'\)
+
+    \.select\('agent\_name, cost\_inr, duration\_ms, status, created\_at'\)
+
+    \.gte\('created\_at', new Date\(Date\.now\(\) \- days\*86400000\)\.toISOString\(\)\)
+
+    \.order\('created\_at', \{ ascending: false \}\);
+
+  // Aggregate by agent
+
+  const summary = data?\.reduce\(\(acc: any, row: any\) => \{
+
+    if \(\!acc\[row\.agent\_name\]\) acc\[row\.agent\_name\] = \{ total\_cost: 0, runs: 0, errors: 0 \};
+
+    acc\[row\.agent\_name\]\.total\_cost \+= row\.cost\_inr || 0;
+
+    acc\[row\.agent\_name\]\.runs \+= 1;
+
+    if \(row\.status === 'error'\) acc\[row\.agent\_name\]\.errors \+= 1;
+
+    return acc;
+
+  \}, \{\}\);
+
+  const total = data?\.reduce\(\(sum: number, r: any\) => sum \+ \(r\.cost\_inr || 0\), 0\);
+
+  return NextResponse\.json\(\{ summary, total\_inr: total, period\_days: days \}\);
+
+\}
+
+# __8\. TigerHire\-Specific Cursor Audit Prompt__
+
+Run this on the codebase before beta\. Paste it into Cursor Composer \(Cmd\+I\) with @codebase\. It is tailored to TigerHire's specific risks — not a generic audit\. The findings should be committed to TECH\_AUDIT\.md and critical/high items converted to GitHub issues before the first beta user is onboarded\.
+
+__When to run this__
+
+Run 1: After Sprints 1\-2 are complete \(WhatsApp \+ FitScore working\)
+
+Run 2: After Sprint 4 \(full platform built, before beta\)
+
+Run 3: Before any enterprise conversation \(SOC2 readiness check\)
+
+Run 4: After any major refactor
+
+Commit findings to: TECH\_AUDIT\.md in repo root
+
+Convert Critical \+ High findings to GitHub Issues immediately
+
+Do not onboard beta users until all Critical findings are resolved
+
+__⚡ CURSOR — AUDIT: __*TigerHire Production Audit — paste into Cursor Composer with @codebase*
+
+// @codebase
+
+//
+
+// You are a Principal Engineer \+ Security Architect \+ SRE combined\.
+
+// Perform a production\-grade audit of TigerHire specifically\.
+
+// This is a real platform\. Real candidate PII\. Real company data\. Real money\.
+
+//
+
+// ═══ TIGERHIRE\-SPECIFIC RISKS TO AUDIT ═══
+
+//
+
+// 1\. CANDIDATE PII EXPOSURE
+
+//    \- Are phone numbers, emails, CV URLs ever returned to recruiters before unlock?
+
+//    \- Does maskCandidateForShortlist\(\) apply on every shortlist API response?
+
+//    \- Can a recruiter from Company A see candidate data linked to Company B?
+
+//    \- Is cv\_url a signed URL \(expiring\) or a public URL? If public, fix it\.
+
+//
+
+// 2\. EMPLOYMENT STATUS GUARD
+
+//    \- Does match\_candidates\_for\_job SQL function exclude active\_employee candidates?
+
+//    \- Can an active employee appear in any shortlist for any external recruiter?
+
+//    \- Is employment\_status changeable by the candidate directly without audit log?
+
+//
+
+// 3\. AGENT COST RUNAWAY
+
+//    \- Is there any code path that could call Claude in a loop?
+
+//    \- Does scoreNewCandidate check if scores already exist before running?
+
+//    \- Does generateSummaryIfNeeded check summary\_generated before calling Claude?
+
+//    \- Is there a daily cost cap that sends an alert if exceeded?
+
+//
+
+// 4\. WHATSAPP WEBHOOK SECURITY
+
+//    \- Is WHATSAPP\_WEBHOOK\_SECRET validated on every POST?
+
+//    \- Is there rate limiting per phone number?
+
+//    \- Can a malicious actor send a crafted payload to trigger Scout Agent repeatedly?
+
+//
+
+// 5\. RBAC COMPLETENESS
+
+//    \- Does every API route call requireRole\(\) before any data access?
+
+//    \- Can an employee access another company's open positions?
+
+//    \- Can a candidate call /api/candidates/\[other\_id\]/unlock?
+
+//    \- Are all admin routes protected with super\_admin check?
+
+//
+
+// 6\. INPUT VALIDATION
+
+//    \- Does every POST/PUT API route parse body through a Zod schema?
+
+//    \- Are there any raw req\.json\(\) calls passed directly to Supabase?
+
+//    \- Is phone number format validated before WhatsApp send?
+
+//
+
+// 7\. SERVICE LAYER DISCIPLINE
+
+//    \- Are there any Supabase calls directly in API route files?
+
+//    \- Are there any agent calls directly in API route files?
+
+//    \- Is any business logic in UI components?
+
+//
+
+// 8\. TESTING GAPS
+
+//    \- Is calculate\_fitscore\(\) tested with overqualified candidate?
+
+//    \- Is resignation lock tested \(active employee excluded from shortlist\)?
+
+//    \- Is PII masking tested \(phone null before unlock\)?
+
+//    \- Is the WhatsApp session state machine tested for invalid transitions?
+
+//
+
+// 9\. OBSERVABILITY GAPS
+
+//    \- Does every agent call logAgentRun\(\) with cost?
+
+//    \- Are there any silent catch blocks with no logging?
+
+//    \- Is there a way to see today's total AI spend without querying the DB directly?
+
+//
+
+// 10\. DATA INTEGRITY
+
+//    \- Can a candidate have employment\_status = alumni without a resignation\_event record?
+
+//    \- Can fitscores exist for a candidate that has been deleted?
+
+//    \- Are all foreign keys with ON DELETE CASCADE correct?
+
+//
+
+// ═══ OUTPUT FORMAT ═══
+
+// For each finding:
+
+// SEVERITY: CRITICAL / HIGH / MEDIUM / LOW
+
+// FILE: exact file path
+
+// FINDING: what is wrong and why it matters for TigerHire specifically
+
+// FIX: exact code change required \(not generic advice\)
+
+//
+
+// Group by: Critical → High → Medium → Low
+
+// End with: Maturity score 1\-10 for each of:
+
+//   Security / Architecture / Testing / Observability / Data Integrity
+
+//
+
+// Save findings to TECH\_AUDIT\.md
+
+# __9\. Sprint Plan — V5 Final__
+
+__Sprint__
+
+__Dates__
+
+__Core Deliverables__
+
+__Security Gate__
+
+__Done When__
+
+1
+
+Feb 20\-26
+
+DB migrations 24\-33 run\. Folder structure created\. Service \+ repository layers scaffolded\. Scout Agent: partitioned storage \+ embedding \+ canonical skills\. Taxonomy seeded\.
+
+Zod schemas on all webhook routes\. WHATSAPP\_WEBHOOK\_SECRET validated\.
+
+CV drop → embedding → SQL FitScore → WhatsApp reply in under 2 min\.
+
+2
+
+Feb 27\-Mar 5
+
+FitScore Agent V5: vector search \+ SQL formula \+ re\-rank pass \+ sonnet summaries\. JD creation route updated\. Event\-driven \(no batch cron\)\. logAgentRun\(\) on every agent\.
+
+PII masking applied on shortlist API\. requireRole\(\) on all job \+ fitscore routes\.
+
+Post JD → top 10 scored \+ ranked \+ summarised\. Recruiter sees shortlist\. Cost logged\.
+
+3
+
+Mar 6\-12
+
+Employee portal: invite flow, profile creation, refer flow, resignation flow, 48hr unlock cron\. Vouch \+ Verify \+ Trust Score unchanged from V2\.
+
+RLS policies on employee tables\. Active employee excluded from external shortlists tested\.
+
+Employee invites colleague → colleague gets WhatsApp → CV dropped → FitScore runs\. Active employee not visible to external recruiter\.
+
+4
+
+Mar 13\-19
+
+Recruiter dashboard\. Per\-job pipeline page \(shortlist \+ stages \+ Request Interview\)\. Scheduler Agent\. Stripe payments\. Resend emails\. Cost metrics dashboard\.
+
+Unlock flow: credits deducted before PII revealed\. No race condition\.
+
+Recruiter posts JD → shortlist arrives → unlocks candidate → scheduler sends slots → interview confirmed\.
+
+5
+
+Mar 20\-26
+
+Run Cursor audit prompt on full codebase\. Fix all Critical \+ High findings\. Unit tests for service layer\. Integration tests for core flows\. E2E tests for 5 core journeys\.
+
+All Critical security findings resolved\. TECH\_AUDIT\.md committed\.
+
+Zero Critical findings\. Zero High findings\. Test suite passes\. Staging environment stable\.
+
+6
+
+Mar 27\-Apr 2
+
+Code freeze Mar 27\. Regression test Mar 28\-29\. Load test vector search with 5K candidates Mar 30\. Final deploy Mar 31\. Smoke test Apr 1\. Launch Apr 2 9am IST\.
+
+Full audit sign\-off\. No open Critical or High issues in GitHub\.
+
+tigerhire\.io live\. First real CV scored\. First real shortlist delivered\.
+
+# __10\. Cost Model — V5__
+
+__Operation__
+
+__Model__
+
+__Frequency__
+
+__₹ per call__
+
+__Monthly at scale__
+
+CV parse
+
+claude\-sonnet\-4\-6
+
+Once per candidate ever
+
+~₹0\.50
+
+₹500 \(1K new CVs/month\)
+
+JD parse
+
+claude\-sonnet\-4\-6
+
+Once per JD ever
+
+~₹0\.30
+
+₹60 \(200 JDs/month\)
+
+Candidate embedding
+
+text\-embedding\-3\-small
+
+Once per candidate ever
+
+~₹0\.01
+
+₹10 \(1K new/month\)
+
+JD embedding
+
+text\-embedding\-3\-small
+
+Once per JD ever
+
+~₹0\.01
+
+₹2 \(200 JDs/month\)
+
+Vector search \+ SQL FitScore
+
+pgvector \+ PostgreSQL
+
+Event\-driven per match
+
+₹0\.00
+
+₹0
+
+Re\-rank pass — top 10 per JD
+
+claude\-sonnet\-4\-6
+
+Per new JD \(10 calls\)
+
+~₹0\.50
+
+₹1,000 \(200 JDs/month\)
+
+AI summary — shortlist entry
+
+claude\-sonnet\-4\-6
+
+Once per entry, cached
+
+~₹0\.35
+
+₹3,500 \(10K entries\)
+
+Vouch specificity score
+
+claude\-haiku
+
+Once per vouch
+
+~₹0\.05
+
+₹250 \(5K vouches\)
+
+Ongoing: 1K new CVs/month
+
+claude\-sonnet\-4\-6 \+ embedding
+
+Monthly steady state
+
+—
+
+₹510
+
+Buffer — anomalies \+ retries
+
+—
+
+—
+
+—
+
+₹2,000
+
+TOTAL MONTHLY BUDGET
+
+—
+
+—
+
+—
+
+~₹15,000/month
+
+__V5 Cost vs Original Architecture__
+
+Original V1 architecture \(Claude for all FitScore\):  ₹1,50,00,000/month at scale
+
+V2 architecture \(SQL formula, haiku summaries\):       ₹8,000/month
+
+V5 architecture \(sonnet summaries \+ re\-rank pass\):   ₹15,000/month
+
+V5 vs V1: 99\.9% cost reduction
+
+V5 vs V2: ₹7,000/month more — for materially better summary quality and re\-rank accuracy
+
+Budget rule: if monthly cost exceeds ₹25,000, review agent\_logs immediately\.
+
+Cost alert fires at ₹800/day — investigate same day\.
+
+Single run alert fires at ₹50 — investigate immediately \(runaway loop risk\)\.
+
+# __11\. Environment Variables — Complete__
+
+__/\.env\.local — All Variables V5__
+
+// Supabase
+
+NEXT\_PUBLIC\_SUPABASE\_URL=
+
+NEXT\_PUBLIC\_SUPABASE\_ANON\_KEY=
+
+SUPABASE\_SERVICE\_ROLE\_KEY=   // server\-side only, never in components
+
+// Anthropic — CV parse, re\-rank, summaries, vouch
+
+ANTHROPIC\_API\_KEY=
+
+// OpenAI — embeddings only
+
+OPENAI\_API\_KEY=
+
+// WhatsApp Business API \(Interakt or WATI\)
+
+WHATSAPP\_API\_KEY=
+
+WHATSAPP\_PHONE\_NUMBER\_ID=
+
+WHATSAPP\_WEBHOOK\_SECRET=   // validated on every webhook POST
+
+WHATSAPP\_BUSINESS\_NUMBER=\+91XXXXXXXXXX
+
+// Stripe
+
+NEXT\_PUBLIC\_STRIPE\_PUBLISHABLE\_KEY=
+
+STRIPE\_SECRET\_KEY=
+
+STRIPE\_WEBHOOK\_SECRET=
+
+// Email
+
+RESEND\_API\_KEY=
+
+FROM\_EMAIL=hello@tigerhire\.io
+
+// Job APIs \(post\-MVP\)
+
+INDEED\_PUBLISHER\_ID=
+
+ADZUNA\_APP\_ID=
+
+ADZUNA\_API\_KEY=
+
+// App
+
+NEXT\_PUBLIC\_APP\_URL=https://tigerhire\.io
+
+CRON\_SECRET=   // validated on all /api/cron/ routes
+
+// Observability \(add Axiom or similar for production log drain\)
+
+AXIOM\_DATASET=   // optional — for structured log shipping
+
+AXIOM\_TOKEN=     // optional
+
+# __12\. The Rules — Non\-Negotiable Before Beta__
+
+__8 Rules\. Break any one and you are not ready for beta\.__
+
+1\. Every API route calls requireRole\(\) before touching any data\.
+
+2\. Every POST/PUT body is parsed through a Zod schema\.
+
+3\. Candidate phone, email, cv\_url are null in API responses until unlocked\.
+
+4\. Active employees never appear in external recruiter shortlists\.
+
+5\. logAgentRun\(\) is called on every agent execution with cost\.
+
+6\. SUPABASE\_SERVICE\_ROLE\_KEY is never referenced in any component file\.
+
+7\. The Cursor audit prompt has been run and all Critical findings are resolved\.
+
+8\. The 5 E2E tests pass on staging before any real user is onboarded\.
+
+*Document: TigerHire PRD V5 — Definitive  |  tigerhire\.io  |  February 2026  |  Confidential*
+
+*Supersedes: PRD V1 · PRD V2 · ADR · All sprint docs  |  Read alongside: TigerHire ADR \(Migrations 24\-29\)*
+
+__Run the Cursor audit prompt in Section 8 before onboarding any beta user\. No exceptions\.__
+

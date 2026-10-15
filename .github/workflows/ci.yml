@@ -1,0 +1,531 @@
+name: CI
+
+on:
+  # Cost: full CI runs on PRs (to dev/main) and on pushes to main only.
+  # Merges to dev are validated by the PR run + the separate "Dev release gate"
+  # workflow, so we don't re-run the whole matrix on every dev push.
+  # Always report the required release result, including documentation-only PRs.
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main, dev]
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  lint:
+    name: Lint
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 24
+          cache: npm
+      - run: npm ci
+      - run: npm run lint -- --max-warnings 0
+      - run: npm run format:check
+      - name: API Zod validation (mutating routes)
+        run: npm run validate
+      - name: Source file size limits
+        run: npm run size-check
+      - name: API route guard audit (critical CSRF)
+        run: node scripts/audit-api-routes.mjs
+
+  typecheck:
+    name: Typecheck
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 24
+          cache: npm
+      - run: npm ci
+      - run: npm run typecheck
+
+  test:
+    name: Unit & Integration Tests
+    runs-on: ubuntu-latest
+    env:
+      # Required for tests/integration/fitscore-hybrid-routing.test.ts (must run, not skipIf).
+      # Configure repo secrets to match E2E (same Supabase project as staging/preview is typical).
+      NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}
+      NEXT_PUBLIC_SUPABASE_ANON_KEY: ${{ secrets.NEXT_PUBLIC_SUPABASE_ANON_KEY }}
+      SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+      REQUIRE_LIVE_SUPABASE_INTEGRATION: "true"
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 24
+          cache: npm
+      - run: npm ci
+      - name: Verify preview database before integration tests
+        run: node scripts/assert-ci-preview.mjs
+      - name: Coverage gate (strict for main branch flow)
+        run: |
+          if [ "${{ github.ref }}" = "refs/heads/main" ] || [ "${{ github.base_ref }}" = "main" ]; then
+            echo "Running strict coverage gate for main branch flow"
+            npm run test:coverage:strict
+          else
+            echo "Running report-only coverage for non-main flow"
+            npm run test:coverage
+          fi
+
+  behavior-rls:
+    name: Behavior RLS Tests
+    runs-on: ubuntu-latest
+    env:
+      NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}
+      NEXT_PUBLIC_SUPABASE_ANON_KEY: ${{ secrets.NEXT_PUBLIC_SUPABASE_ANON_KEY }}
+      SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+    steps:
+      - uses: actions/checkout@v6
+      # HARD STOP: these tests mutate. Between them the two behaviour specs make
+      # ~32 inserts, deletes and auth-user creations. Pointed at production they
+      # would create and destroy real auth users and org rows on every CI run.
+      #
+      # The secrets are a text box in a settings page — on 2026-08-04 they were
+      # filled in with prod Mumbai credentials, and the only thing that prevented
+      # writes to production was an unrelated missing third secret keeping the
+      # job switched off. That is luck, not a control. This is the control.
+      - name: Refuse to run mutating tests against production
+        env:
+          PROD_PROJECT_REF: qzhhhsvtyqyixpcdfhng
+        run: |
+          if [ -n "$NEXT_PUBLIC_SUPABASE_URL" ] && \
+             printf '%s' "$NEXT_PUBLIC_SUPABASE_URL" | grep -q "$PROD_PROJECT_REF"; then
+            echo "::error title=CI is pointed at PRODUCTION::NEXT_PUBLIC_SUPABASE_URL resolves to the production project ($PROD_PROJECT_REF). The behaviour tests in this job perform inserts, deletes and auth-user creation. Repoint the repository secrets at the preview project before re-running."
+            exit 1
+          fi
+
+      - name: Check Supabase secrets are configured
+        id: prereq
+        run: |
+          if [ -z "$NEXT_PUBLIC_SUPABASE_URL" ] || [ -z "$NEXT_PUBLIC_SUPABASE_ANON_KEY" ] || [ -z "$SUPABASE_SERVICE_ROLE_KEY" ]; then
+            echo "::error::Required preview credentials are missing; tenant isolation cannot be verified."
+            exit 1
+          else
+            echo "enabled=true" >> "$GITHUB_OUTPUT"
+          fi
+      - uses: actions/setup-node@v6
+        if: steps.prereq.outputs.enabled == 'true'
+        with:
+          node-version: 24
+          cache: npm
+      - run: npm ci
+        if: steps.prereq.outputs.enabled == 'true'
+      - name: Run behavior tests with JSON report
+        if: steps.prereq.outputs.enabled == 'true'
+        run: |
+          node scripts/assert-ci-preview.mjs
+          npx vitest run tests/integration/company-sso-mappings-rls.behavior.test.ts tests/integration/oauth-callback.behavior.test.ts --reporter=json --outputFile=vitest-behavior.json
+      - name: Fail if behavior tests executed zero assertions
+        if: steps.prereq.outputs.enabled == 'true'
+        run: node scripts/check-behavior-tests-ran.mjs vitest-behavior.json
+      # Runs here because this is the job that already holds the Supabase
+      # secrets. Probes every .select() in src/ against the live schema: a
+      # column the database does not have makes PostgREST reject the whole
+      # select, and call sites that ignore `error` then serve a 200 with data
+      # silently missing. Ratcheted against scripts/schema-drift-baseline.json,
+      # so it fails only on NEW drift.
+      - name: Schema/code drift gate
+        if: steps.prereq.outputs.enabled == 'true'
+        run: npm run schema-drift-check
+
+  agency-coverage:
+    name: Agency & candidate coverage
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 24
+          cache: npm
+      - run: npm ci
+      - run: npm run test:agency-candidates:coverage
+
+  functional:
+    name: Functional Tests
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 24
+          cache: npm
+      - run: npm ci
+      - run: npm run test:functional
+
+  stress:
+    name: Stress Tests
+    runs-on: ubuntu-latest
+    # Heavy / non-correctness: run on pushes to main, not on every PR.
+    if: github.event_name != 'pull_request'
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 24
+          cache: npm
+      - run: npm ci
+      - run: npm run test:stress
+
+  perf:
+    name: Performance Benchmarks
+    runs-on: ubuntu-latest
+    # Heavy / non-correctness: run on pushes to main, not on every PR.
+    if: github.event_name != 'pull_request'
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 24
+          cache: npm
+      - run: npm ci
+      - run: npm run test:perf
+
+  secret-scan:
+    name: Secret Scanning
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+      # The gitleaks-action@v2 wrapper now requires a paid GITLEAKS_LICENSE for
+      # organizations. The gitleaks TOOL itself stays MIT, so we run the pinned
+      # CLI directly — no license, same scan. `dir` scans the checked-out tree
+      # (current secrets); exit-code 1 fails the job on any finding.
+      - name: Gitleaks (MIT CLI — no org license required)
+        run: |
+          GITLEAKS_VERSION=8.28.0
+          curl -sSfL "https://github.com/gitleaks/gitleaks/releases/download/v${GITLEAKS_VERSION}/gitleaks_${GITLEAKS_VERSION}_linux_x64.tar.gz" -o /tmp/gitleaks.tgz
+          tar -xzf /tmp/gitleaks.tgz -C /tmp gitleaks
+          /tmp/gitleaks dir . -c .gitleaks.toml --redact --no-banner --exit-code 1
+
+  # SARIF upload to GitHub requires Code Scanning enabled (Settings → Code security → Code scanning).
+  # Without it, analyze@v3 fails at upload; upload: never still runs queries and keeps CI green.
+  # When Code Scanning is on, remove `upload: never` (or set upload: always) to populate the Security tab.
+  # Fork PRs: upload is blocked anyway; job is skipped via `if` below.
+  codeql:
+    name: CodeQL SAST
+    # Heavy SAST: run on pushes to main, not on every PR.
+    if: github.event_name != 'pull_request'
+    runs-on: ubuntu-latest
+    permissions:
+      security-events: write
+      actions: read
+      contents: read
+    steps:
+      - uses: actions/checkout@v6
+      - name: Initialize CodeQL
+        uses: github/codeql-action/init@v4
+        with:
+          languages: javascript-typescript
+      - name: Perform CodeQL Analysis
+        uses: github/codeql-action/analyze@v4
+        with:
+          # Advanced Security / Code Scanning is off for this repo, so the SARIF
+          # upload 500s ("Advanced Security must be enabled"). `upload: never`
+          # runs the full query set and keeps the job green without uploading.
+          # Flip to `always` once Code Scanning is enabled to populate Security tab.
+          upload: never
+
+  security:
+    name: Security Audit
+    runs-on: ubuntu-latest
+    # High/critical advisories must block release builds.
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 24
+          cache: npm
+      - run: npm ci
+
+      - name: npm audit (critical + high)
+        run: npm audit --audit-level=high
+
+      - name: Check for known vulnerabilities
+        run: npx audit-ci --high
+
+  license:
+    name: License Compliance
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 24
+          cache: npm
+      - run: npm ci
+      - name: Check licenses
+        run: >
+          npx license-checker --summary
+          --excludePackages tigerhire@0.1.0
+          --onlyAllow "MIT;Apache-2.0;BSD-2-Clause;BSD-3-Clause;BSD*;ISC;0BSD;Unlicense;CC0-1.0;LGPL-3.0-or-later;Python-2.0;MPL-2.0;BlueOak-1.0.0;CC-BY-4.0"
+
+  dead-code:
+    name: Dead Code
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 24
+          cache: npm
+      - run: npm ci
+      - name: Inngest handlers registered in serve()
+        run: npm run check:inngest-registration
+      - name: List unused exports (ts-prune, informational)
+        run: npx ts-prune 2>/dev/null | head -80 || true
+
+  sbom:
+    name: SBOM
+    runs-on: ubuntu-latest
+    # Artifact generation (not a gate): run on pushes to main, not on every PR.
+    if: github.event_name != 'pull_request'
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 24
+          cache: npm
+      - run: npm ci
+      # npm ls --long --all can exit ELSPROBLEMS (extraneous WASM hoists, peer quirks
+      # like the unresolved `webpack` peer of next-pwa/workbox/sentry). The package.json
+      # `sbom` script passes --ignore-npm-errors so the SBOM still generates; use it so
+      # CI matches local instead of invoking cyclonedx-npm bare (which fails ELSPROBLEMS).
+      - name: Generate SBOM
+        run: npm run sbom
+      - uses: actions/upload-artifact@v7
+        with:
+          name: sbom
+          path: sbom.json
+
+  migration-safety:
+    name: Migration Safety Check
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - name: Check migrations for dangerous operations
+        run: node scripts/check-migrations-safety.mjs
+
+  build:
+    name: Build
+    runs-on: ubuntu-latest
+    # Only the correctness/quality gates that run on every PR. The heavy jobs
+    # (stress, perf, codeql, sbom) run on pushes to main only, so they are NOT
+    # listed here — otherwise `build` would be skipped on PRs (a skipped
+    # dependency propagates). They still run alongside build on main pushes.
+    needs:
+      [
+        lint,
+        typecheck,
+        test,
+        behavior-rls,
+        agency-coverage,
+        functional,
+        secret-scan,
+        security,
+        license,
+        dead-code,
+        migration-safety,
+      ]
+    env:
+      NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}
+      NEXT_PUBLIC_SUPABASE_ANON_KEY: ${{ secrets.NEXT_PUBLIC_SUPABASE_ANON_KEY }}
+    steps:
+      - uses: actions/checkout@v6
+
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 24
+          cache: npm
+
+      - run: npm ci
+
+      - name: Verify package-lock
+        run: test -f package-lock.json
+
+      - name: Build
+        # `next build` OOMs on the default heap now that the source tree is
+        # larger; raise the limit to match the typecheck job's proven value.
+        env:
+          NODE_OPTIONS: --max-old-space-size=6144
+        run: npm run build
+
+      - name: Verify production server boots against preview configuration
+        env:
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+          # Liveness only: this value cannot authorise production cron jobs.
+          CRON_SECRET: ci-boot-check-only
+          VERCEL_ENV: preview
+          OUTBOUND_NOTIFICATIONS_ENABLED: "false"
+        run: |
+          node scripts/assert-ci-preview.mjs
+          npm run verify:boot
+
+  k6-load:
+    name: K6 Load Tests
+    runs-on: ubuntu-latest
+    needs: build
+    # Load test: run on pushes to main, not on every PR.
+    if: github.event_name != 'pull_request'
+    env:
+      BASE_URL: http://localhost:3000
+      NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}
+      NEXT_PUBLIC_SUPABASE_ANON_KEY: ${{ secrets.NEXT_PUBLIC_SUPABASE_ANON_KEY }}
+    steps:
+      - uses: actions/checkout@v6
+
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 24
+          cache: npm
+
+      - run: npm ci
+
+      - name: Install k6
+        run: |
+          # Fetch the signing key from k6's own distribution host rather than
+          # hkp://keyserver.ubuntu.com, which now answers 404 for this
+          # fingerprint — "gpg: keyserver receive failed: No data", reproducible
+          # across re-runs, not a flake. dl.k6.io is already the trust anchor
+          # for the apt repo on the next line, so this narrows the number of
+          # third parties involved rather than widening it. Signature
+          # verification via signed-by is unchanged.
+          set -euo pipefail
+          curl -fsSL --retry 3 --retry-all-errors https://dl.k6.io/key.gpg \
+            | sudo gpg --dearmor -o /usr/share/keyrings/k6-archive-keyring.gpg
+          echo "deb [signed-by=/usr/share/keyrings/k6-archive-keyring.gpg] https://dl.k6.io/deb stable main" | sudo tee /etc/apt/sources.list.d/k6.list
+          sudo apt-get update && sudo apt-get install -y k6
+
+      - name: Start server
+        run: npm run dev &
+        env:
+          PORT: 3000
+
+      - name: Wait for server
+        run: npx wait-on http://localhost:3000/api/health --timeout 60000
+
+      - name: Run k6 API Benchmark
+        run: k6 run k6/api-benchmark.js --duration 1m --vus 10
+
+      - uses: actions/upload-artifact@v7
+        if: always()
+        with:
+          name: k6-results
+          path: k6/results-*.json
+          retention-days: 7
+
+  e2e:
+    name: E2E Tests
+    runs-on: ubuntu-latest
+    needs: build
+    # E2E smoke: run on pushes to main, not on every PR.
+    if: github.event_name != 'pull_request'
+    env:
+      E2E_APPLY_ORG_SLUG: ${{ secrets.E2E_APPLY_ORG_SLUG }}
+      NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}
+      NEXT_PUBLIC_SUPABASE_ANON_KEY: ${{ secrets.NEXT_PUBLIC_SUPABASE_ANON_KEY }}
+      SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+      # Every signed-in smoke test needs this. Playwright starts the app with
+      # `npm run dev`, so NODE_ENV is development and /api/auth/test-login is
+      # enabled — but it signs in with SEED_DEMO_PASSWORD, falling back to the
+      # literal "demo123" when that is unset. The demo accounts on the preview
+      # database were seeded with the real password, so the fallback 401s and
+      # every seat-based test fails at the login step. Six of them have been
+      # failing on main since at least 27 July for exactly this reason.
+      SEED_DEMO_PASSWORD: ${{ secrets.SEED_DEMO_PASSWORD }}
+      # Same reason the dev release gate sets these: the Brief 11 plan-document
+      # specs assert nav that only exists with the flag on, and `true` is the
+      # documented default in .env.example. Without it those specs test
+      # non-plan-document nav and fail as if the nav had regressed.
+      FF_PLAN_DOCUMENT: "true"
+      NEXT_PUBLIC_FF_PLAN_DOCUMENT: "true"
+    steps:
+      - uses: actions/checkout@v6
+
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 24
+          cache: npm
+
+      - run: npm ci
+
+      - name: Install Playwright Browsers
+        run: npx playwright install --with-deps chromium
+
+      - name: Run E2E smoke tests
+        run: npm run test:e2e:smoke
+
+      - uses: actions/upload-artifact@v7
+        if: always()
+        with:
+          name: playwright-report
+          path: playwright-report/
+          retention-days: 7
+
+  release-e2e:
+    name: Production-mode release E2E
+    runs-on: ubuntu-latest
+    needs: build
+    env:
+      NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}
+      NEXT_PUBLIC_SUPABASE_ANON_KEY: ${{ secrets.NEXT_PUBLIC_SUPABASE_ANON_KEY }}
+      SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+      SEED_DEMO_PASSWORD: ${{ secrets.SEED_DEMO_PASSWORD }}
+      OUTBOUND_NOTIFICATIONS_ENABLED: "false"
+      EMAIL_MODE: sandbox
+      WHATSAPP_MODE: sandbox
+      VERCEL_ENV: preview
+      CRON_SECRET: release-test-local-only
+      NODE_OPTIONS: --max-old-space-size=6144
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 24
+          cache: npm
+      - run: npm ci
+      - run: node scripts/assert-ci-preview.mjs
+      - run: npm run build
+      - run: npx playwright install --with-deps chromium
+      - name: Real-schema erasure and retry verification
+        run: RUN_RELEASE_DB_TESTS=1 npx vitest run tests/integration/release-erasure.behavior.test.ts
+      - run: npm run test:e2e:release
+      - uses: actions/upload-artifact@v7
+        if: always()
+        with:
+          name: release-e2e-results
+          path: test-results/release.json
+          retention-days: 7
+
+  release-readiness:
+    name: Release readiness
+    runs-on: ubuntu-latest
+    if: always()
+    needs: [build, release-e2e]
+    steps:
+      - name: Require completed build and release verification
+        env:
+          BUILD_RESULT: ${{ needs.build.result }}
+          RELEASE_RESULT: ${{ needs.release-e2e.result }}
+        run: |
+          test "$BUILD_RESULT" = success && test "$RELEASE_RESULT" = success
+
+  deploy:
+    name: Deploy
+    runs-on: ubuntu-latest
+    needs: release-readiness
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+    environment: production
+    steps:
+      - uses: actions/checkout@v6
+
+      - name: Deploy to Vercel
+        run: echo "Deployed via Vercel Git integration (push-to-deploy)"

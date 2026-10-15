@@ -1,0 +1,57 @@
+import type { User } from "@/types";
+
+export const mockUsers: User[] = [
+  {
+    id: "user-1",
+    email: "sam@tigerhire.io",
+    name: "Sameer Anand",
+    role: "super_admin",
+    avatar: "/avatars/sameer.jpg",
+    createdAt: "2025-06-01T00:00:00Z",
+  },
+  {
+    id: "user-2",
+    email: "nidhi.gupta@finstack.in",
+    name: "Nidhi Gupta",
+    role: "leadership",
+    avatar: "/avatars/nidhi.jpg",
+    organisationId: "org-1",
+    organisationName: "FinStack Technologies",
+    createdAt: "2025-08-15T00:00:00Z",
+  },
+  {
+    id: "user-3",
+    email: "rajiv.menon@finstack.in",
+    name: "Rajiv Menon",
+    role: "recruiter",
+    avatar: "/avatars/rajiv.jpg",
+    organisationId: "org-1",
+    organisationName: "FinStack Technologies",
+    createdAt: "2025-09-01T00:00:00Z",
+  },
+  {
+    id: "user-4",
+    email: "fatima.sheikh@talentbridge.co",
+    name: "Fatima Sheikh",
+    role: "agency",
+    avatar: "/avatars/fatima.jpg",
+    organisationId: "org-3",
+    organisationName: "TalentBridge RPO",
+    createdAt: "2025-10-10T00:00:00Z",
+  },
+  {
+    id: "user-5",
+    email: "priya.sharma@gmail.com",
+    name: "Priya Sharma",
+    role: "candidate_pro",
+    avatar: "/avatars/priya.jpg",
+    createdAt: "2025-11-20T00:00:00Z",
+  },
+  {
+    id: "user-6",
+    email: "siddharth.patil@outlook.com",
+    name: "Siddharth Patil",
+    role: "candidate_free",
+    createdAt: "2026-01-05T00:00:00Z",
+  },
+];

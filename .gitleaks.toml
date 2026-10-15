@@ -1,0 +1,25 @@
+# gitleaks configuration for TigerHire.
+#
+# Extends the full default ruleset (all real secret detectors stay active) and
+# allowlists ONLY non-production paths that intentionally contain fake/example
+# credentials: test fixtures, documentation, and setup guides. Production source
+# under src/ is deliberately NOT allowlisted — a real secret committed there
+# still fails the Secret Scanning job.
+#
+# Auto-loaded by the gitleaks CLI when scanning the repo root ((target)/.gitleaks.toml).
+title = "TigerHire gitleaks"
+
+[extend]
+useDefault = true
+
+[allowlist]
+description = "Test fixtures, docs, and example/setup material — no real secrets"
+paths = [
+  '''(^|/)tests/''',
+  '''(^|/)imported-from-zip/''',
+  '''(^|/)docs/''',
+  '''(^|/)e2e/''',
+  '''.*\.test\.(ts|tsx|js|jsx)$''',
+  '''.*\.spec\.(ts|tsx|js|jsx)$''',
+  '''.*\.md$''',
+]

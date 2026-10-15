@@ -1,0 +1,14 @@
+Meta WhatsApp template submission (operator — Phase 0)
+
+Template name: th_screening_invite
+Category: Utility (or Marketing per Meta policy for your use case)
+Language: English
+
+Body:
+Hi {{1}}, {{2}} would like to ask a few quick screening questions to match you with the right role. Reply YES to start or NO to skip.
+
+Variables:
+{{1}} — candidate first name
+{{2}} — company name
+
+Approval typically takes 1–3 business days. Do not enable production FF_PLAN_AUTO_EXECUTE screening until this template shows Approved in Meta Business Manager.

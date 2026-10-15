@@ -1,0 +1,3066 @@
+{
+  "version": "2.0",
+  "source": "TigerHire_JD_Templates_All_India.xlsx (March 2026)",
+  "categories": {
+    "Technology & Engineering": [
+      "Software Engineer (Backend)",
+      "Software Engineer (Frontend)",
+      "Full Stack Developer",
+      "DevOps / SRE Engineer",
+      "Data Engineer",
+      "AI/ML Engineer",
+      "Cybersecurity Analyst",
+      "QA/Test Engineer",
+      "Cloud Architect",
+      "Mobile App Developer",
+      "Prompt Engineer",
+      "Blockchain Developer"
+    ],
+    "BFSI": [
+      "Relationship Manager (Banking)",
+      "Credit Analyst",
+      "Investment Banker",
+      "Insurance Underwriter",
+      "Compliance Officer (BFSI)",
+      "Risk Analyst",
+      "Financial Analyst / FP&A",
+      "Fintech Product Manager"
+    ],
+    "Healthcare & Pharma": [
+      "Doctor / Physician",
+      "Registered Nurse",
+      "Hospital Administrator",
+      "Pharmacovigilance Associate",
+      "QC Analyst (Pharma)",
+      "Clinical Research Associate",
+      "Medical Coder",
+      "Telemedicine Coordinator",
+      "Regulatory Affairs Specialist"
+    ],
+    "Manufacturing & Engineering": [
+      "Production Manager",
+      "QA Engineer (Manufacturing)",
+      "Supply Chain Manager",
+      "Plant / Factory Manager",
+      "Industrial Engineer",
+      "Procurement Manager",
+      "EHS Officer",
+      "Maintenance Engineer"
+    ],
+    "Sales & Business Development": [
+      "Sales Executive / AE (B2B)",
+      "Business Development Manager",
+      "Key Account Manager",
+      "Inside Sales Representative",
+      "Pre-Sales / Solutions Consultant",
+      "Channel / Partner Manager",
+      "Regional Sales Manager"
+    ],
+    "Marketing & Content": [
+      "Digital Marketing Manager",
+      "SEO/SEM Specialist",
+      "Content Writer / Strategist",
+      "Social Media Manager",
+      "Brand Manager (FMCG)",
+      "Performance Marketing Manager",
+      "Marketing Analyst"
+    ],
+    "Product & Design": [
+      "Product Manager",
+      "UX/UI Designer",
+      "Product Analyst",
+      "Design System Lead"
+    ],
+    "HR & People Operations": [
+      "Technical Recruiter",
+      "HR Business Partner",
+      "Talent Acquisition Lead",
+      "L&D Manager",
+      "Compensation & Benefits Specialist",
+      "HR Generalist"
+    ],
+    "Operations & Customer Success": [
+      "Customer Success Manager",
+      "Operations Manager",
+      "BPO / Call Center Team Lead",
+      "Process Excellence Lead",
+      "Logistics / Warehouse Manager"
+    ],
+    "Finance & Accounting": [
+      "Chartered Accountant (CA)",
+      "Accounts Payable/Receivable Manager",
+      "Tax Consultant / GST Specialist",
+      "Internal Auditor",
+      "Treasury Analyst",
+      "Financial Controller"
+    ],
+    "Legal & Compliance": [
+      "Corporate Lawyer / Legal Counsel",
+      "Company Secretary (CS)",
+      "Data Privacy / DPO",
+      "Contract Manager",
+      "IP Specialist"
+    ],
+    "Scrum, Agile & Project Management": [
+      "Technical Scrum Master",
+      "Enterprise Scrum Master",
+      "Project Manager (IT)",
+      "Program Manager",
+      "Agile Coach",
+      "Delivery Manager"
+    ],
+    "Leadership & Executive": [
+      "Engineering Manager",
+      "Chief of Staff",
+      "VP of Engineering",
+      "CTO / VP Technology",
+      "General Manager",
+      "COO / Head of Operations"
+    ],
+    "Education & EdTech": [
+      "Academic Counsellor",
+      "Instructional Designer",
+      "EdTech Product Manager",
+      "Corporate Trainer / L&D Facilitator"
+    ],
+    "Government & Public Sector": [
+      "Civil Services (IAS/IPS/IFS)",
+      "PSU Manager / Executive",
+      "Govt Project Coordinator",
+      "Defence Civilian Staff"
+    ],
+    "Real Estate & Infrastructure": [
+      "Site Engineer (Civil)",
+      "Project Manager (Construction)",
+      "Real Estate Sales Manager",
+      "Urban Planner",
+      "MEP Engineer"
+    ],
+    "Retail, E-commerce & D2C": [
+      "Category Manager",
+      "Merchandiser",
+      "E-commerce Manager",
+      "Store Manager",
+      "Quick Commerce Ops Manager"
+    ],
+    "Logistics & Supply Chain": [
+      "Supply Chain Analyst",
+      "Fleet / Transport Manager",
+      "Warehouse Operations Manager",
+      "Import/Export Executive",
+      "Last Mile Delivery Manager"
+    ],
+    "Media, Entertainment & Content": [
+      "Video Editor / Content Creator",
+      "Journalist / Reporter",
+      "Advertising Account Manager",
+      "OTT Content Strategist"
+    ],
+    "Green Energy & Sustainability": [
+      "Solar Project Engineer",
+      "ESG Analyst",
+      "Sustainability Manager",
+      "EV Battery Engineer",
+      "Carbon Credit Analyst"
+    ]
+  },
+  "templates": [
+    {
+      "role_title": "Software Engineer (Backend)",
+      "category": "Technology & Engineering",
+      "weights": {
+        "core_language": 20,
+        "system_design": 20,
+        "database_skills": 15,
+        "devops_cicd": 10,
+        "testing_quality": 10,
+        "problem_solving": 10,
+        "years_exp": 10,
+        "domain_knowledge": 5
+      },
+      "signals": "REST/GraphQL, microservices, Kafka, Redis, Docker, AWS/GCP, monitoring, performance tuning",
+      "score_floor": 15,
+      "fit_thresholds": {
+        "strong": 78,
+        "good": 60,
+        "moderate": 40,
+        "weak": 25
+      },
+      "id": "india-001",
+      "red_flags": "No production exp (critical), Only frontend (moderate), No version control (critical)"
+    },
+    {
+      "role_title": "Software Engineer (Frontend)",
+      "category": "Technology & Engineering",
+      "weights": {
+        "framework_mastery": 25,
+        "css_design": 15,
+        "javascript_ts": 15,
+        "performance": 10,
+        "testing_a11y": 10,
+        "api_integration": 10,
+        "years_exp": 10,
+        "portfolio": 5
+      },
+      "signals": "React/Next.js, TypeScript, Tailwind, Storybook, Playwright, web perf, responsive design",
+      "score_floor": 15,
+      "fit_thresholds": {
+        "strong": 78,
+        "good": 60,
+        "moderate": 40,
+        "weak": 25
+      },
+      "id": "india-002",
+      "red_flags": "No modern framework (moderate), No responsive design (moderate), No TypeScript (minor)"
+    },
+    {
+      "role_title": "Full Stack Developer",
+      "category": "Technology & Engineering",
+      "weights": {
+        "frontend_skills": 20,
+        "backend_skills": 20,
+        "database": 15,
+        "devops": 10,
+        "system_design": 10,
+        "api_design": 10,
+        "years_exp": 10,
+        "shipped_products": 5
+      },
+      "signals": "MERN/MEAN stack, Next.js, Node.js, PostgreSQL/MongoDB, Docker, REST APIs, cloud deployment",
+      "score_floor": 15,
+      "fit_thresholds": {
+        "strong": 78,
+        "good": 60,
+        "moderate": 40,
+        "weak": 25
+      },
+      "id": "india-003",
+      "red_flags": "Only one side (frontend or backend only) (moderate), No deployment experience (moderate)"
+    },
+    {
+      "role_title": "DevOps / SRE Engineer",
+      "category": "Technology & Engineering",
+      "weights": {
+        "cloud_infra": 20,
+        "cicd_automation": 20,
+        "containers": 15,
+        "monitoring": 15,
+        "scripting": 10,
+        "security": 10,
+        "years_exp": 5,
+        "incident_mgmt": 5
+      },
+      "signals": "Terraform, Kubernetes, Docker, AWS/GCP, GitHub Actions, Datadog, Prometheus, Ansible, Helm",
+      "score_floor": 15,
+      "fit_thresholds": {
+        "strong": 78,
+        "good": 60,
+        "moderate": 40,
+        "weak": 25
+      },
+      "id": "india-004",
+      "red_flags": "No cloud exp (critical), Only manual deployments (critical), No monitoring (moderate)"
+    },
+    {
+      "role_title": "Data Engineer",
+      "category": "Technology & Engineering",
+      "weights": {
+        "sql_modeling": 20,
+        "pipeline_design": 20,
+        "orchestration": 15,
+        "cloud_data": 15,
+        "programming": 10,
+        "data_quality": 10,
+        "years_exp": 5,
+        "streaming": 5
+      },
+      "signals": "dbt, Airflow, Spark, Snowflake, BigQuery, Kafka, Python, SQL, dimensional modeling",
+      "score_floor": 15,
+      "fit_thresholds": {
+        "strong": 78,
+        "good": 60,
+        "moderate": 40,
+        "weak": 25
+      },
+      "id": "india-005",
+      "red_flags": "No SQL proficiency (critical), Only BI/reporting (moderate), No orchestration (moderate)"
+    },
+    {
+      "role_title": "AI/ML Engineer",
+      "category": "Technology & Engineering",
+      "weights": {
+        "ml_fundamentals": 20,
+        "production_ml": 20,
+        "deep_learning": 15,
+        "data_processing": 10,
+        "llm_genai": 10,
+        "programming": 10,
+        "cloud_mlops": 10,
+        "years_exp": 5
+      },
+      "signals": "PyTorch, TensorFlow, Hugging Face, MLflow, SageMaker, LangChain, model serving, experiment tracking",
+      "score_floor": 15,
+      "fit_thresholds": {
+        "strong": 78,
+        "good": 60,
+        "moderate": 40,
+        "weak": 25
+      },
+      "id": "india-006",
+      "red_flags": "Only Kaggle no production (moderate), No deployment exp (moderate)"
+    },
+    {
+      "role_title": "Cybersecurity Analyst",
+      "category": "Technology & Engineering",
+      "weights": {
+        "threat_detection": 20,
+        "network_security": 15,
+        "compliance_frameworks": 15,
+        "incident_response": 15,
+        "tools_siem": 10,
+        "scripting": 10,
+        "certifications": 10,
+        "years_exp": 5
+      },
+      "signals": "SIEM, SOC, pentesting, Nmap, Burp Suite, Wireshark, ISO 27001, NIST, GDPR, CEH, OSCP",
+      "score_floor": 15,
+      "fit_thresholds": {
+        "strong": 78,
+        "good": 60,
+        "moderate": 40,
+        "weak": 25
+      },
+      "id": "india-007",
+      "red_flags": "No security-specific experience (critical), Only IT support (moderate)"
+    },
+    {
+      "role_title": "QA/Test Engineer",
+      "category": "Technology & Engineering",
+      "weights": {
+        "test_automation": 25,
+        "test_strategy": 15,
+        "api_testing": 15,
+        "performance_testing": 10,
+        "cicd_integration": 10,
+        "programming": 10,
+        "tools": 10,
+        "years_exp": 5
+      },
+      "signals": "Selenium, Playwright, Cypress, JMeter, Postman, API testing, CI/CD integration, test frameworks",
+      "score_floor": 15,
+      "fit_thresholds": {
+        "strong": 78,
+        "good": 60,
+        "moderate": 40,
+        "weak": 25
+      },
+      "id": "india-008",
+      "red_flags": "Only manual testing for senior role (moderate), No automation (critical for senior)"
+    },
+    {
+      "role_title": "Cloud Architect",
+      "category": "Technology & Engineering",
+      "weights": {
+        "cloud_platforms": 25,
+        "architecture_design": 20,
+        "security_compliance": 15,
+        "cost_optimization": 10,
+        "migration": 10,
+        "iac": 10,
+        "certifications": 5,
+        "years_exp": 5
+      },
+      "signals": "AWS/GCP/Azure solutions architect, multi-cloud, Well-Architected Framework, Terraform, security",
+      "score_floor": 15,
+      "fit_thresholds": {
+        "strong": 78,
+        "good": 60,
+        "moderate": 40,
+        "weak": 25
+      },
+      "id": "india-009",
+      "red_flags": "No cloud certification (moderate), Single-cloud only (minor), No enterprise scale (moderate)"
+    },
+    {
+      "role_title": "Mobile App Developer",
+      "category": "Technology & Engineering",
+      "weights": {
+        "platform_mastery": 25,
+        "ui_performance": 15,
+        "architecture": 15,
+        "api_integration": 10,
+        "testing": 10,
+        "app_store": 10,
+        "cross_platform": 10,
+        "years_exp": 5
+      },
+      "signals": "React Native, Flutter, Swift, Kotlin, app store optimization, offline-first, push notifications",
+      "score_floor": 15,
+      "fit_thresholds": {
+        "strong": 78,
+        "good": 60,
+        "moderate": 40,
+        "weak": 25
+      },
+      "id": "india-010",
+      "red_flags": "No published apps (moderate), Only web no mobile (critical), No native experience (minor)"
+    },
+    {
+      "role_title": "Prompt Engineer",
+      "category": "Technology & Engineering",
+      "weights": {
+        "prompt_design": 25,
+        "llm_knowledge": 20,
+        "evaluation": 15,
+        "programming": 10,
+        "domain_expertise": 10,
+        "safety_guardrails": 10,
+        "rag_retrieval": 5,
+        "years_exp": 5
+      },
+      "signals": "LLM prompting, chain-of-thought, few-shot, RAG, evaluation frameworks, safety, Claude/GPT APIs",
+      "score_floor": 15,
+      "fit_thresholds": {
+        "strong": 78,
+        "good": 60,
+        "moderate": 40,
+        "weak": 25
+      },
+      "id": "india-011",
+      "red_flags": "No LLM experience (critical), Only ChatGPT usage no engineering (moderate)"
+    },
+    {
+      "role_title": "Blockchain Developer",
+      "category": "Technology & Engineering",
+      "weights": {
+        "smart_contracts": 25,
+        "protocol_knowledge": 20,
+        "programming": 15,
+        "security_audit": 15,
+        "defi_web3": 10,
+        "testing": 5,
+        "years_exp": 5,
+        "community": 5
+      },
+      "signals": "Solidity, Rust, Ethereum, L2s, smart contract auditing, DeFi protocols, Web3.js/Ethers.js",
+      "score_floor": 15,
+      "fit_thresholds": {
+        "strong": 78,
+        "good": 60,
+        "moderate": 40,
+        "weak": 25
+      },
+      "id": "india-012",
+      "red_flags": "No smart contract experience (critical), Only crypto trading (critical)"
+    },
+    {
+      "role_title": "Relationship Manager (Banking)",
+      "category": "BFSI",
+      "weights": {
+        "client_management": 25,
+        "product_knowledge": 20,
+        "sales_targets": 20,
+        "compliance": 10,
+        "communication": 10,
+        "portfolio_size": 5,
+        "years_exp": 5,
+        "certifications": 5
+      },
+      "signals": "AUM managed, client retention, cross-sell ratio, NPS, portfolio growth, product mix, NISM certs",
+      "score_floor": 15,
+      "fit_thresholds": {
+        "strong": 78,
+        "good": 60,
+        "moderate": 40,
+        "weak": 25
+      },
+      "id": "india-013",
+      "red_flags": "No sales targets achieved (critical), No banking product knowledge (moderate)"
+    },
+    {
+      "role_title": "Credit Analyst",
+      "category": "BFSI",
+      "weights": {
+        "financial_analysis": 25,
+        "risk_assessment": 20,
+        "credit_models": 15,
+        "industry_knowledge": 10,
+        "regulatory": 10,
+        "tools": 10,
+        "years_exp": 5,
+        "documentation": 5
+      },
+      "signals": "Credit scoring models, financial statement analysis, NPA management, Basel norms, CIBIL, RBI guidelines",
+      "score_floor": 15,
+      "fit_thresholds": {
+        "strong": 78,
+        "good": 60,
+        "moderate": 40,
+        "weak": 25
+      },
+      "id": "india-014",
+      "red_flags": "No financial statement analysis (critical), No credit risk exposure (critical)"
+    },
+    {
+      "role_title": "Investment Banker",
+      "category": "BFSI",
+      "weights": {
+        "financial_modeling": 25,
+        "deal_execution": 20,
+        "valuation": 15,
+        "market_knowledge": 15,
+        "client_relationships": 10,
+        "regulatory": 5,
+        "years_exp": 5,
+        "certifications": 5
+      },
+      "signals": "DCF, LBO, M&A, IPO, pitch decks, deal pipeline, SEBI regulations, Bloomberg, CFA",
+      "score_floor": 15,
+      "fit_thresholds": {
+        "strong": 78,
+        "good": 60,
+        "moderate": 40,
+        "weak": 25
+      },
+      "id": "india-015",
+      "red_flags": "No deal experience (critical), No financial modeling (critical)"
+    },
+    {
+      "role_title": "Insurance Underwriter",
+      "category": "BFSI",
+      "weights": {
+        "risk_assessment": 25,
+        "product_knowledge": 20,
+        "data_analysis": 15,
+        "regulatory": 15,
+        "claims_analysis": 10,
+        "tools": 5,
+        "years_exp": 5,
+        "certifications": 5
+      },
+      "signals": "Risk pricing, loss ratio, actuarial basics, IRDAI regulations, reinsurance, policy documentation",
+      "score_floor": 15,
+      "fit_thresholds": {
+        "strong": 78,
+        "good": 60,
+        "moderate": 40,
+        "weak": 25
+      },
+      "id": "india-016",
+      "red_flags": "No underwriting experience (critical), No insurance domain (moderate)"
+    },
+    {
+      "role_title": "Compliance Officer (BFSI)",
+      "category": "BFSI",
+      "weights": {
+        "regulatory_knowledge": 25,
+        "audit_risk": 20,
+        "aml_kyc": 15,
+        "reporting": 10,
+        "policy_development": 10,
+        "stakeholder_mgmt": 10,
+        "years_exp": 5,
+        "certifications": 5
+      },
+      "signals": "RBI/SEBI/IRDAI regulations, AML/KYC/CFT, STR filing, compliance monitoring, audit management",
+      "score_floor": 15,
+      "fit_thresholds": {
+        "strong": 78,
+        "good": 60,
+        "moderate": 40,
+        "weak": 25
+      },
+      "id": "india-017",
+      "red_flags": "No regulatory knowledge (critical), No BFSI domain (critical)"
+    },
+    {
+      "role_title": "Risk Analyst",
+      "category": "BFSI",
+      "weights": {
+        "risk_modeling": 25,
+        "data_analytics": 20,
+        "regulatory": 15,
+        "financial_knowledge": 10,
+        "tools": 10,
+        "reporting": 10,
+        "years_exp": 5,
+        "certifications": 5
+      },
+      "signals": "VaR, stress testing, Basel III, credit risk, market risk, operational risk, SAS/R/Python, FRM",
+      "score_floor": 15,
+      "fit_thresholds": {
+        "strong": 78,
+        "good": 60,
+        "moderate": 40,
+        "weak": 25
+      },
+      "id": "india-018",
+      "red_flags": "No risk quantification (critical), Only operational no financial risk (moderate)"
+    },
+    {
+      "role_title": "Financial Analyst / FP&A",
+      "category": "BFSI",
+      "weights": {
+        "financial_modeling": 25,
+        "data_analysis": 20,
+        "reporting": 15,
+        "forecasting": 15,
+        "business_acumen": 10,
+        "tools": 10,
+        "years_exp": 5
+      },
+      "signals": "3-statement models, variance analysis, budgeting, Power BI/Tableau, Excel advanced, ERP (SAP/Oracle)",
+      "score_floor": 15,
+      "fit_thresholds": {
+        "strong": 78,
+        "good": 60,
+        "moderate": 40,
+        "weak": 25
+      },
+      "id": "india-019",
+      "red_flags": "No financial modeling (critical), Only bookkeeping (moderate), No Excel proficiency (critical)"
+    },
+    {
+      "role_title": "Fintech Product Manager",
+      "category": "BFSI",
+      "weights": {
+        "product_strategy": 20,
+        "payments_domain": 20,
+        "data_driven": 15,
+        "technical_acumen": 15,
+        "regulatory": 10,
+        "user_experience": 10,
+        "years_exp": 5,
+        "stakeholder": 5
+      },
+      "signals": "UPI, NEFT/IMPS, lending, insurance tech, BNPL, RBI sandbox, product metrics, A/B testing",
+      "score_floor": 15,
+      "fit_thresholds": {
+        "strong": 78,
+        "good": 60,
+        "moderate": 40,
+        "weak": 25
+      },
+      "id": "india-020",
+      "red_flags": "No fintech/payments domain (critical), No shipped products (critical)"
+    },
+    {
+      "role_title": "Doctor / Physician",
+      "category": "Healthcare & Pharma",
+      "weights": {
+        "clinical_expertise": 30,
+        "patient_care": 20,
+        "diagnosis": 15,
+        "specialization": 10,
+        "research": 5,
+        "communication": 10,
+        "years_exp": 5,
+        "credentials": 5
+      },
+      "signals": "MBBS/MD/MS, MCI/NMC registration, specialty training, clinical hours, publications, CME credits",
+      "score_floor": 15,
+      "fit_thresholds": {
+        "strong": 78,
+        "good": 60,
+        "moderate": 40,
+        "weak": 25
+      },
+      "id": "india-021",
+      "red_flags": "No valid medical registration (critical), No clinical experience (critical)"
+    },
+    {
+      "role_title": "Registered Nurse",
+      "category": "Healthcare & Pharma",
+      "weights": {
+        "clinical_skills": 25,
+        "patient_care": 20,
+        "emergency_response": 15,
+        "documentation": 10,
+        "teamwork": 10,
+        "specialization": 10,
+        "years_exp": 5,
+        "certifications": 5
+      },
+      "signals": "BSc/GNM Nursing, INC registration, BLS/ACLS, ICU/OT experience, patient safety, EMR systems",
+      "score_floor": 15,
+      "fit_thresholds": {
+        "strong": 78,
+        "good": 60,
+        "moderate": 40,
+        "weak": 25
+      },
+      "id": "india-022",
+      "red_flags": "No nursing registration (critical), No clinical hours (critical)"
+    },
+    {
+      "role_title": "Hospital Administrator",
+      "category": "Healthcare & Pharma",
+      "weights": {
+        "operations_mgmt": 20,
+        "financial_mgmt": 15,
+        "regulatory_compliance": 15,
+        "staff_mgmt": 15,
+        "patient_experience": 10,
+        "technology": 10,
+        "years_exp": 10,
+        "certifications": 5
+      },
+      "signals": "NABH accreditation, hospital P&L, bed occupancy, patient satisfaction, MHA degree, HMIS systems",
+      "score_floor": 15,
+      "fit_thresholds": {
+        "strong": 78,
+        "good": 60,
+        "moderate": 40,
+        "weak": 25
+      },
+      "id": "india-023",
+      "red_flags": "No healthcare admin experience (critical), No regulatory knowledge (moderate)"
+    },
+    {
+      "role_title": "Pharmacovigilance Associate",
+      "category": "Healthcare & Pharma",
+      "weights": {
+        "adverse_event_reporting": 25,
+        "regulatory_knowledge": 20,
+        "case_processing": 15,
+        "database_tools": 15,
+        "medical_terminology": 10,
+        "documentation": 10,
+        "years_exp": 5
+      },
+      "signals": "ICSR processing, MedDRA coding, Argus/ARISg, CIOMS forms, signal detection, GVP, WHO-UMC",
+      "score_floor": 15,
+      "fit_thresholds": {
+        "strong": 78,
+        "good": 60,
+        "moderate": 40,
+        "weak": 25
+      },
+      "id": "india-024",
+      "red_flags": "No PV experience (critical for experienced), No pharma background (moderate)"
+    },
+    {
+      "role_title": "QC Analyst (Pharma)",
+      "category": "Healthcare & Pharma",
+      "weights": {
+        "analytical_testing": 25,
+        "gmp_compliance": 20,
+        "instrumentation": 15,
+        "documentation": 15,
+        "troubleshooting": 10,
+        "safety": 5,
+        "years_exp": 5,
+        "certifications": 5
+      },
+      "signals": "HPLC, GC, dissolution, stability testing, SOP writing, FDA/WHO GMP, pharmacopoeia (IP/BP/USP)",
+      "score_floor": 15,
+      "fit_thresholds": {
+        "strong": 78,
+        "good": 60,
+        "moderate": 40,
+        "weak": 25
+      },
+      "id": "india-025",
+      "red_flags": "No lab experience (critical), No GMP knowledge (critical), No instrumentation (moderate)"
+    },
+    {
+      "role_title": "Clinical Research Associate",
+      "category": "Healthcare & Pharma",
+      "weights": {
+        "protocol_knowledge": 25,
+        "site_monitoring": 20,
+        "regulatory": 15,
+        "data_management": 10,
+        "communication": 10,
+        "gcp_compliance": 10,
+        "years_exp": 5,
+        "therapeutic_area": 5
+      },
+      "signals": "GCP/ICH guidelines, site monitoring visits, CRF review, CTMS, EDC systems, CDSCO regulations",
+      "score_floor": 15,
+      "fit_thresholds": {
+        "strong": 78,
+        "good": 60,
+        "moderate": 40,
+        "weak": 25
+      },
+      "id": "india-026",
+      "red_flags": "No clinical trial experience (critical), No GCP training (critical)"
+    },
+    {
+      "role_title": "Medical Coder",
+      "category": "Healthcare & Pharma",
+      "weights": {
+        "coding_accuracy": 25,
+        "coding_systems": 25,
+        "anatomy_knowledge": 15,
+        "compliance": 10,
+        "productivity": 10,
+        "tools": 5,
+        "years_exp": 5,
+        "certifications": 5
+      },
+      "signals": "ICD-10, CPT, HCPCS, CPC/CCS certification, coding accuracy %, revenue impact, EMR systems",
+      "score_floor": 15,
+      "fit_thresholds": {
+        "strong": 78,
+        "good": 60,
+        "moderate": 40,
+        "weak": 25
+      },
+      "id": "india-027",
+      "red_flags": "No coding certification (moderate), No medical terminology (critical)"
+    },
+    {
+      "role_title": "Telemedicine Coordinator",
+      "category": "Healthcare & Pharma",
+      "weights": {
+        "clinical_coordination": 20,
+        "technology_mgmt": 20,
+        "patient_experience": 15,
+        "regulatory": 15,
+        "scheduling": 10,
+        "data_reporting": 10,
+        "years_exp": 5,
+        "communication": 5
+      },
+      "signals": "Teleconsultation platforms, eSanjeevani, ABDM, patient onboarding, digital health compliance",
+      "score_floor": 15,
+      "fit_thresholds": {
+        "strong": 78,
+        "good": 60,
+        "moderate": 40,
+        "weak": 25
+      },
+      "id": "india-028",
+      "red_flags": "No healthcare background (critical), No technology comfort (moderate)"
+    },
+    {
+      "role_title": "Regulatory Affairs Specialist",
+      "category": "Healthcare & Pharma",
+      "weights": {
+        "regulatory_submissions": 25,
+        "cdsco_knowledge": 20,
+        "documentation": 15,
+        "dossier_preparation": 15,
+        "international_regs": 10,
+        "compliance": 10,
+        "years_exp": 5
+      },
+      "signals": "CDSCO filings, CTD/eCTD format, drug/device registration, WHO prequalification, FDA ANDA",
+      "score_floor": 15,
+      "fit_thresholds": {
+        "strong": 78,
+        "good": 60,
+        "moderate": 40,
+        "weak": 25
+      },
+      "id": "india-029",
+      "red_flags": "No regulatory submission experience (critical), No pharma domain (critical)"
+    },
+    {
+      "role_title": "Production Manager",
+      "category": "Manufacturing & Engineering",
+      "weights": {
+        "production_planning": 20,
+        "quality_mgmt": 20,
+        "team_mgmt": 15,
+        "process_optimization": 15,
+        "safety_compliance": 10,
+        "cost_control": 10,
+        "years_exp": 5,
+        "tools": 5
+      },
+      "signals": "OEE improvement, production targets, lean manufacturing, 5S, Kaizen, Six Sigma, SAP PP, shift management",
+      "score_floor": 15,
+      "fit_thresholds": {
+        "strong": 78,
+        "good": 60,
+        "moderate": 40,
+        "weak": 25
+      },
+      "id": "india-030",
+      "red_flags": "No production floor experience (critical), No team management (moderate)"
+    },
+    {
+      "role_title": "QA Engineer (Manufacturing)",
+      "category": "Manufacturing & Engineering",
+      "weights": {
+        "quality_systems": 25,
+        "inspection_testing": 20,
+        "standards": 15,
+        "root_cause_analysis": 15,
+        "documentation": 10,
+        "tools": 5,
+        "years_exp": 5,
+        "certifications": 5
+      },
+      "signals": "ISO 9001, IATF 16949, APQP, PPAP, FMEA, SPC, CMM, 8D methodology, audit experience",
+      "score_floor": 15,
+      "fit_thresholds": {
+        "strong": 78,
+        "good": 60,
+        "moderate": 40,
+        "weak": 25
+      },
+      "id": "india-031",
+      "red_flags": "No quality system experience (critical), No manufacturing domain (moderate)"
+    },
+    {
+      "role_title": "Supply Chain Manager",
+      "category": "Manufacturing & Engineering",
+      "weights": {
+        "planning_forecasting": 20,
+        "vendor_mgmt": 20,
+        "logistics": 15,
+        "cost_optimization": 15,
+        "data_analytics": 10,
+        "tools": 10,
+        "years_exp": 5,
+        "global_trade": 5
+      },
+      "signals": "S&OP, demand planning, inventory optimization, SAP MM, vendor negotiation, logistics network design",
+      "score_floor": 15,
+      "fit_thresholds": {
+        "strong": 78,
+        "good": 60,
+        "moderate": 40,
+        "weak": 25
+      },
+      "id": "india-032",
+      "red_flags": "No supply chain experience (critical), Only procurement no planning (moderate)"
+    },
+    {
+      "role_title": "Plant / Factory Manager",
+      "category": "Manufacturing & Engineering",
+      "weights": {
+        "operations_leadership": 25,
+        "safety_compliance": 15,
+        "budget_pnl": 15,
+        "team_mgmt": 15,
+        "process_improvement": 10,
+        "maintenance": 10,
+        "years_exp": 5,
+        "regulatory": 5
+      },
+      "signals": "Plant P&L, headcount managed, OEE, safety record (LTIFR), capex projects, TPM, lean deployment",
+      "score_floor": 15,
+      "fit_thresholds": {
+        "strong": 78,
+        "good": 60,
+        "moderate": 40,
+        "weak": 25
+      },
+      "id": "india-033",
+      "red_flags": "No plant management experience (critical), No safety record (moderate)"
+    },
+    {
+      "role_title": "Industrial Engineer",
+      "category": "Manufacturing & Engineering",
+      "weights": {
+        "process_design": 25,
+        "time_motion_study": 15,
+        "lean_six_sigma": 15,
+        "automation": 15,
+        "cost_analysis": 10,
+        "tools": 10,
+        "years_exp": 5,
+        "certifications": 5
+      },
+      "signals": "Value stream mapping, time study, line balancing, AutoCAD, Minitab, factory layout design, Six Sigma",
+      "score_floor": 15,
+      "fit_thresholds": {
+        "strong": 78,
+        "good": 60,
+        "moderate": 40,
+        "weak": 25
+      },
+      "id": "india-034",
+      "red_flags": "No manufacturing floor experience (critical), Only theoretical (moderate)"
+    },
+    {
+      "role_title": "Procurement Manager",
+      "category": "Manufacturing & Engineering",
+      "weights": {
+        "vendor_mgmt": 25,
+        "negotiation": 20,
+        "cost_reduction": 15,
+        "compliance": 10,
+        "category_mgmt": 10,
+        "tools": 10,
+        "years_exp": 5,
+        "global_sourcing": 5
+      },
+      "signals": "Spend managed, savings %, vendor onboarding, RFQ/RFP, SAP MM, GeM portal, L1 bidding, import/export",
+      "score_floor": 15,
+      "fit_thresholds": {
+        "strong": 78,
+        "good": 60,
+        "moderate": 40,
+        "weak": 25
+      },
+      "id": "india-035",
+      "red_flags": "No procurement experience (critical), No negotiation evidence (moderate)"
+    },
+    {
+      "role_title": "EHS Officer",
+      "category": "Manufacturing & Engineering",
+      "weights": {
+        "safety_management": 25,
+        "environmental": 20,
+        "regulatory": 15,
+        "audit_inspection": 15,
+        "training": 10,
+        "incident_mgmt": 10,
+        "years_exp": 5
+      },
+      "signals": "NEBOSH, IOSH, ISO 14001, ISO 45001, OSHA, factory act, fire safety, waste management, LTIFR",
+      "score_floor": 15,
+      "fit_thresholds": {
+        "strong": 78,
+        "good": 60,
+        "moderate": 40,
+        "weak": 25
+      },
+      "id": "india-036",
+      "red_flags": "No EHS certification (critical), No manufacturing/site experience (critical)"
+    },
+    {
+      "role_title": "Maintenance Engineer",
+      "category": "Manufacturing & Engineering",
+      "weights": {
+        "equipment_maintenance": 25,
+        "preventive_maintenance": 20,
+        "troubleshooting": 15,
+        "automation": 10,
+        "safety": 10,
+        "documentation": 10,
+        "years_exp": 5,
+        "tools": 5
+      },
+      "signals": "CMMS, TPM, breakdown analysis, PLC/SCADA, electrical/mechanical systems, spare parts management",
+      "score_floor": 15,
+      "fit_thresholds": {
+        "strong": 78,
+        "good": 60,
+        "moderate": 40,
+        "weak": 25
+      },
+      "id": "india-037",
+      "red_flags": "No hands-on maintenance (critical), No equipment-specific experience (moderate)"
+    },
+    {
+      "role_title": "Sales Executive / AE (B2B)",
+      "category": "Sales & Business Development",
+      "weights": {
+        "quota_attainment": 25,
+        "sales_methodology": 15,
+        "pipeline_mgmt": 15,
+        "relationship": 15,
+        "communication": 10,
+        "industry": 10,
+        "years_exp": 5,
+        "tools": 5
+      },
+      "signals": "Revenue numbers, quota %, deal size, sales cycle, Salesforce/HubSpot, MEDDIC/SPIN, territory management",
+      "score_floor": 15,
+      "fit_thresholds": {
+        "strong": 78,
+        "good": 60,
+        "moderate": 40,
+        "weak": 25
+      },
+      "id": "india-038",
+      "red_flags": "No revenue numbers (critical), Only inbound (moderate), No CRM (minor)"
+    },
+    {
+      "role_title": "Business Development Manager",
+      "category": "Sales & Business Development",
+      "weights": {
+        "lead_generation": 20,
+        "partnership_dev": 20,
+        "market_analysis": 15,
+        "deal_structuring": 15,
+        "communication": 10,
+        "strategy": 10,
+        "years_exp": 5,
+        "network": 5
+      },
+      "signals": "Pipeline built, partnerships signed, new market entry, revenue from new channels, CRM, proposals",
+      "score_floor": 15,
+      "fit_thresholds": {
+        "strong": 78,
+        "good": 60,
+        "moderate": 40,
+        "weak": 25
+      },
+      "id": "india-039",
+      "red_flags": "No BD/sales experience (critical), Only account management no new business (moderate)"
+    },
+    {
+      "role_title": "Key Account Manager",
+      "category": "Sales & Business Development",
+      "weights": {
+        "account_growth": 25,
+        "relationship_depth": 20,
+        "retention": 15,
+        "cross_sell": 10,
+        "strategic_planning": 10,
+        "communication": 10,
+        "years_exp": 5,
+        "portfolio_size": 5
+      },
+      "signals": "Account revenue growth %, retention rate, NRR, QBR cadence, multi-threading, executive relationships",
+      "score_floor": 15,
+      "fit_thresholds": {
+        "strong": 78,
+        "good": 60,
+        "moderate": 40,
+        "weak": 25
+      },
+      "id": "india-040",
+      "red_flags": "No account management (critical), No revenue responsibility (moderate)"
+    },
+    {
+      "role_title": "Inside Sales Representative",
+      "category": "Sales & Business Development",
+      "weights": {
+        "outreach_volume": 20,
+        "conversion": 25,
+        "product_knowledge": 15,
+        "objection_handling": 10,
+        "crm_discipline": 10,
+        "communication": 10,
+        "years_exp": 5,
+        "tools": 5
+      },
+      "signals": "Calls/emails per day, conversion rate, pipeline generated, demo bookings, Salesforce/Outreach/Salesloft",
+      "score_floor": 15,
+      "fit_thresholds": {
+        "strong": 78,
+        "good": 60,
+        "moderate": 40,
+        "weak": 25
+      },
+      "id": "india-041",
+      "red_flags": "No outbound experience (moderate), No metrics (critical)"
+    },
+    {
+      "role_title": "Pre-Sales / Solutions Consultant",
+      "category": "Sales & Business Development",
+      "weights": {
+        "technical_knowledge": 25,
+        "solution_design": 20,
+        "demo_presentation": 15,
+        "customer_discovery": 10,
+        "rfp_response": 10,
+        "collaboration": 10,
+        "years_exp": 5,
+        "win_rate": 5
+      },
+      "signals": "Demo success rate, technical win rate, RFP responses, solution architecture, POC delivery",
+      "score_floor": 15,
+      "fit_thresholds": {
+        "strong": 78,
+        "good": 60,
+        "moderate": 40,
+        "weak": 25
+      },
+      "id": "india-042",
+      "red_flags": "No technical depth (critical), Only sales no technical (moderate)"
+    },
+    {
+      "role_title": "Channel / Partner Manager",
+      "category": "Sales & Business Development",
+      "weights": {
+        "partner_recruitment": 20,
+        "partner_enablement": 20,
+        "revenue_through_channel": 20,
+        "relationship_mgmt": 10,
+        "program_design": 10,
+        "reporting": 10,
+        "years_exp": 5,
+        "industry": 5
+      },
+      "signals": "Partners managed, channel revenue %, partner satisfaction, enablement programs, deal registration",
+      "score_floor": 15,
+      "fit_thresholds": {
+        "strong": 78,
+        "good": 60,
+        "moderate": 40,
+        "weak": 25
+      },
+      "id": "india-043",
+      "red_flags": "No channel experience (critical), Only direct sales (moderate)"
+    },
+    {
+      "role_title": "Regional Sales Manager",
+      "category": "Sales & Business Development",
+      "weights": {
+        "team_leadership": 20,
+        "revenue_ownership": 25,
+        "territory_strategy": 15,
+        "forecasting": 10,
+        "coaching": 10,
+        "market_development": 10,
+        "years_exp": 5,
+        "team_size": 5
+      },
+      "signals": "Region revenue, team size, quota attainment across team, market share growth, talent development",
+      "score_floor": 15,
+      "fit_thresholds": {
+        "strong": 78,
+        "good": 60,
+        "moderate": 40,
+        "weak": 25
+      },
+      "id": "india-044",
+      "red_flags": "No team management (critical), No P&L responsibility (moderate)"
+    },
+    {
+      "role_title": "Digital Marketing Manager",
+      "category": "Marketing & Content",
+      "weights": {
+        "channel_expertise": 20,
+        "data_analytics": 20,
+        "campaign_mgmt": 15,
+        "content_strategy": 15,
+        "automation": 10,
+        "brand": 10,
+        "years_exp": 5,
+        "budget": 5
+      },
+      "signals": "ROAS, CAC, LTV, GA4, Meta/Google Ads, HubSpot/Marketo, A/B testing, funnel optimization",
+      "score_floor": 15,
+      "fit_thresholds": {
+        "strong": 78,
+        "good": 60,
+        "moderate": 40,
+        "weak": 25
+      },
+      "id": "india-045",
+      "red_flags": "No metrics/results (critical), Only brand no performance (moderate)"
+    },
+    {
+      "role_title": "SEO/SEM Specialist",
+      "category": "Marketing & Content",
+      "weights": {
+        "seo_technical": 25,
+        "sem_campaigns": 20,
+        "analytics": 15,
+        "content_optimization": 15,
+        "tools": 10,
+        "link_building": 5,
+        "years_exp": 5,
+        "results": 5
+      },
+      "signals": "Organic traffic growth %, keyword rankings, Google Ads ROAS, Search Console, Ahrefs/Semrush, CTR",
+      "score_floor": 15,
+      "fit_thresholds": {
+        "strong": 78,
+        "good": 60,
+        "moderate": 40,
+        "weak": 25
+      },
+      "id": "india-046",
+      "red_flags": "No organic traffic results (critical), Only paid no SEO (moderate for SEO role)"
+    },
+    {
+      "role_title": "Content Writer / Strategist",
+      "category": "Marketing & Content",
+      "weights": {
+        "writing_quality": 25,
+        "seo_knowledge": 15,
+        "content_planning": 15,
+        "audience_understanding": 15,
+        "research": 10,
+        "tools": 10,
+        "years_exp": 5,
+        "portfolio": 5
+      },
+      "signals": "Published samples, content calendar, SEO writing, engagement metrics, editorial workflow, CMS platforms",
+      "score_floor": 15,
+      "fit_thresholds": {
+        "strong": 78,
+        "good": 60,
+        "moderate": 40,
+        "weak": 25
+      },
+      "id": "india-047",
+      "red_flags": "No writing samples (critical), No digital/SEO awareness (moderate), Only academic writing (minor)"
+    },
+    {
+      "role_title": "Social Media Manager",
+      "category": "Marketing & Content",
+      "weights": {
+        "platform_expertise": 20,
+        "content_creation": 20,
+        "community_mgmt": 15,
+        "analytics": 15,
+        "paid_social": 10,
+        "trend_awareness": 10,
+        "years_exp": 5,
+        "results": 5
+      },
+      "signals": "Follower growth, engagement rate, content calendar, paid campaign ROAS, community building, tools",
+      "score_floor": 15,
+      "fit_thresholds": {
+        "strong": 78,
+        "good": 60,
+        "moderate": 40,
+        "weak": 25
+      },
+      "id": "india-048",
+      "red_flags": "No brand account management (critical), Only personal social media (moderate)"
+    },
+    {
+      "role_title": "Brand Manager (FMCG)",
+      "category": "Marketing & Content",
+      "weights": {
+        "brand_strategy": 20,
+        "market_research": 15,
+        "campaign_planning": 15,
+        "p_and_l": 15,
+        "agency_mgmt": 10,
+        "consumer_insights": 10,
+        "years_exp": 10,
+        "innovation": 5
+      },
+      "signals": "Brand P&L, market share, Nielsen/IRI data, ATL/BTL campaigns, new product launches, agency management",
+      "score_floor": 15,
+      "fit_thresholds": {
+        "strong": 78,
+        "good": 60,
+        "moderate": 40,
+        "weak": 25
+      },
+      "id": "india-049",
+      "red_flags": "No FMCG brand experience (critical), No P&L ownership (moderate)"
+    },
+    {
+      "role_title": "Performance Marketing Manager",
+      "category": "Marketing & Content",
+      "weights": {
+        "paid_channels": 25,
+        "data_analytics": 20,
+        "budget_optimization": 15,
+        "attribution": 10,
+        "creative_testing": 10,
+        "automation": 10,
+        "years_exp": 5,
+        "results": 5
+      },
+      "signals": "ROAS, CPA, CTR, budget managed, Google/Meta/LinkedIn Ads, attribution models, incrementality testing",
+      "score_floor": 15,
+      "fit_thresholds": {
+        "strong": 78,
+        "good": 60,
+        "moderate": 40,
+        "weak": 25
+      },
+      "id": "india-050",
+      "red_flags": "No paid spend management (critical), No analytics (moderate)"
+    },
+    {
+      "role_title": "Marketing Analyst",
+      "category": "Marketing & Content",
+      "weights": {
+        "data_analysis": 25,
+        "marketing_knowledge": 15,
+        "tools": 15,
+        "reporting": 15,
+        "attribution": 10,
+        "experimentation": 10,
+        "years_exp": 5,
+        "sql": 5
+      },
+      "signals": "SQL, Python/R, Tableau/Power BI, GA4, marketing mix modeling, cohort analysis, funnel analysis",
+      "score_floor": 15,
+      "fit_thresholds": {
+        "strong": 78,
+        "good": 60,
+        "moderate": 40,
+        "weak": 25
+      },
+      "id": "india-051",
+      "red_flags": "No analytics skills (critical), Only qualitative no quantitative (moderate)"
+    },
+    {
+      "role_title": "Product Manager",
+      "category": "Product & Design",
+      "weights": {
+        "strategy": 20,
+        "customer_empathy": 20,
+        "data_driven": 15,
+        "stakeholder": 15,
+        "technical_acumen": 10,
+        "execution": 10,
+        "years_exp": 5,
+        "domain": 5
+      },
+      "signals": "PRD, user stories, A/B testing, Mixpanel/Amplitude, OKRs, competitive analysis, GTM, pricing",
+      "score_floor": 15,
+      "fit_thresholds": {
+        "strong": 78,
+        "good": 60,
+        "moderate": 40,
+        "weak": 25
+      },
+      "id": "india-052",
+      "red_flags": "No shipped products (critical), Only project mgmt (moderate)"
+    },
+    {
+      "role_title": "UX/UI Designer",
+      "category": "Product & Design",
+      "weights": {
+        "visual_design": 20,
+        "ux_research": 20,
+        "prototyping": 15,
+        "design_thinking": 15,
+        "design_systems": 10,
+        "eng_collab": 10,
+        "years_exp": 5,
+        "portfolio": 5
+      },
+      "signals": "Figma, design systems, user research, usability testing, wireframing, accessibility, responsive",
+      "score_floor": 15,
+      "fit_thresholds": {
+        "strong": 78,
+        "good": 60,
+        "moderate": 40,
+        "weak": 25
+      },
+      "id": "india-053",
+      "red_flags": "No portfolio (critical), Only visual no UX (moderate)"
+    },
+    {
+      "role_title": "Product Analyst",
+      "category": "Product & Design",
+      "weights": {
+        "data_analysis": 25,
+        "product_metrics": 20,
+        "experimentation": 15,
+        "sql": 15,
+        "visualization": 10,
+        "stakeholder": 5,
+        "years_exp": 5,
+        "tools": 5
+      },
+      "signals": "SQL, Python, Amplitude/Mixpanel, funnel analysis, retention analysis, A/B testing, Tableau/Looker",
+      "score_floor": 15,
+      "fit_thresholds": {
+        "strong": 78,
+        "good": 60,
+        "moderate": 40,
+        "weak": 25
+      },
+      "id": "india-054",
+      "red_flags": "No SQL (critical), No product context (moderate)"
+    },
+    {
+      "role_title": "Design System Lead",
+      "category": "Product & Design",
+      "weights": {
+        "component_design": 25,
+        "documentation": 15,
+        "frontend_knowledge": 15,
+        "accessibility": 15,
+        "governance": 10,
+        "collaboration": 10,
+        "years_exp": 5,
+        "tools": 5
+      },
+      "signals": "Design tokens, component libraries, Figma, Storybook, a11y standards, versioning, adoption metrics",
+      "score_floor": 15,
+      "fit_thresholds": {
+        "strong": 78,
+        "good": 60,
+        "moderate": 40,
+        "weak": 25
+      },
+      "id": "india-055",
+      "red_flags": "No design system experience (critical), No component thinking (moderate)"
+    },
+    {
+      "role_title": "Technical Recruiter",
+      "category": "HR & People Operations",
+      "weights": {
+        "sourcing": 20,
+        "tech_screening": 20,
+        "pipeline_metrics": 15,
+        "candidate_exp": 15,
+        "closing": 10,
+        "ats_tools": 10,
+        "years_exp": 5,
+        "volume": 5
+      },
+      "signals": "Hires/month, time-to-fill, sourcing mix, offer acceptance rate, tech stack knowledge, ATS proficiency",
+      "score_floor": 15,
+      "fit_thresholds": {
+        "strong": 78,
+        "good": 60,
+        "moderate": 40,
+        "weak": 25
+      },
+      "id": "india-056",
+      "red_flags": "No tech role hiring (critical), Only agency (moderate), No sourcing (moderate)"
+    },
+    {
+      "role_title": "HR Business Partner",
+      "category": "HR & People Operations",
+      "weights": {
+        "strategic_advisory": 20,
+        "employee_relations": 20,
+        "performance_mgmt": 15,
+        "talent_dev": 15,
+        "employment_law": 10,
+        "people_analytics": 10,
+        "years_exp": 5,
+        "business_acumen": 5
+      },
+      "signals": "Headcount supported, engagement scores, attrition reduction, org restructure, ER cases, HRIS",
+      "score_floor": 15,
+      "fit_thresholds": {
+        "strong": 78,
+        "good": 60,
+        "moderate": 40,
+        "weak": 25
+      },
+      "id": "india-057",
+      "red_flags": "Only admin HR (critical), No ER experience (moderate)"
+    },
+    {
+      "role_title": "Talent Acquisition Lead",
+      "category": "HR & People Operations",
+      "weights": {
+        "team_leadership": 20,
+        "strategy": 20,
+        "employer_branding": 15,
+        "metrics": 15,
+        "stakeholder": 10,
+        "tools": 10,
+        "years_exp": 5,
+        "hiring_volume": 5
+      },
+      "signals": "Team size managed, annual hiring volume, cost-per-hire, quality of hire, employer brand initiatives",
+      "score_floor": 15,
+      "fit_thresholds": {
+        "strong": 78,
+        "good": 60,
+        "moderate": 40,
+        "weak": 25
+      },
+      "id": "india-058",
+      "red_flags": "No team management (critical), No strategic hiring (moderate)"
+    },
+    {
+      "role_title": "L&D Manager",
+      "category": "HR & People Operations",
+      "weights": {
+        "program_design": 25,
+        "delivery": 20,
+        "needs_analysis": 15,
+        "measurement": 10,
+        "technology": 10,
+        "stakeholder": 10,
+        "years_exp": 5,
+        "budget": 5
+      },
+      "signals": "Programs designed, participants trained, completion rates, skill uplift metrics, LMS, e-learning",
+      "score_floor": 15,
+      "fit_thresholds": {
+        "strong": 78,
+        "good": 60,
+        "moderate": 40,
+        "weak": 25
+      },
+      "id": "india-059",
+      "red_flags": "No program design (critical), Only facilitation no strategy (moderate)"
+    },
+    {
+      "role_title": "Compensation & Benefits Specialist",
+      "category": "HR & People Operations",
+      "weights": {
+        "comp_benchmarking": 25,
+        "benefits_design": 20,
+        "data_analysis": 15,
+        "regulatory": 10,
+        "tools": 10,
+        "communication": 10,
+        "years_exp": 5,
+        "certifications": 5
+      },
+      "signals": "Salary surveys, pay band design, benefits benchmarking, ESOP/RSU admin, payroll, tax compliance",
+      "score_floor": 15,
+      "fit_thresholds": {
+        "strong": 78,
+        "good": 60,
+        "moderate": 40,
+        "weak": 25
+      },
+      "id": "india-060",
+      "red_flags": "No comp experience (critical), Only payroll processing (moderate)"
+    },
+    {
+      "role_title": "HR Generalist",
+      "category": "HR & People Operations",
+      "weights": {
+        "employee_lifecycle": 20,
+        "compliance": 15,
+        "recruitment": 15,
+        "engagement": 15,
+        "hris": 10,
+        "communication": 10,
+        "years_exp": 10,
+        "labour_law": 5
+      },
+      "signals": "Onboarding, exit management, PF/ESI, Shops & Establishments Act, POSH, attendance, HRIS systems",
+      "score_floor": 15,
+      "fit_thresholds": {
+        "strong": 78,
+        "good": 60,
+        "moderate": 40,
+        "weak": 25
+      },
+      "id": "india-061",
+      "red_flags": "No HR experience (critical), Only recruitment no generalist (moderate)"
+    },
+    {
+      "role_title": "Customer Success Manager",
+      "category": "Operations & Customer Success",
+      "weights": {
+        "retention": 20,
+        "relationship": 20,
+        "onboarding": 15,
+        "expansion": 15,
+        "product_knowledge": 10,
+        "health_scoring": 10,
+        "years_exp": 5,
+        "portfolio": 5
+      },
+      "signals": "NRR %, churn reduction, ARR managed, QBR cadence, Gainsight/Totango, onboarding playbooks",
+      "score_floor": 15,
+      "fit_thresholds": {
+        "strong": 78,
+        "good": 60,
+        "moderate": 40,
+        "weak": 25
+      },
+      "id": "india-062",
+      "red_flags": "No retention metrics (critical), Only support (moderate)"
+    },
+    {
+      "role_title": "Operations Manager",
+      "category": "Operations & Customer Success",
+      "weights": {
+        "process_optimization": 20,
+        "team_mgmt": 20,
+        "data_reporting": 15,
+        "cross_functional": 15,
+        "project_execution": 10,
+        "tools": 10,
+        "years_exp": 5,
+        "budget": 5
+      },
+      "signals": "Team size, efficiency gains %, SOP creation, automation, vendor management, KPI dashboards",
+      "score_floor": 15,
+      "fit_thresholds": {
+        "strong": 78,
+        "good": 60,
+        "moderate": 40,
+        "weak": 25
+      },
+      "id": "india-063",
+      "red_flags": "No team management (moderate), No process improvement (critical)"
+    },
+    {
+      "role_title": "BPO / Call Center Team Lead",
+      "category": "Operations & Customer Success",
+      "weights": {
+        "team_performance": 25,
+        "quality_monitoring": 15,
+        "workforce_mgmt": 15,
+        "customer_handling": 15,
+        "reporting": 10,
+        "training": 10,
+        "years_exp": 5,
+        "tools": 5
+      },
+      "signals": "Team size, AHT, CSAT, FCR, shrinkage %, attrition management, CRM, workforce scheduling",
+      "score_floor": 15,
+      "fit_thresholds": {
+        "strong": 78,
+        "good": 60,
+        "moderate": 40,
+        "weak": 25
+      },
+      "id": "india-064",
+      "red_flags": "No team lead experience (critical), No voice process (moderate for voice roles)"
+    },
+    {
+      "role_title": "Process Excellence Lead",
+      "category": "Operations & Customer Success",
+      "weights": {
+        "lean_six_sigma": 25,
+        "process_mapping": 20,
+        "data_analytics": 15,
+        "change_mgmt": 10,
+        "automation": 10,
+        "stakeholder": 10,
+        "years_exp": 5,
+        "certifications": 5
+      },
+      "signals": "Six Sigma belt, DMAIC projects, cost savings, cycle time reduction, VSM, Minitab, process automation",
+      "score_floor": 15,
+      "fit_thresholds": {
+        "strong": 78,
+        "good": 60,
+        "moderate": 40,
+        "weak": 25
+      },
+      "id": "india-065",
+      "red_flags": "No Six Sigma certification (moderate), No project evidence (critical)"
+    },
+    {
+      "role_title": "Logistics / Warehouse Manager",
+      "category": "Operations & Customer Success",
+      "weights": {
+        "warehouse_ops": 25,
+        "team_mgmt": 15,
+        "inventory_mgmt": 15,
+        "safety": 10,
+        "cost_control": 10,
+        "technology": 10,
+        "years_exp": 10,
+        "compliance": 5
+      },
+      "signals": "Warehouse size (sq ft), throughput, inventory accuracy, WMS, last mile, fleet management, safety record",
+      "score_floor": 15,
+      "fit_thresholds": {
+        "strong": 78,
+        "good": 60,
+        "moderate": 40,
+        "weak": 25
+      },
+      "id": "india-066",
+      "red_flags": "No warehouse management (critical), No inventory experience (moderate)"
+    },
+    {
+      "role_title": "Chartered Accountant (CA)",
+      "category": "Finance & Accounting",
+      "weights": {
+        "audit": 20,
+        "taxation": 20,
+        "financial_reporting": 15,
+        "advisory": 10,
+        "compliance": 15,
+        "tools": 10,
+        "years_exp": 5,
+        "specialization": 5
+      },
+      "signals": "CA qualification, articleship, tax planning, GST, audit engagements, Ind AS/IFRS, Tally/SAP FICO",
+      "score_floor": 15,
+      "fit_thresholds": {
+        "strong": 78,
+        "good": 60,
+        "moderate": 40,
+        "weak": 25
+      },
+      "id": "india-067",
+      "red_flags": "No CA qualification (critical), No articleship (critical)"
+    },
+    {
+      "role_title": "Accounts Payable/Receivable Manager",
+      "category": "Finance & Accounting",
+      "weights": {
+        "process_mgmt": 20,
+        "reconciliation": 20,
+        "vendor_customer_mgmt": 15,
+        "compliance": 15,
+        "automation": 10,
+        "reporting": 10,
+        "years_exp": 5,
+        "tools": 5
+      },
+      "signals": "Invoice volume, DSO/DPO, aging management, reconciliation accuracy, ERP (SAP/Oracle), TDS compliance",
+      "score_floor": 15,
+      "fit_thresholds": {
+        "strong": 78,
+        "good": 60,
+        "moderate": 40,
+        "weak": 25
+      },
+      "id": "india-068",
+      "red_flags": "No AP/AR experience (critical), No ERP (moderate)"
+    },
+    {
+      "role_title": "Tax Consultant / GST Specialist",
+      "category": "Finance & Accounting",
+      "weights": {
+        "gst_expertise": 25,
+        "direct_tax": 20,
+        "compliance": 15,
+        "advisory": 10,
+        "tools": 10,
+        "litigation": 10,
+        "years_exp": 5,
+        "certifications": 5
+      },
+      "signals": "GST returns, TDS/TCS, income tax, transfer pricing, tax planning, GST portal, Clear/Tally, tax audits",
+      "score_floor": 15,
+      "fit_thresholds": {
+        "strong": 78,
+        "good": 60,
+        "moderate": 40,
+        "weak": 25
+      },
+      "id": "india-069",
+      "red_flags": "No GST knowledge (critical for GST role), No taxation experience (critical)"
+    },
+    {
+      "role_title": "Internal Auditor",
+      "category": "Finance & Accounting",
+      "weights": {
+        "audit_methodology": 25,
+        "risk_assessment": 20,
+        "compliance": 15,
+        "reporting": 10,
+        "data_analytics": 10,
+        "domain_knowledge": 10,
+        "years_exp": 5,
+        "certifications": 5
+      },
+      "signals": "Audit engagements completed, risk matrices, SOX compliance, CARO, internal controls, ACL/IDEA",
+      "score_floor": 15,
+      "fit_thresholds": {
+        "strong": 78,
+        "good": 60,
+        "moderate": 40,
+        "weak": 25
+      },
+      "id": "india-070",
+      "red_flags": "No audit experience (critical), Only external audit no internal (minor)"
+    },
+    {
+      "role_title": "Treasury Analyst",
+      "category": "Finance & Accounting",
+      "weights": {
+        "cash_management": 25,
+        "forex": 20,
+        "banking_relationships": 15,
+        "risk_hedging": 10,
+        "reporting": 10,
+        "tools": 10,
+        "years_exp": 5,
+        "compliance": 5
+      },
+      "signals": "Cash flow forecasting, FX hedging, bank facility management, FEMA compliance, TMS, fund management",
+      "score_floor": 15,
+      "fit_thresholds": {
+        "strong": 78,
+        "good": 60,
+        "moderate": 40,
+        "weak": 25
+      },
+      "id": "india-071",
+      "red_flags": "No treasury experience (critical), No forex exposure (moderate for MNC roles)"
+    },
+    {
+      "role_title": "Financial Controller",
+      "category": "Finance & Accounting",
+      "weights": {
+        "financial_reporting": 20,
+        "team_mgmt": 15,
+        "compliance": 15,
+        "audit_coordination": 15,
+        "budgeting": 10,
+        "process_improvement": 10,
+        "years_exp": 10,
+        "certifications": 5
+      },
+      "signals": "Close cycle time, team size, audit observations, Ind AS/IFRS, ERP implementation, MIS reporting",
+      "score_floor": 15,
+      "fit_thresholds": {
+        "strong": 78,
+        "good": 60,
+        "moderate": 40,
+        "weak": 25
+      },
+      "id": "india-072",
+      "red_flags": "No controllership experience (critical), No CA/CMA (moderate)"
+    },
+    {
+      "role_title": "Corporate Lawyer / Legal Counsel",
+      "category": "Legal & Compliance",
+      "weights": {
+        "contract_drafting": 25,
+        "regulatory": 20,
+        "litigation": 10,
+        "corporate_governance": 15,
+        "negotiation": 10,
+        "domain": 10,
+        "years_exp": 5,
+        "bar_council": 5
+      },
+      "signals": "Contract volume, deal support, Companies Act, FEMA, arbitration, M&A, IP, data privacy, litigation",
+      "score_floor": 15,
+      "fit_thresholds": {
+        "strong": 78,
+        "good": 60,
+        "moderate": 40,
+        "weak": 25
+      },
+      "id": "india-073",
+      "red_flags": "No Bar Council enrollment (critical), No corporate law (moderate for in-house)"
+    },
+    {
+      "role_title": "Company Secretary (CS)",
+      "category": "Legal & Compliance",
+      "weights": {
+        "compliance": 25,
+        "board_management": 20,
+        "regulatory_filings": 15,
+        "corporate_governance": 15,
+        "secretarial_audit": 10,
+        "stakeholder": 5,
+        "years_exp": 5,
+        "qualification": 5
+      },
+      "signals": "ICSI qualification, MCA filings, board minutes, ROC compliance, SEBI LODR, annual returns",
+      "score_floor": 15,
+      "fit_thresholds": {
+        "strong": 78,
+        "good": 60,
+        "moderate": 40,
+        "weak": 25
+      },
+      "id": "india-074",
+      "red_flags": "No CS qualification (critical), No listed company experience (moderate for listed co roles)"
+    },
+    {
+      "role_title": "Data Privacy / DPO",
+      "category": "Legal & Compliance",
+      "weights": {
+        "privacy_frameworks": 25,
+        "dpia_management": 20,
+        "regulatory": 15,
+        "technical_understanding": 15,
+        "policy_development": 10,
+        "training": 5,
+        "years_exp": 5,
+        "certifications": 5
+      },
+      "signals": "DPDP Act, GDPR, DPIA, consent management, data mapping, privacy by design, CIPP/E, breach response",
+      "score_floor": 15,
+      "fit_thresholds": {
+        "strong": 78,
+        "good": 60,
+        "moderate": 40,
+        "weak": 25
+      },
+      "id": "india-075",
+      "red_flags": "No privacy experience (critical), No knowledge of DPDP Act (critical for India roles)"
+    },
+    {
+      "role_title": "Contract Manager",
+      "category": "Legal & Compliance",
+      "weights": {
+        "contract_lifecycle": 25,
+        "negotiation": 20,
+        "risk_identification": 15,
+        "compliance": 10,
+        "tools": 10,
+        "stakeholder": 10,
+        "years_exp": 5,
+        "volume": 5
+      },
+      "signals": "Contract volume managed, CLM tools, negotiation savings, turnaround time, template standardization",
+      "score_floor": 15,
+      "fit_thresholds": {
+        "strong": 78,
+        "good": 60,
+        "moderate": 40,
+        "weak": 25
+      },
+      "id": "india-076",
+      "red_flags": "No contract management (critical), Only admin no negotiation (moderate)"
+    },
+    {
+      "role_title": "IP Specialist",
+      "category": "Legal & Compliance",
+      "weights": {
+        "ip_portfolio": 25,
+        "patent_trademark": 20,
+        "prosecution": 15,
+        "litigation": 10,
+        "licensing": 10,
+        "domain": 10,
+        "years_exp": 5,
+        "certifications": 5
+      },
+      "signals": "Patent filings, trademark registrations, IP portfolio size, Indian Patent Office, WIPO, IP valuation",
+      "score_floor": 15,
+      "fit_thresholds": {
+        "strong": 78,
+        "good": 60,
+        "moderate": 40,
+        "weak": 25
+      },
+      "id": "india-077",
+      "red_flags": "No IP experience (critical), Only theoretical (moderate)"
+    },
+    {
+      "role_title": "Technical Scrum Master",
+      "category": "Scrum, Agile & Project Management",
+      "weights": {
+        "technical_depth": 20,
+        "agile_mastery": 15,
+        "cicd_devops": 15,
+        "startup_pace": 15,
+        "stakeholder": 10,
+        "team_scale": 5,
+        "sm_years": 15,
+        "certifications": 5
+      },
+      "signals": "Docker, CI/CD, cloud, coding background, API testing, system architecture understanding",
+      "score_floor": 15,
+      "fit_thresholds": {
+        "strong": 78,
+        "good": 60,
+        "moderate": 40,
+        "weak": 25
+      },
+      "id": "india-078",
+      "red_flags": "No technical background (critical), Only ceremonies (moderate)"
+    },
+    {
+      "role_title": "Enterprise Scrum Master",
+      "category": "Scrum, Agile & Project Management",
+      "weights": {
+        "stakeholder": 25,
+        "team_scale": 20,
+        "agile_mastery": 15,
+        "sm_years": 15,
+        "certifications": 10,
+        "governance": 10,
+        "technical": 3,
+        "startup_pace": 2
+      },
+      "signals": "SAFe, PI Planning, ART coordination, executive reporting, compliance, cross-functional governance",
+      "score_floor": 15,
+      "fit_thresholds": {
+        "strong": 78,
+        "good": 60,
+        "moderate": 40,
+        "weak": 25
+      },
+      "id": "india-079",
+      "red_flags": "Single small team (moderate), No scaled Agile (moderate)"
+    },
+    {
+      "role_title": "Project Manager (IT)",
+      "category": "Scrum, Agile & Project Management",
+      "weights": {
+        "delivery_track_record": 20,
+        "stakeholder": 15,
+        "risk_mgmt": 15,
+        "budget_mgmt": 15,
+        "tools": 10,
+        "methodology": 10,
+        "years_exp": 10,
+        "certifications": 5
+      },
+      "signals": "Projects delivered, budget managed, team size, on-time delivery %, PMP/PRINCE2, MS Project, JIRA",
+      "score_floor": 15,
+      "fit_thresholds": {
+        "strong": 78,
+        "good": 60,
+        "moderate": 40,
+        "weak": 25
+      },
+      "id": "india-080",
+      "red_flags": "No project delivery (critical), Only coordination no ownership (moderate)"
+    },
+    {
+      "role_title": "Program Manager",
+      "category": "Scrum, Agile & Project Management",
+      "weights": {
+        "multi_project": 20,
+        "strategy_alignment": 20,
+        "stakeholder": 15,
+        "risk_governance": 15,
+        "budget": 10,
+        "reporting": 10,
+        "years_exp": 5,
+        "team_influence": 5
+      },
+      "signals": "Program size ($), projects managed simultaneously, cross-org coordination, OKR alignment, executive reporting",
+      "score_floor": 15,
+      "fit_thresholds": {
+        "strong": 78,
+        "good": 60,
+        "moderate": 40,
+        "weak": 25
+      },
+      "id": "india-081",
+      "red_flags": "No multi-project experience (critical), Only single project (moderate)"
+    },
+    {
+      "role_title": "Agile Coach",
+      "category": "Scrum, Agile & Project Management",
+      "weights": {
+        "coaching": 25,
+        "transformation": 20,
+        "frameworks": 15,
+        "stakeholder": 15,
+        "metrics": 10,
+        "training": 5,
+        "years_exp": 5,
+        "certifications": 5
+      },
+      "signals": "Teams coached, Agile maturity improvement, transformation roadmaps, workshop facilitation, SAFe/LeSS",
+      "score_floor": 15,
+      "fit_thresholds": {
+        "strong": 78,
+        "good": 60,
+        "moderate": 40,
+        "weak": 25
+      },
+      "id": "india-082",
+      "red_flags": "Less than 5yr SM experience (moderate), No coaching evidence (critical)"
+    },
+    {
+      "role_title": "Delivery Manager",
+      "category": "Scrum, Agile & Project Management",
+      "weights": {
+        "delivery_ownership": 25,
+        "client_mgmt": 20,
+        "team_leadership": 15,
+        "financials": 10,
+        "quality": 10,
+        "escalation": 10,
+        "years_exp": 5,
+        "domain": 5
+      },
+      "signals": "Account size, team size, utilization, on-time delivery, CSAT, revenue recognition, SOW management",
+      "score_floor": 15,
+      "fit_thresholds": {
+        "strong": 78,
+        "good": 60,
+        "moderate": 40,
+        "weak": 25
+      },
+      "id": "india-083",
+      "red_flags": "No delivery ownership (critical), No client-facing (moderate), No P&L (moderate)"
+    },
+    {
+      "role_title": "Engineering Manager",
+      "category": "Leadership & Executive",
+      "weights": {
+        "people_mgmt": 25,
+        "tech_credibility": 20,
+        "delivery": 15,
+        "hiring": 15,
+        "cross_functional": 10,
+        "process": 10,
+        "years_exp": 5
+      },
+      "signals": "Team size, engineers hired, promotions, attrition, shipped products, architecture reviews",
+      "score_floor": 15,
+      "fit_thresholds": {
+        "strong": 78,
+        "good": 60,
+        "moderate": 40,
+        "weak": 25
+      },
+      "id": "india-084",
+      "red_flags": "No direct reports (critical), No hiring (moderate)"
+    },
+    {
+      "role_title": "Chief of Staff",
+      "category": "Leadership & Executive",
+      "weights": {
+        "strategic_execution": 25,
+        "cross_functional": 20,
+        "communication": 20,
+        "operational_excellence": 15,
+        "data_analysis": 10,
+        "years_exp": 5,
+        "industry": 5
+      },
+      "signals": "Executive-level work, board materials, strategic planning, company-wide initiatives, program management",
+      "score_floor": 15,
+      "fit_thresholds": {
+        "strong": 78,
+        "good": 60,
+        "moderate": 40,
+        "weak": 25
+      },
+      "id": "india-085",
+      "red_flags": "Only admin not strategic (critical), No executive interaction (critical)"
+    },
+    {
+      "role_title": "VP of Engineering",
+      "category": "Leadership & Executive",
+      "weights": {
+        "org_building": 25,
+        "tech_strategy": 20,
+        "delivery_scale": 15,
+        "culture": 10,
+        "business_alignment": 10,
+        "industry_influence": 5,
+        "years_exp": 10,
+        "budget": 5
+      },
+      "signals": "Org size (50+), tech stack decisions, multi-team delivery, hiring pipeline, engineering brand, OKRs",
+      "score_floor": 15,
+      "fit_thresholds": {
+        "strong": 78,
+        "good": 60,
+        "moderate": 40,
+        "weak": 25
+      },
+      "id": "india-086",
+      "red_flags": "Managed <20 engineers (moderate), No strategic influence (critical)"
+    },
+    {
+      "role_title": "CTO / VP Technology",
+      "category": "Leadership & Executive",
+      "weights": {
+        "tech_vision": 25,
+        "architecture": 20,
+        "team_building": 15,
+        "business_strategy": 15,
+        "innovation": 10,
+        "stakeholder": 5,
+        "years_exp": 5,
+        "board_exposure": 5
+      },
+      "signals": "Tech stack decisions, patents, architecture scale, team size, funding/board interaction, vendor strategy",
+      "score_floor": 15,
+      "fit_thresholds": {
+        "strong": 78,
+        "good": 60,
+        "moderate": 40,
+        "weak": 25
+      },
+      "id": "india-087",
+      "red_flags": "No leadership experience (critical), Only IC (critical for CTO)"
+    },
+    {
+      "role_title": "General Manager",
+      "category": "Leadership & Executive",
+      "weights": {
+        "pnl_ownership": 25,
+        "cross_functional_leadership": 20,
+        "strategy": 15,
+        "team_building": 15,
+        "market_knowledge": 10,
+        "stakeholder": 5,
+        "years_exp": 5,
+        "revenue": 5
+      },
+      "signals": "P&L size, revenue growth, headcount, market share, cost optimization, new market entry",
+      "score_floor": 15,
+      "fit_thresholds": {
+        "strong": 78,
+        "good": 60,
+        "moderate": 40,
+        "weak": 25
+      },
+      "id": "india-088",
+      "red_flags": "No P&L (critical), No cross-functional leadership (critical)"
+    },
+    {
+      "role_title": "COO / Head of Operations",
+      "category": "Leadership & Executive",
+      "weights": {
+        "operational_excellence": 25,
+        "scale_mgmt": 20,
+        "process_design": 15,
+        "team_leadership": 15,
+        "financial_acumen": 10,
+        "technology": 5,
+        "years_exp": 5,
+        "board": 5
+      },
+      "signals": "Org size, operational metrics, cost savings, process redesign, scale management, board reporting",
+      "score_floor": 15,
+      "fit_thresholds": {
+        "strong": 78,
+        "good": 60,
+        "moderate": 40,
+        "weak": 25
+      },
+      "id": "india-089",
+      "red_flags": "No operational leadership (critical), Only single function (moderate)"
+    },
+    {
+      "role_title": "Academic Counsellor",
+      "category": "Education & EdTech",
+      "weights": {
+        "student_engagement": 25,
+        "program_knowledge": 20,
+        "conversion": 15,
+        "communication": 15,
+        "empathy": 10,
+        "tools": 5,
+        "years_exp": 5,
+        "targets": 5
+      },
+      "signals": "Conversion rate, student satisfaction, enrollment numbers, follow-up cadence, CRM, program expertise",
+      "score_floor": 15,
+      "fit_thresholds": {
+        "strong": 78,
+        "good": 60,
+        "moderate": 40,
+        "weak": 25
+      },
+      "id": "india-090",
+      "red_flags": "No counselling experience (moderate), No education domain (moderate)"
+    },
+    {
+      "role_title": "Instructional Designer",
+      "category": "Education & EdTech",
+      "weights": {
+        "course_design": 25,
+        "learning_theory": 20,
+        "multimedia": 15,
+        "assessment_design": 10,
+        "lms_tools": 10,
+        "content_writing": 10,
+        "years_exp": 5,
+        "portfolio": 5
+      },
+      "signals": "Courses designed, learner completion rates, Articulate/Captivate, SCORM, ADDIE/SAM, video editing",
+      "score_floor": 15,
+      "fit_thresholds": {
+        "strong": 78,
+        "good": 60,
+        "moderate": 40,
+        "weak": 25
+      },
+      "id": "india-091",
+      "red_flags": "No course design (critical), Only content writing no design (moderate)"
+    },
+    {
+      "role_title": "EdTech Product Manager",
+      "category": "Education & EdTech",
+      "weights": {
+        "product_strategy": 20,
+        "learning_outcomes": 20,
+        "data_driven": 15,
+        "technical": 10,
+        "stakeholder": 10,
+        "user_research": 10,
+        "years_exp": 10,
+        "domain": 5
+      },
+      "signals": "Learning metrics, course completion, NPS, A/B testing, LMS integration, pedagogy understanding",
+      "score_floor": 15,
+      "fit_thresholds": {
+        "strong": 78,
+        "good": 60,
+        "moderate": 40,
+        "weak": 25
+      },
+      "id": "india-092",
+      "red_flags": "No edtech domain (moderate), No product experience (critical)"
+    },
+    {
+      "role_title": "Corporate Trainer / L&D Facilitator",
+      "category": "Education & EdTech",
+      "weights": {
+        "facilitation": 25,
+        "content_development": 20,
+        "audience_adaptation": 15,
+        "assessment": 10,
+        "technology": 10,
+        "domain_expertise": 10,
+        "years_exp": 5,
+        "certifications": 5
+      },
+      "signals": "Training hours delivered, participant feedback, topics covered, TTT certification, virtual delivery",
+      "score_floor": 15,
+      "fit_thresholds": {
+        "strong": 78,
+        "good": 60,
+        "moderate": 40,
+        "weak": 25
+      },
+      "id": "india-093",
+      "red_flags": "No facilitation experience (critical), Only slide creation (moderate)"
+    },
+    {
+      "role_title": "Civil Services (IAS/IPS/IFS)",
+      "category": "Government & Public Sector",
+      "weights": {
+        "upsc_qualification": 30,
+        "administrative_exp": 20,
+        "domain_knowledge": 15,
+        "leadership": 10,
+        "communication": 10,
+        "ethics": 10,
+        "years_exp": 5
+      },
+      "signals": "UPSC rank, service allocation, postings held, policy contributions, district administration",
+      "score_floor": 15,
+      "fit_thresholds": {
+        "strong": 78,
+        "good": 60,
+        "moderate": 40,
+        "weak": 25
+      },
+      "id": "india-094",
+      "red_flags": "No UPSC qualification (critical), No administrative experience (critical for lateral)"
+    },
+    {
+      "role_title": "PSU Manager / Executive",
+      "category": "Government & Public Sector",
+      "weights": {
+        "domain_expertise": 20,
+        "govt_processes": 20,
+        "technical_skills": 15,
+        "leadership": 15,
+        "compliance": 10,
+        "project_mgmt": 10,
+        "years_exp": 5,
+        "gate_qualification": 5
+      },
+      "signals": "GATE score, PSU exam qualification, government procurement, DPR, project execution, vigilance",
+      "score_floor": 15,
+      "fit_thresholds": {
+        "strong": 78,
+        "good": 60,
+        "moderate": 40,
+        "weak": 25
+      },
+      "id": "india-095",
+      "red_flags": "No PSU exam qualification (critical for direct), No government process knowledge (moderate)"
+    },
+    {
+      "role_title": "Govt Project Coordinator",
+      "category": "Government & Public Sector",
+      "weights": {
+        "project_mgmt": 20,
+        "govt_procedures": 20,
+        "stakeholder": 15,
+        "documentation": 15,
+        "monitoring": 10,
+        "compliance": 10,
+        "years_exp": 5,
+        "domain": 5
+      },
+      "signals": "Govt scheme implementation, DPR preparation, GFR compliance, MIS reporting, PM Gati Shakti, GeM",
+      "score_floor": 15,
+      "fit_thresholds": {
+        "strong": 78,
+        "good": 60,
+        "moderate": 40,
+        "weak": 25
+      },
+      "id": "india-096",
+      "red_flags": "No government project experience (critical), No documentation skills (moderate)"
+    },
+    {
+      "role_title": "Defence Civilian Staff",
+      "category": "Government & Public Sector",
+      "weights": {
+        "security_clearance": 25,
+        "technical_skills": 20,
+        "documentation": 15,
+        "protocol": 15,
+        "compliance": 10,
+        "physical_fitness": 5,
+        "years_exp": 5,
+        "qualification": 5
+      },
+      "signals": "Security clearance, defence procurement, CCS rules, defence accounting, stores management, NCC",
+      "score_floor": 15,
+      "fit_thresholds": {
+        "strong": 78,
+        "good": 60,
+        "moderate": 40,
+        "weak": 25
+      },
+      "id": "india-097",
+      "red_flags": "No security clearance eligibility (critical), No defence familiarity (moderate)"
+    },
+    {
+      "role_title": "Site Engineer (Civil)",
+      "category": "Real Estate & Infrastructure",
+      "weights": {
+        "construction_knowledge": 25,
+        "quality_control": 20,
+        "safety": 15,
+        "project_coordination": 10,
+        "estimation": 10,
+        "tools": 10,
+        "years_exp": 5,
+        "certifications": 5
+      },
+      "signals": "Projects executed, RCC/structural, IS codes, AutoCAD, STAAD, site supervision, BOQ, RERA compliance",
+      "score_floor": 15,
+      "fit_thresholds": {
+        "strong": 78,
+        "good": 60,
+        "moderate": 40,
+        "weak": 25
+      },
+      "id": "india-098",
+      "red_flags": "No site experience (critical), Only design no construction (moderate)"
+    },
+    {
+      "role_title": "Project Manager (Construction)",
+      "category": "Real Estate & Infrastructure",
+      "weights": {
+        "project_delivery": 25,
+        "budget_mgmt": 15,
+        "team_mgmt": 15,
+        "safety_compliance": 10,
+        "client_mgmt": 10,
+        "planning": 10,
+        "years_exp": 10,
+        "certifications": 5
+      },
+      "signals": "Project value (Cr), on-time delivery, team size, safety record, Primavera/MS Project, RERA, PMC",
+      "score_floor": 15,
+      "fit_thresholds": {
+        "strong": 78,
+        "good": 60,
+        "moderate": 40,
+        "weak": 25
+      },
+      "id": "india-099",
+      "red_flags": "No construction project management (critical), No budget ownership (moderate)"
+    },
+    {
+      "role_title": "Real Estate Sales Manager",
+      "category": "Real Estate & Infrastructure",
+      "weights": {
+        "sales_performance": 25,
+        "market_knowledge": 20,
+        "team_leadership": 15,
+        "client_mgmt": 15,
+        "regulatory": 10,
+        "digital_marketing": 5,
+        "years_exp": 5,
+        "network": 5
+      },
+      "signals": "Units sold, revenue generated, team size, RERA knowledge, CRM, site visits to conversion ratio",
+      "score_floor": 15,
+      "fit_thresholds": {
+        "strong": 78,
+        "good": 60,
+        "moderate": 40,
+        "weak": 25
+      },
+      "id": "india-100",
+      "red_flags": "No real estate sales (critical), No RERA knowledge (moderate)"
+    },
+    {
+      "role_title": "Urban Planner",
+      "category": "Real Estate & Infrastructure",
+      "weights": {
+        "planning_frameworks": 25,
+        "gis_tools": 20,
+        "regulatory": 15,
+        "stakeholder": 10,
+        "environmental": 10,
+        "data_analysis": 10,
+        "years_exp": 5,
+        "qualifications": 5
+      },
+      "signals": "Master plans, GIS/AutoCAD, development control rules, EIA, smart city projects, AMRUT, PMAY",
+      "score_floor": 15,
+      "fit_thresholds": {
+        "strong": 78,
+        "good": 60,
+        "moderate": 40,
+        "weak": 25
+      },
+      "id": "india-101",
+      "red_flags": "No urban planning qualification (critical), No GIS (moderate)"
+    },
+    {
+      "role_title": "MEP Engineer",
+      "category": "Real Estate & Infrastructure",
+      "weights": {
+        "mep_design": 25,
+        "project_coordination": 20,
+        "codes_standards": 15,
+        "vendor_mgmt": 10,
+        "bim": 10,
+        "commissioning": 10,
+        "years_exp": 5,
+        "certifications": 5
+      },
+      "signals": "HVAC/electrical/plumbing design, Revit MEP, AutoCAD MEP, NBC compliance, IGBC/LEED, BOQ",
+      "score_floor": 15,
+      "fit_thresholds": {
+        "strong": 78,
+        "good": 60,
+        "moderate": 40,
+        "weak": 25
+      },
+      "id": "india-102",
+      "red_flags": "No MEP project experience (critical), Only single discipline (moderate for senior)"
+    },
+    {
+      "role_title": "Category Manager",
+      "category": "Retail, E-commerce & D2C",
+      "weights": {
+        "category_strategy": 25,
+        "vendor_mgmt": 20,
+        "data_analytics": 15,
+        "pricing": 10,
+        "merchandising": 10,
+        "p_and_l": 10,
+        "years_exp": 5,
+        "domain": 5
+      },
+      "signals": "Category GMV/revenue, assortment width, margin improvement, vendor onboarding, pricing strategy",
+      "score_floor": 15,
+      "fit_thresholds": {
+        "strong": 78,
+        "good": 60,
+        "moderate": 40,
+        "weak": 25
+      },
+      "id": "india-103",
+      "red_flags": "No category ownership (critical), No e-commerce (moderate for e-com roles)"
+    },
+    {
+      "role_title": "Merchandiser",
+      "category": "Retail, E-commerce & D2C",
+      "weights": {
+        "product_selection": 20,
+        "trend_analysis": 20,
+        "vendor_relations": 15,
+        "inventory_planning": 15,
+        "pricing": 10,
+        "visual_merchandising": 10,
+        "years_exp": 5,
+        "domain": 5
+      },
+      "signals": "Sell-through rate, markdown %, OTB planning, trend forecasting, retail math, POS/ERP systems",
+      "score_floor": 15,
+      "fit_thresholds": {
+        "strong": 78,
+        "good": 60,
+        "moderate": 40,
+        "weak": 25
+      },
+      "id": "india-104",
+      "red_flags": "No merchandising experience (critical), Only store operations (moderate)"
+    },
+    {
+      "role_title": "E-commerce Manager",
+      "category": "Retail, E-commerce & D2C",
+      "weights": {
+        "marketplace_mgmt": 20,
+        "performance_marketing": 15,
+        "conversion_optimization": 15,
+        "operations": 15,
+        "analytics": 15,
+        "catalog": 10,
+        "years_exp": 5,
+        "revenue": 5
+      },
+      "signals": "GMV managed, conversion rate, AOV, marketplace rankings, SEO, paid ads, Shopify/WooCommerce",
+      "score_floor": 15,
+      "fit_thresholds": {
+        "strong": 78,
+        "good": 60,
+        "moderate": 40,
+        "weak": 25
+      },
+      "id": "india-105",
+      "red_flags": "No e-commerce experience (critical), Only physical retail (moderate)"
+    },
+    {
+      "role_title": "Store Manager",
+      "category": "Retail, E-commerce & D2C",
+      "weights": {
+        "store_operations": 20,
+        "team_mgmt": 20,
+        "sales_targets": 20,
+        "customer_experience": 10,
+        "inventory": 10,
+        "visual_merchandising": 10,
+        "years_exp": 5,
+        "compliance": 5
+      },
+      "signals": "Store revenue, footfall conversion, team size, shrinkage rate, mystery shopping score, VM compliance",
+      "score_floor": 15,
+      "fit_thresholds": {
+        "strong": 78,
+        "good": 60,
+        "moderate": 40,
+        "weak": 25
+      },
+      "id": "india-106",
+      "red_flags": "No retail store management (critical), No team management (moderate)"
+    },
+    {
+      "role_title": "Quick Commerce Ops Manager",
+      "category": "Retail, E-commerce & D2C",
+      "weights": {
+        "dark_store_ops": 20,
+        "delivery_logistics": 20,
+        "demand_planning": 15,
+        "team_mgmt": 15,
+        "technology": 10,
+        "cost_control": 10,
+        "years_exp": 5,
+        "scale": 5
+      },
+      "signals": "Delivery time metrics, order volume, dark store efficiency, rider management, Blinkit/Zepto/Swiggy experience",
+      "score_floor": 15,
+      "fit_thresholds": {
+        "strong": 78,
+        "good": 60,
+        "moderate": 40,
+        "weak": 25
+      },
+      "id": "india-107",
+      "red_flags": "No q-commerce/logistics (critical), No operations management (moderate)"
+    },
+    {
+      "role_title": "Supply Chain Analyst",
+      "category": "Logistics & Supply Chain",
+      "weights": {
+        "demand_forecasting": 20,
+        "inventory_analytics": 20,
+        "data_tools": 15,
+        "process_improvement": 15,
+        "reporting": 10,
+        "erp": 10,
+        "years_exp": 5,
+        "domain": 5
+      },
+      "signals": "Forecast accuracy, inventory turns, OTIF, Excel/Python/SQL, Power BI, SAP APO/IBP, demand planning",
+      "score_floor": 15,
+      "fit_thresholds": {
+        "strong": 78,
+        "good": 60,
+        "moderate": 40,
+        "weak": 25
+      },
+      "id": "india-108",
+      "red_flags": "No supply chain analytics (critical), No data tools (moderate)"
+    },
+    {
+      "role_title": "Fleet / Transport Manager",
+      "category": "Logistics & Supply Chain",
+      "weights": {
+        "fleet_management": 25,
+        "route_optimization": 15,
+        "cost_control": 15,
+        "compliance": 15,
+        "team_mgmt": 10,
+        "technology": 10,
+        "years_exp": 5,
+        "safety": 5
+      },
+      "signals": "Fleet size, cost per km, on-time delivery, GPS/TMS, driver management, RTO compliance, fuel efficiency",
+      "score_floor": 15,
+      "fit_thresholds": {
+        "strong": 78,
+        "good": 60,
+        "moderate": 40,
+        "weak": 25
+      },
+      "id": "india-109",
+      "red_flags": "No fleet management (critical), No transport domain (moderate)"
+    },
+    {
+      "role_title": "Warehouse Operations Manager",
+      "category": "Logistics & Supply Chain",
+      "weights": {
+        "warehouse_mgmt": 25,
+        "inventory_accuracy": 15,
+        "team_mgmt": 15,
+        "process_improvement": 15,
+        "safety": 10,
+        "wms": 10,
+        "years_exp": 5,
+        "scale": 5
+      },
+      "signals": "Warehouse sq ft, throughput, pick accuracy, WMS (Manhattan/SAP EWM), automation, MHE, safety record",
+      "score_floor": 15,
+      "fit_thresholds": {
+        "strong": 78,
+        "good": 60,
+        "moderate": 40,
+        "weak": 25
+      },
+      "id": "india-110",
+      "red_flags": "No warehouse management (critical), No WMS (moderate)"
+    },
+    {
+      "role_title": "Import/Export Executive",
+      "category": "Logistics & Supply Chain",
+      "weights": {
+        "customs_knowledge": 25,
+        "documentation": 20,
+        "regulatory": 15,
+        "logistics_coordination": 10,
+        "forex": 10,
+        "tools": 10,
+        "years_exp": 5,
+        "incoterms": 5
+      },
+      "signals": "Customs clearance, DGFT, shipping documentation, Incoterms, LC/BG, EXIM policy, IEC code, CHA coordination",
+      "score_floor": 15,
+      "fit_thresholds": {
+        "strong": 78,
+        "good": 60,
+        "moderate": 40,
+        "weak": 25
+      },
+      "id": "india-111",
+      "red_flags": "No import/export experience (critical), No customs knowledge (critical)"
+    },
+    {
+      "role_title": "Last Mile Delivery Manager",
+      "category": "Logistics & Supply Chain",
+      "weights": {
+        "delivery_operations": 25,
+        "rider_mgmt": 15,
+        "technology": 15,
+        "cost_optimization": 15,
+        "customer_experience": 10,
+        "scale": 10,
+        "years_exp": 5,
+        "safety": 5
+      },
+      "signals": "Delivery volume, SLA adherence, cost per delivery, rider retention, route optimization, hub management",
+      "score_floor": 15,
+      "fit_thresholds": {
+        "strong": 78,
+        "good": 60,
+        "moderate": 40,
+        "weak": 25
+      },
+      "id": "india-112",
+      "red_flags": "No last mile experience (critical), No logistics (moderate)"
+    },
+    {
+      "role_title": "Video Editor / Content Creator",
+      "category": "Media, Entertainment & Content",
+      "weights": {
+        "editing_skills": 25,
+        "storytelling": 20,
+        "tools": 15,
+        "platform_knowledge": 15,
+        "speed": 10,
+        "collaboration": 5,
+        "years_exp": 5,
+        "portfolio": 5
+      },
+      "signals": "Premiere Pro/Final Cut/DaVinci, After Effects, YouTube/Instagram/Shorts optimization, portfolio views",
+      "score_floor": 15,
+      "fit_thresholds": {
+        "strong": 78,
+        "good": 60,
+        "moderate": 40,
+        "weak": 25
+      },
+      "id": "india-113",
+      "red_flags": "No editing portfolio (critical), No professional tools (moderate)"
+    },
+    {
+      "role_title": "Journalist / Reporter",
+      "category": "Media, Entertainment & Content",
+      "weights": {
+        "writing_reporting": 25,
+        "investigation": 20,
+        "speed_accuracy": 15,
+        "source_network": 10,
+        "multimedia": 10,
+        "ethics": 10,
+        "years_exp": 5,
+        "beat": 5
+      },
+      "signals": "Published bylines, beat coverage, breaking stories, fact-checking, digital journalism, social media",
+      "score_floor": 15,
+      "fit_thresholds": {
+        "strong": 78,
+        "good": 60,
+        "moderate": 40,
+        "weak": 25
+      },
+      "id": "india-114",
+      "red_flags": "No published work (critical), No newsroom experience (moderate)"
+    },
+    {
+      "role_title": "Advertising Account Manager",
+      "category": "Media, Entertainment & Content",
+      "weights": {
+        "client_management": 25,
+        "campaign_mgmt": 20,
+        "creative_briefing": 15,
+        "budget_mgmt": 10,
+        "media_planning": 10,
+        "presentation": 10,
+        "years_exp": 5,
+        "portfolio": 5
+      },
+      "signals": "Client portfolio, campaign case studies, media mix, billings managed, creative brief writing, pitches won",
+      "score_floor": 15,
+      "fit_thresholds": {
+        "strong": 78,
+        "good": 60,
+        "moderate": 40,
+        "weak": 25
+      },
+      "id": "india-115",
+      "red_flags": "No agency experience (moderate), No client management (critical)"
+    },
+    {
+      "role_title": "OTT Content Strategist",
+      "category": "Media, Entertainment & Content",
+      "weights": {
+        "content_strategy": 25,
+        "audience_analytics": 20,
+        "content_acquisition": 15,
+        "platform_knowledge": 15,
+        "trend_analysis": 10,
+        "budget": 5,
+        "years_exp": 5,
+        "domain": 5
+      },
+      "signals": "Viewership metrics, content slate planning, licensing/acquisition, original commissioning, genre analysis",
+      "score_floor": 15,
+      "fit_thresholds": {
+        "strong": 78,
+        "good": 60,
+        "moderate": 40,
+        "weak": 25
+      },
+      "id": "india-116",
+      "red_flags": "No OTT/media experience (critical), Only traditional broadcast (moderate)"
+    },
+    {
+      "role_title": "Solar Project Engineer",
+      "category": "Green Energy & Sustainability",
+      "weights": {
+        "solar_design": 25,
+        "project_execution": 20,
+        "regulatory": 15,
+        "grid_integration": 10,
+        "vendor_mgmt": 10,
+        "tools": 10,
+        "years_exp": 5,
+        "certifications": 5
+      },
+      "signals": "MW installed, PVsyst/HelioScope, net metering, DISCOM approvals, BOS design, O&M, MNRE guidelines",
+      "score_floor": 15,
+      "fit_thresholds": {
+        "strong": 78,
+        "good": 60,
+        "moderate": 40,
+        "weak": 25
+      },
+      "id": "india-117",
+      "red_flags": "No solar project experience (critical), No PVsyst (moderate)"
+    },
+    {
+      "role_title": "ESG Analyst",
+      "category": "Green Energy & Sustainability",
+      "weights": {
+        "esg_frameworks": 25,
+        "data_analysis": 20,
+        "reporting": 15,
+        "regulatory": 10,
+        "stakeholder": 10,
+        "research": 10,
+        "years_exp": 5,
+        "certifications": 5
+      },
+      "signals": "GRI, SASB, TCFD, BRSR, carbon accounting, ESG ratings, sustainability reporting, materiality assessment",
+      "score_floor": 15,
+      "fit_thresholds": {
+        "strong": 78,
+        "good": 60,
+        "moderate": 40,
+        "weak": 25
+      },
+      "id": "india-118",
+      "red_flags": "No ESG framework knowledge (critical), No sustainability reporting (moderate)"
+    },
+    {
+      "role_title": "Sustainability Manager",
+      "category": "Green Energy & Sustainability",
+      "weights": {
+        "strategy_development": 20,
+        "carbon_mgmt": 20,
+        "regulatory": 15,
+        "stakeholder": 15,
+        "project_mgmt": 10,
+        "reporting": 10,
+        "years_exp": 5,
+        "certifications": 5
+      },
+      "signals": "Sustainability roadmap, GHG inventory, SBTi, circular economy, BRSR, CDP disclosure, net zero strategy",
+      "score_floor": 15,
+      "fit_thresholds": {
+        "strong": 78,
+        "good": 60,
+        "moderate": 40,
+        "weak": 25
+      },
+      "id": "india-119",
+      "red_flags": "No sustainability strategy (critical), Only CSR not ESG (moderate)"
+    },
+    {
+      "role_title": "EV Battery Engineer",
+      "category": "Green Energy & Sustainability",
+      "weights": {
+        "battery_design": 25,
+        "cell_chemistry": 20,
+        "testing_validation": 15,
+        "bms": 15,
+        "manufacturing": 10,
+        "safety": 5,
+        "years_exp": 5,
+        "tools": 5
+      },
+      "signals": "Li-ion/LFP, cell characterization, BMS design, thermal management, AIS 156, ARAI certification, MATLAB",
+      "score_floor": 15,
+      "fit_thresholds": {
+        "strong": 78,
+        "good": 60,
+        "moderate": 40,
+        "weak": 25
+      },
+      "id": "india-120",
+      "red_flags": "No battery engineering (critical), No EV domain (moderate)"
+    },
+    {
+      "role_title": "Carbon Credit Analyst",
+      "category": "Green Energy & Sustainability",
+      "weights": {
+        "carbon_markets": 25,
+        "methodology": 20,
+        "project_assessment": 15,
+        "regulatory": 10,
+        "data_analysis": 10,
+        "verification": 10,
+        "years_exp": 5,
+        "certifications": 5
+      },
+      "signals": "Verra/Gold Standard, CDM, CCER, carbon offset projects, MRV, additionality, Indian Carbon Market",
+      "score_floor": 15,
+      "fit_thresholds": {
+        "strong": 78,
+        "good": 60,
+        "moderate": 40,
+        "weak": 25
+      },
+      "id": "india-121",
+      "red_flags": "No carbon market knowledge (critical), Only general sustainability (moderate)"
+    }
+  ]
+}

@@ -1,0 +1,44 @@
+# Weekly check that the Claude models in src/lib/config/models.ts are still
+# active. Opens a GitHub issue when any are deprecated or retired so the
+# maintainer can swap them in one place. See scripts/check-anthropic-deprecations.mjs.
+
+name: Anthropic Model Deprecation Check
+
+on:
+  schedule:
+    # Mondays 09:00 UTC — gives a fresh signal at the start of the week.
+    - cron: "0 9 * * 1"
+  workflow_dispatch: {} # also runnable on demand from the Actions UI
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    permissions:
+      issues: write # needed for `gh issue create`
+      contents: read
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Run deprecation check
+        id: check
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          set +e
+          node scripts/check-anthropic-deprecations.mjs --create-issue
+          EXIT_CODE=$?
+          set -e
+          # Exit codes: 0 = all OK, 1 = deprecation found (issue opened), 2 = script error.
+          # We only fail the job on script errors so a deprecation finding doesn't spam red CI.
+          if [ "$EXIT_CODE" = "2" ]; then
+            echo "::error::deprecation check script failed (exit 2)"
+            exit 1
+          fi
+          echo "deprecation_status=$EXIT_CODE" >> "$GITHUB_OUTPUT"

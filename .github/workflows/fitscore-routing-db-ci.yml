@@ -1,0 +1,31 @@
+# DISABLED until test Supabase project is set up. Re-enable post-launch.
+name: FitScore Routing DB CI
+
+on:
+  workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  routing-integration:
+    name: Hybrid routing integration (Supabase test DB)
+    runs-on: ubuntu-latest
+    env:
+      CI: "true"
+      NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.SUPABASE_TEST_URL }}
+      SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_TEST_SERVICE_ROLE_KEY }}
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 24
+          cache: npm
+      - run: npm ci
+      - name: Fail fast when test DB secrets are missing
+        run: |
+          test -n "$NEXT_PUBLIC_SUPABASE_URL" || { echo "Missing secret: SUPABASE_TEST_URL"; exit 1; }
+          test -n "$SUPABASE_SERVICE_ROLE_KEY" || { echo "Missing secret: SUPABASE_TEST_SERVICE_ROLE_KEY"; exit 1; }
+      - name: Run FitScore integration tests (routing + pending approval)
+        run: npx vitest run tests/integration/fitscore-hybrid-routing.test.ts tests/integration/pending-jd-approval-flow.test.ts

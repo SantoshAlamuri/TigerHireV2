@@ -1,0 +1,279 @@
+◇ injected env (27) from .env.local // tip: ⌘ override existing { override: true }
+◇ injected env (0) from .env // tip: ⌘ multiple files { path: ['.env.local', '.env'] }
+
+Supabase target: https://htdyomyhkvhcwoeodwas.supabase.co
+Host: htdyomyhkvhcwoeodwas.supabase.co
+
+=== QA Engineer scoring path comparison ===
+Job: QA Engineer (861e8c58-9c72-4c46-8534-a02207a35cbc)
+Candidates: 10
+JD Base: QA Engineer (approved)
+
+--- SAMEERULLA SHARIEF (a4126b48-b841-4bbf-b9aa-0b94c8c24893) ---
+Current: hybrid_v2 @ 34
+Running hybrid_v2...
+[INFO] [vision-fallback] Sending PDF to Claude for verbatim extraction {"sizeBytes":513796}
+[INFO] [anthropic] callClaudeWithUserContent start {"label":"vision-fallback-resume","model":"claude-sonnet-4-6"}
+[INFO] [anthropic] callClaudeWithUserContent done {"label":"vision-fallback-resume","durationMs":37016,"inputTokens":6821,"outputTokens":2065,"cacheCreationInputTokens":0,"cacheReadInputTokens":0,"responseLength":8758}
+[INFO] [vision-fallback] Extracted text from PDF {"length":8758,"inputTokens":6821,"outputTokens":2065}
+[INFO] [anthropic] callClaude start {"label":"fitscore-hybrid-extraction-verdict","model":"claude-haiku-4-5","temperature":0.2}
+[INFO] [anthropic] callClaude done {"label":"fitscore-hybrid-extraction-verdict","durationMs":11868,"inputTokens":3583,"outputTokens":1175,"cacheCreationInputTokens":0,"cacheReadInputTokens":0}
+  score: 33
+Running three_stage...
+[INFO] [vision-fallback] Sending PDF to Claude for verbatim extraction {"sizeBytes":513796}
+[INFO] [anthropic] callClaudeWithUserContent start {"label":"vision-fallback-resume","model":"claude-sonnet-4-6"}
+[INFO] [anthropic] callClaudeWithUserContent done {"label":"vision-fallback-resume","durationMs":37426,"inputTokens":6821,"outputTokens":2118,"cacheCreationInputTokens":0,"cacheReadInputTokens":0,"responseLength":8951}
+[INFO] [vision-fallback] Extracted text from PDF {"length":8951,"inputTokens":6821,"outputTokens":2118}
+[INFO] metric.scoring.rubric_selected {"rubric_id":"template-generic","role":"Knowledge Worker","fallback_used":true}
+  score: 44
+Running v1_stage2 (Stage 2 v1.1)...
+[INFO] [vision-fallback] Sending PDF to Claude for verbatim extraction {"sizeBytes":513796}
+[INFO] [anthropic] callClaudeWithUserContent start {"label":"vision-fallback-resume","model":"claude-sonnet-4-6"}
+[INFO] [anthropic] callClaudeWithUserContent done {"label":"vision-fallback-resume","durationMs":38044,"inputTokens":6821,"outputTokens":2065,"cacheCreationInputTokens":0,"cacheReadInputTokens":0,"responseLength":8761}
+[INFO] [vision-fallback] Extracted text from PDF {"length":8761,"inputTokens":6821,"outputTokens":2065}
+[INFO] metric.scoring.rubric_selected {"rubric_id":"template-generic","role":"Knowledge Worker","fallback_used":true}
+  score: 64
+Spread: 31 | closest: hybrid_v2+three_stage (Δ11)
+
+--- Samikshya Nath (77eaffe4-97fa-4563-ae83-766c6188b04d) ---
+Current: hybrid_v2 @ 61
+Running hybrid_v2...
+[INFO] [anthropic] callClaude start {"label":"fitscore-hybrid-extraction-verdict","model":"claude-haiku-4-5","temperature":0.2}
+[INFO] [anthropic] callClaude done {"label":"fitscore-hybrid-extraction-verdict","durationMs":10661,"inputTokens":2279,"outputTokens":1101,"cacheCreationInputTokens":0,"cacheReadInputTokens":0}
+[INFO] [anthropic] callClaude start {"label":"fitscore-hybrid-extraction-verdict","model":"claude-haiku-4-5","temperature":0.2}
+[INFO] [anthropic] callClaude done {"label":"fitscore-hybrid-extraction-verdict","durationMs":10602,"inputTokens":2325,"outputTokens":1142,"cacheCreationInputTokens":0,"cacheReadInputTokens":0}
+  score: 63
+Running three_stage...
+[INFO] metric.scoring.rubric_selected {"rubric_id":"template-generic","role":"Knowledge Worker","fallback_used":true}
+  score: 4
+Running v1_stage2 (Stage 2 v1.1)...
+[INFO] metric.scoring.rubric_selected {"rubric_id":"template-generic","role":"Knowledge Worker","fallback_used":true}
+  score: 42
+Spread: 59 | closest: hybrid_v2+v1_stage2 (Δ21)
+
+--- K MADHU SUDHAN REDDY (5aba4e7d-916e-44f8-bbce-bde6023b6204) ---
+Current: hybrid_v2 @ 38
+Running hybrid_v2...
+[INFO] [vision-fallback] Sending PDF to Claude for verbatim extraction {"sizeBytes":266905}
+[INFO] [anthropic] callClaudeWithUserContent start {"label":"vision-fallback-resume","model":"claude-sonnet-4-6"}
+[INFO] [anthropic] callClaudeWithUserContent done {"label":"vision-fallback-resume","durationMs":34397,"inputTokens":5963,"outputTokens":1292,"cacheCreationInputTokens":0,"cacheReadInputTokens":0,"responseLength":5517}
+[INFO] [vision-fallback] Extracted text from PDF {"length":5517,"inputTokens":5963,"outputTokens":1292}
+[INFO] [anthropic] callClaude start {"label":"fitscore-hybrid-extraction-verdict","model":"claude-haiku-4-5","temperature":0.2}
+[INFO] [anthropic] callClaude done {"label":"fitscore-hybrid-extraction-verdict","durationMs":11932,"inputTokens":2783,"outputTokens":1174,"cacheCreationInputTokens":0,"cacheReadInputTokens":0}
+[INFO] [anthropic] callClaude start {"label":"fitscore-hybrid-extraction-verdict","model":"claude-haiku-4-5","temperature":0.2}
+[INFO] [anthropic] callClaude done {"label":"fitscore-hybrid-extraction-verdict","durationMs":12686,"inputTokens":2829,"outputTokens":1204,"cacheCreationInputTokens":0,"cacheReadInputTokens":0}
+  score: 48
+Running three_stage...
+[INFO] [vision-fallback] Sending PDF to Claude for verbatim extraction {"sizeBytes":266905}
+[INFO] [anthropic] callClaudeWithUserContent start {"label":"vision-fallback-resume","model":"claude-sonnet-4-6"}
+[INFO] [anthropic] callClaudeWithUserContent done {"label":"vision-fallback-resume","durationMs":36845,"inputTokens":5963,"outputTokens":1291,"cacheCreationInputTokens":0,"cacheReadInputTokens":0,"responseLength":5504}
+[INFO] [vision-fallback] Extracted text from PDF {"length":5504,"inputTokens":5963,"outputTokens":1291}
+[INFO] metric.scoring.rubric_selected {"rubric_id":"template-generic","role":"Knowledge Worker","fallback_used":true}
+  score: 20
+Running v1_stage2 (Stage 2 v1.1)...
+[INFO] [vision-fallback] Sending PDF to Claude for verbatim extraction {"sizeBytes":266905}
+[INFO] [anthropic] callClaudeWithUserContent start {"label":"vision-fallback-resume","model":"claude-sonnet-4-6"}
+[INFO] [anthropic] callClaudeWithUserContent done {"label":"vision-fallback-resume","durationMs":33888,"inputTokens":5963,"outputTokens":1287,"cacheCreationInputTokens":0,"cacheReadInputTokens":0,"responseLength":5503}
+[INFO] [vision-fallback] Extracted text from PDF {"length":5503,"inputTokens":5963,"outputTokens":1287}
+[INFO] metric.scoring.rubric_selected {"rubric_id":"template-generic","role":"Knowledge Worker","fallback_used":true}
+  FAIL: LLM returned invalid or truncated JSON. Try again or shorten the resume content.
+SKIP output row: path failure — v1_stage2: LLM returned invalid or truncated JSON. Try again or shorten the resume content.
+
+--- Krushali Vadaliya (2a5e07eb-4244-4d9b-b393-9d989d0d6749) ---
+Current: hybrid_v2 @ 59
+Running hybrid_v2...
+[INFO] [vision-fallback] Sending PDF to Claude for verbatim extraction {"sizeBytes":101776}
+[INFO] [anthropic] callClaudeWithUserContent start {"label":"vision-fallback-resume","model":"claude-sonnet-4-6"}
+[INFO] [anthropic] callClaudeWithUserContent done {"label":"vision-fallback-resume","durationMs":20717,"inputTokens":2432,"outputTokens":904,"cacheCreationInputTokens":0,"cacheReadInputTokens":0,"responseLength":3476}
+[INFO] [vision-fallback] Extracted text from PDF {"length":3476,"inputTokens":2432,"outputTokens":904}
+[INFO] [anthropic] callClaude start {"label":"fitscore-hybrid-extraction-verdict","model":"claude-haiku-4-5","temperature":0.2}
+[INFO] [anthropic] callClaude done {"label":"fitscore-hybrid-extraction-verdict","durationMs":12969,"inputTokens":2407,"outputTokens":1466,"cacheCreationInputTokens":0,"cacheReadInputTokens":0}
+[INFO] [anthropic] callClaude start {"label":"fitscore-hybrid-extraction-verdict","model":"claude-haiku-4-5","temperature":0.2}
+[INFO] [anthropic] callClaude done {"label":"fitscore-hybrid-extraction-verdict","durationMs":12047,"inputTokens":2453,"outputTokens":1350,"cacheCreationInputTokens":0,"cacheReadInputTokens":0}
+  score: 64
+Running three_stage...
+[INFO] [vision-fallback] Sending PDF to Claude for verbatim extraction {"sizeBytes":101776}
+[INFO] [anthropic] callClaudeWithUserContent start {"label":"vision-fallback-resume","model":"claude-sonnet-4-6"}
+[INFO] [anthropic] callClaudeWithUserContent done {"label":"vision-fallback-resume","durationMs":24165,"inputTokens":2432,"outputTokens":895,"cacheCreationInputTokens":0,"cacheReadInputTokens":0,"responseLength":3456}
+[INFO] [vision-fallback] Extracted text from PDF {"length":3456,"inputTokens":2432,"outputTokens":895}
+[INFO] metric.scoring.rubric_selected {"rubric_id":"template-generic","role":"Knowledge Worker","fallback_used":true}
+  score: 4
+Running v1_stage2 (Stage 2 v1.1)...
+[INFO] [vision-fallback] Sending PDF to Claude for verbatim extraction {"sizeBytes":101776}
+[INFO] [anthropic] callClaudeWithUserContent start {"label":"vision-fallback-resume","model":"claude-sonnet-4-6"}
+[INFO] [anthropic] callClaudeWithUserContent done {"label":"vision-fallback-resume","durationMs":20424,"inputTokens":2432,"outputTokens":884,"cacheCreationInputTokens":0,"cacheReadInputTokens":0,"responseLength":3408}
+[INFO] [vision-fallback] Extracted text from PDF {"length":3408,"inputTokens":2432,"outputTokens":884}
+[INFO] metric.scoring.rubric_selected {"rubric_id":"template-generic","role":"Knowledge Worker","fallback_used":true}
+  FAIL: LLM returned invalid or truncated JSON. Try again or shorten the resume content.
+SKIP output row: path failure — v1_stage2: LLM returned invalid or truncated JSON. Try again or shorten the resume content.
+
+--- K SAI GANESH (8dfff985-fb45-45e4-bfa3-fe3d501ddff0) ---
+Current: hybrid_v2 @ 52
+Running hybrid_v2...
+[INFO] [vision-fallback] Sending PDF to Claude for verbatim extraction {"sizeBytes":163582}
+[INFO] [anthropic] callClaudeWithUserContent start {"label":"vision-fallback-resume","model":"claude-sonnet-4-6"}
+[INFO] [anthropic] callClaudeWithUserContent done {"label":"vision-fallback-resume","durationMs":19074,"inputTokens":2381,"outputTokens":750,"cacheCreationInputTokens":0,"cacheReadInputTokens":0,"responseLength":2956}
+[INFO] [vision-fallback] Extracted text from PDF {"length":2956,"inputTokens":2381,"outputTokens":750}
+[INFO] [anthropic] callClaude start {"label":"fitscore-hybrid-extraction-verdict","model":"claude-haiku-4-5","temperature":0.2}
+[INFO] [anthropic] callClaude done {"label":"fitscore-hybrid-extraction-verdict","durationMs":10691,"inputTokens":2237,"outputTokens":1167,"cacheCreationInputTokens":0,"cacheReadInputTokens":0}
+  score: 54
+Running three_stage...
+[INFO] [vision-fallback] Sending PDF to Claude for verbatim extraction {"sizeBytes":163582}
+[INFO] [anthropic] callClaudeWithUserContent start {"label":"vision-fallback-resume","model":"claude-sonnet-4-6"}
+[INFO] [anthropic] callClaudeWithUserContent done {"label":"vision-fallback-resume","durationMs":18052,"inputTokens":2381,"outputTokens":755,"cacheCreationInputTokens":0,"cacheReadInputTokens":0,"responseLength":2955}
+[INFO] [vision-fallback] Extracted text from PDF {"length":2955,"inputTokens":2381,"outputTokens":755}
+[INFO] metric.scoring.rubric_selected {"rubric_id":"template-generic","role":"Knowledge Worker","fallback_used":true}
+  score: 3
+Running v1_stage2 (Stage 2 v1.1)...
+[INFO] [vision-fallback] Sending PDF to Claude for verbatim extraction {"sizeBytes":163582}
+[INFO] [anthropic] callClaudeWithUserContent start {"label":"vision-fallback-resume","model":"claude-sonnet-4-6"}
+[INFO] [anthropic] callClaudeWithUserContent done {"label":"vision-fallback-resume","durationMs":11860,"inputTokens":2381,"outputTokens":750,"cacheCreationInputTokens":0,"cacheReadInputTokens":0,"responseLength":2956}
+[INFO] [vision-fallback] Extracted text from PDF {"length":2956,"inputTokens":2381,"outputTokens":750}
+[INFO] metric.scoring.rubric_selected {"rubric_id":"template-generic","role":"Knowledge Worker","fallback_used":true}
+  FAIL: LLM returned invalid or truncated JSON. Try again or shorten the resume content.
+SKIP output row: path failure — v1_stage2: LLM returned invalid or truncated JSON. Try again or shorten the resume content.
+
+--- KUSUMA R (0707856b-2219-460f-8654-51f5798a132b) ---
+Current: hybrid_v2 @ 47
+Running hybrid_v2...
+[INFO] [vision-fallback] Sending PDF to Claude for verbatim extraction {"sizeBytes":167491}
+[INFO] [anthropic] callClaudeWithUserContent start {"label":"vision-fallback-resume","model":"claude-sonnet-4-6"}
+[INFO] [anthropic] callClaudeWithUserContent done {"label":"vision-fallback-resume","durationMs":27755,"inputTokens":4262,"outputTokens":1128,"cacheCreationInputTokens":0,"cacheReadInputTokens":0,"responseLength":4837}
+[INFO] [vision-fallback] Extracted text from PDF {"length":4837,"inputTokens":4262,"outputTokens":1128}
+[INFO] [anthropic] callClaude start {"label":"fitscore-hybrid-extraction-verdict","model":"claude-haiku-4-5","temperature":0.2}
+[INFO] [anthropic] callClaude done {"label":"fitscore-hybrid-extraction-verdict","durationMs":11193,"inputTokens":2598,"outputTokens":1177,"cacheCreationInputTokens":0,"cacheReadInputTokens":0}
+[INFO] [anthropic] callClaude start {"label":"fitscore-hybrid-extraction-verdict","model":"claude-haiku-4-5","temperature":0.2}
+[INFO] [anthropic] callClaude done {"label":"fitscore-hybrid-extraction-verdict","durationMs":12401,"inputTokens":2644,"outputTokens":1210,"cacheCreationInputTokens":0,"cacheReadInputTokens":0}
+  score: 59
+Running three_stage...
+[INFO] [vision-fallback] Sending PDF to Claude for verbatim extraction {"sizeBytes":167491}
+[INFO] [anthropic] callClaudeWithUserContent start {"label":"vision-fallback-resume","model":"claude-sonnet-4-6"}
+[INFO] [anthropic] callClaudeWithUserContent done {"label":"vision-fallback-resume","durationMs":31006,"inputTokens":4262,"outputTokens":1129,"cacheCreationInputTokens":0,"cacheReadInputTokens":0,"responseLength":4837}
+[INFO] [vision-fallback] Extracted text from PDF {"length":4837,"inputTokens":4262,"outputTokens":1129}
+[INFO] metric.scoring.rubric_selected {"rubric_id":"template-generic","role":"Knowledge Worker","fallback_used":true}
+  score: 4
+Running v1_stage2 (Stage 2 v1.1)...
+[INFO] [vision-fallback] Sending PDF to Claude for verbatim extraction {"sizeBytes":167491}
+[INFO] [anthropic] callClaudeWithUserContent start {"label":"vision-fallback-resume","model":"claude-sonnet-4-6"}
+[INFO] [anthropic] callClaudeWithUserContent done {"label":"vision-fallback-resume","durationMs":27540,"inputTokens":4262,"outputTokens":1085,"cacheCreationInputTokens":0,"cacheReadInputTokens":0,"responseLength":4626}
+[INFO] [vision-fallback] Extracted text from PDF {"length":4626,"inputTokens":4262,"outputTokens":1085}
+[INFO] metric.scoring.rubric_selected {"rubric_id":"template-generic","role":"Knowledge Worker","fallback_used":true}
+  score: 47
+Spread: 55 | closest: hybrid_v2+v1_stage2 (Δ12)
+
+--- Meghana (78ec3bc5-2904-4a11-b313-b74b3a2db855) ---
+Current: hybrid_v2 @ 65
+Running hybrid_v2...
+[INFO] [vision-fallback] Sending PDF to Claude for verbatim extraction {"sizeBytes":417968}
+[INFO] [anthropic] callClaudeWithUserContent start {"label":"vision-fallback-resume","model":"claude-sonnet-4-6"}
+[INFO] [anthropic] callClaudeWithUserContent done {"label":"vision-fallback-resume","durationMs":17430,"inputTokens":4173,"outputTokens":1006,"cacheCreationInputTokens":0,"cacheReadInputTokens":0,"responseLength":4488}
+[INFO] [vision-fallback] Extracted text from PDF {"length":4488,"inputTokens":4173,"outputTokens":1006}
+[INFO] [anthropic] callClaude start {"label":"fitscore-hybrid-extraction-verdict","model":"claude-haiku-4-5","temperature":0.2}
+[INFO] [anthropic] callClaude done {"label":"fitscore-hybrid-extraction-verdict","durationMs":11172,"inputTokens":2476,"outputTokens":1185,"cacheCreationInputTokens":0,"cacheReadInputTokens":0}
+[INFO] [anthropic] callClaude start {"label":"fitscore-hybrid-extraction-verdict","model":"claude-haiku-4-5","temperature":0.2}
+[INFO] [anthropic] callClaude done {"label":"fitscore-hybrid-extraction-verdict","durationMs":10992,"inputTokens":2522,"outputTokens":1200,"cacheCreationInputTokens":0,"cacheReadInputTokens":0}
+  score: 60
+Running three_stage...
+[INFO] [vision-fallback] Sending PDF to Claude for verbatim extraction {"sizeBytes":417968}
+[INFO] [anthropic] callClaudeWithUserContent start {"label":"vision-fallback-resume","model":"claude-sonnet-4-6"}
+[INFO] [anthropic] callClaudeWithUserContent done {"label":"vision-fallback-resume","durationMs":17463,"inputTokens":4173,"outputTokens":1006,"cacheCreationInputTokens":0,"cacheReadInputTokens":0,"responseLength":4486}
+[INFO] [vision-fallback] Extracted text from PDF {"length":4486,"inputTokens":4173,"outputTokens":1006}
+[INFO] metric.scoring.rubric_selected {"rubric_id":"template-generic","role":"Knowledge Worker","fallback_used":true}
+  score: 46
+Running v1_stage2 (Stage 2 v1.1)...
+[INFO] [vision-fallback] Sending PDF to Claude for verbatim extraction {"sizeBytes":417968}
+[INFO] [anthropic] callClaudeWithUserContent start {"label":"vision-fallback-resume","model":"claude-sonnet-4-6"}
+[INFO] [anthropic] callClaudeWithUserContent done {"label":"vision-fallback-resume","durationMs":16965,"inputTokens":4173,"outputTokens":1006,"cacheCreationInputTokens":0,"cacheReadInputTokens":0,"responseLength":4486}
+[INFO] [vision-fallback] Extracted text from PDF {"length":4486,"inputTokens":4173,"outputTokens":1006}
+[INFO] metric.scoring.rubric_selected {"rubric_id":"template-generic","role":"Knowledge Worker","fallback_used":true}
+  FAIL: LLM returned invalid or truncated JSON. Try again or shorten the resume content.
+SKIP output row: path failure — v1_stage2: LLM returned invalid or truncated JSON. Try again or shorten the resume content.
+
+--- KALLEVI JAYKUMAR (6bd97149-8d09-43f5-93ee-a4673589deb8) ---
+Current: hybrid_v2 @ 30
+Running hybrid_v2...
+[INFO] [vision-fallback] Sending PDF to Claude for verbatim extraction {"sizeBytes":181212}
+[INFO] [anthropic] callClaudeWithUserContent start {"label":"vision-fallback-resume","model":"claude-sonnet-4-6"}
+[INFO] [anthropic] callClaudeWithUserContent done {"label":"vision-fallback-resume","durationMs":50833,"inputTokens":6818,"outputTokens":2185,"cacheCreationInputTokens":0,"cacheReadInputTokens":0,"responseLength":8551}
+[INFO] [vision-fallback] Extracted text from PDF {"length":8551,"inputTokens":6818,"outputTokens":2185}
+[INFO] [anthropic] callClaude start {"label":"fitscore-hybrid-extraction-verdict","model":"claude-haiku-4-5","temperature":0.2}
+[INFO] [anthropic] callClaude done {"label":"fitscore-hybrid-extraction-verdict","durationMs":13771,"inputTokens":3702,"outputTokens":1371,"cacheCreationInputTokens":0,"cacheReadInputTokens":0}
+[INFO] [anthropic] callClaude start {"label":"fitscore-hybrid-extraction-verdict","model":"claude-haiku-4-5","temperature":0.2}
+[INFO] [anthropic] callClaude done {"label":"fitscore-hybrid-extraction-verdict","durationMs":12343,"inputTokens":3748,"outputTokens":1241,"cacheCreationInputTokens":0,"cacheReadInputTokens":0}
+  score: 33
+Running three_stage...
+[INFO] [vision-fallback] Sending PDF to Claude for verbatim extraction {"sizeBytes":181212}
+[INFO] [anthropic] callClaudeWithUserContent start {"label":"vision-fallback-resume","model":"claude-sonnet-4-6"}
+[INFO] [anthropic] callClaudeWithUserContent done {"label":"vision-fallback-resume","durationMs":49342,"inputTokens":6818,"outputTokens":2175,"cacheCreationInputTokens":0,"cacheReadInputTokens":0,"responseLength":8548}
+[INFO] [vision-fallback] Extracted text from PDF {"length":8548,"inputTokens":6818,"outputTokens":2175}
+[INFO] metric.scoring.rubric_selected {"rubric_id":"template-generic","role":"Knowledge Worker","fallback_used":true}
+  score: 15
+Running v1_stage2 (Stage 2 v1.1)...
+[INFO] [vision-fallback] Sending PDF to Claude for verbatim extraction {"sizeBytes":181212}
+[INFO] [anthropic] callClaudeWithUserContent start {"label":"vision-fallback-resume","model":"claude-sonnet-4-6"}
+[INFO] [anthropic] callClaudeWithUserContent done {"label":"vision-fallback-resume","durationMs":49345,"inputTokens":6818,"outputTokens":2177,"cacheCreationInputTokens":0,"cacheReadInputTokens":0,"responseLength":8537}
+[INFO] [vision-fallback] Extracted text from PDF {"length":8537,"inputTokens":6818,"outputTokens":2177}
+[INFO] metric.scoring.rubric_selected {"rubric_id":"template-generic","role":"Knowledge Worker","fallback_used":true}
+  FAIL: LLM returned invalid or truncated JSON. Try again or shorten the resume content.
+SKIP output row: path failure — v1_stage2: LLM returned invalid or truncated JSON. Try again or shorten the resume content.
+
+--- Madan H S (72b7824c-2f18-43ac-8bf8-b2c5c3448e86) ---
+Current: hybrid_v2 @ 42
+Running hybrid_v2...
+[INFO] [vision-fallback] Sending PDF to Claude for verbatim extraction {"sizeBytes":519559}
+[INFO] [anthropic] callClaudeWithUserContent start {"label":"vision-fallback-resume","model":"claude-sonnet-4-6"}
+[INFO] [anthropic] callClaudeWithUserContent done {"label":"vision-fallback-resume","durationMs":21712,"inputTokens":2495,"outputTokens":944,"cacheCreationInputTokens":0,"cacheReadInputTokens":0,"responseLength":3584}
+[INFO] [vision-fallback] Extracted text from PDF {"length":3584,"inputTokens":2495,"outputTokens":944}
+[INFO] [anthropic] callClaude start {"label":"fitscore-hybrid-extraction-verdict","model":"claude-haiku-4-5","temperature":0.2}
+[INFO] [anthropic] callClaude done {"label":"fitscore-hybrid-extraction-verdict","durationMs":13669,"inputTokens":2450,"outputTokens":1427,"cacheCreationInputTokens":0,"cacheReadInputTokens":0}
+  score: 45
+Running three_stage...
+[INFO] [vision-fallback] Sending PDF to Claude for verbatim extraction {"sizeBytes":519559}
+[INFO] [anthropic] callClaudeWithUserContent start {"label":"vision-fallback-resume","model":"claude-sonnet-4-6"}
+[INFO] [anthropic] callClaudeWithUserContent done {"label":"vision-fallback-resume","durationMs":20500,"inputTokens":2495,"outputTokens":915,"cacheCreationInputTokens":0,"cacheReadInputTokens":0,"responseLength":3501}
+[INFO] [vision-fallback] Extracted text from PDF {"length":3501,"inputTokens":2495,"outputTokens":915}
+[INFO] metric.scoring.rubric_selected {"rubric_id":"template-generic","role":"Knowledge Worker","fallback_used":true}
+  score: 4
+Running v1_stage2 (Stage 2 v1.1)...
+[INFO] [vision-fallback] Sending PDF to Claude for verbatim extraction {"sizeBytes":519559}
+[INFO] [anthropic] callClaudeWithUserContent start {"label":"vision-fallback-resume","model":"claude-sonnet-4-6"}
+[INFO] [anthropic] callClaudeWithUserContent done {"label":"vision-fallback-resume","durationMs":20177,"inputTokens":2495,"outputTokens":915,"cacheCreationInputTokens":0,"cacheReadInputTokens":0,"responseLength":3501}
+[INFO] [vision-fallback] Extracted text from PDF {"length":3501,"inputTokens":2495,"outputTokens":915}
+[INFO] metric.scoring.rubric_selected {"rubric_id":"template-generic","role":"Knowledge Worker","fallback_used":true}
+  FAIL: LLM returned invalid or truncated JSON. Try again or shorten the resume content.
+SKIP output row: path failure — v1_stage2: LLM returned invalid or truncated JSON. Try again or shorten the resume content.
+
+--- Niranjan Bhat (ea3b7abd-5504-4e00-abb5-6a8df5d2c73f) ---
+Current: hybrid_v2 @ 15
+Running hybrid_v2...
+[INFO] [vision-fallback] Sending PDF to Claude for verbatim extraction {"sizeBytes":237028}
+[INFO] [anthropic] callClaudeWithUserContent start {"label":"vision-fallback-resume","model":"claude-sonnet-4-6"}
+[INFO] [anthropic] callClaudeWithUserContent done {"label":"vision-fallback-resume","durationMs":23491,"inputTokens":5979,"outputTokens":1160,"cacheCreationInputTokens":0,"cacheReadInputTokens":0,"responseLength":4576}
+[INFO] [vision-fallback] Extracted text from PDF {"length":4576,"inputTokens":5979,"outputTokens":1160}
+[INFO] [anthropic] callClaude start {"label":"fitscore-hybrid-extraction-verdict","model":"claude-haiku-4-5","temperature":0.2}
+[INFO] [anthropic] callClaude done {"label":"fitscore-hybrid-extraction-verdict","durationMs":11915,"inputTokens":2646,"outputTokens":1203,"cacheCreationInputTokens":0,"cacheReadInputTokens":0}
+  score: 21
+Running three_stage...
+[INFO] [vision-fallback] Sending PDF to Claude for verbatim extraction {"sizeBytes":237028}
+[INFO] [anthropic] callClaudeWithUserContent start {"label":"vision-fallback-resume","model":"claude-sonnet-4-6"}
+[INFO] [anthropic] callClaudeWithUserContent done {"label":"vision-fallback-resume","durationMs":23209,"inputTokens":5979,"outputTokens":1161,"cacheCreationInputTokens":0,"cacheReadInputTokens":0,"responseLength":4569}
+[INFO] [vision-fallback] Extracted text from PDF {"length":4569,"inputTokens":5979,"outputTokens":1161}
+[INFO] metric.scoring.rubric_selected {"rubric_id":"template-generic","role":"Knowledge Worker","fallback_used":true}
+  score: 20
+Running v1_stage2 (Stage 2 v1.1)...
+[INFO] [vision-fallback] Sending PDF to Claude for verbatim extraction {"sizeBytes":237028}
+[INFO] [anthropic] callClaudeWithUserContent start {"label":"vision-fallback-resume","model":"claude-sonnet-4-6"}
+[INFO] [anthropic] callClaudeWithUserContent done {"label":"vision-fallback-resume","durationMs":22990,"inputTokens":5979,"outputTokens":1161,"cacheCreationInputTokens":0,"cacheReadInputTokens":0,"responseLength":4577}
+[INFO] [vision-fallback] Extracted text from PDF {"length":4577,"inputTokens":5979,"outputTokens":1161}
+[INFO] metric.scoring.rubric_selected {"rubric_id":"template-generic","role":"Knowledge Worker","fallback_used":true}
+  FAIL: LLM returned invalid or truncated JSON. Try again or shorten the resume content.
+SKIP output row: path failure — v1_stage2: LLM returned invalid or truncated JSON. Try again or shorten the resume content.
+
+Wrote:
+  /Users/santoshalamuri/TigerHire/TigerHire/scripts/output/qa-engineer-scoring-comparison-2026-05-16T09-44-54.csv
+  /Users/santoshalamuri/TigerHire/TigerHire/scripts/output/qa-engineer-scoring-comparison-2026-05-16T09-44-54.md
+
+--- Cost summary ---
+hybrid_v2: $0.1236 (24512 in / 8998 out, 3 runs)
+three_stage: $0.0820 (11083 in / 3247 out, 3 runs)
+v1_stage2: $0.0805 (11083 in / 3150 out, 3 runs)

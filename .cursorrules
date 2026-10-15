@@ -1,0 +1,140 @@
+# TigerHire – Cursor Rules
+
+## Co-development
+
+- This repo is partially developed with **Claude Code**, which may push commits directly to Git.
+- **Before making changes:** run `git pull` so you're on the latest code.
+- **Do not refactor or restructure** files without asking first — another AI tool may have set patterns on purpose.
+- **Do not delete or modify** files you didn't create without confirmation.
+
+## Git Workflow & Branching
+
+This flow is the default way to ship without surprising **production** (`main`): integration and previews happen on **`dev`** first; **`main`** only moves when you deliberately promote after testing.
+
+- **Primary branches:**
+  - `main` — Production-ready code only. Never push untested changes here.
+  - `dev` — Integration branch for active work. All new features and fixes land here first (via PR), then soak on preview before any `main` promotion.
+- **Recommended end-to-end flow (safest for the app):**
+  1. `git checkout dev && git pull origin dev`
+  2. Create a **feature branch from `dev`** (never from `main` for new work): `git checkout -b feature/…` or `claude/…`
+  3. Commit in **small, focused** chunks; push the feature branch; open a **PR → `dev`** (not straight to `main`).
+  4. After merge to **`dev`**, verify on the **`dev` / preview** deployment (and locally: `npm run typecheck`, targeted tests, or smoke paths for risky changes).
+  5. Only when **`dev` is known good**, open **PR `dev` → `main`** (or operator-approved promotion). That is what updates production — not merging a feature branch directly into `main`.
+- **Avoid breaking production:**
+  - Do not develop on `main` or merge feature branches **directly** into `main`, skipping `dev`.
+  - Do not promote `dev` → `main` until critical paths are exercised on preview or staging.
+- **For Claude Code:**
+  - Always branch off `dev`, not `main`.
+  - Use descriptive branch names: `claude/feature-name` or `claude/fix-description`.
+  - Temporary branches like `claude/clever-napier` should be reviewed, cherry-picked if needed, then deleted.
+- **Vercel:** use **`dev` (and feature previews)** for validation; **`main`** maps to production — see deployment notes in `CLAUDE.md` if needed.
+
+## Before Editing
+
+- **Read the full file** before editing. Don't treat anything as boilerplate or placeholder.
+- Preserve existing **code style**, **naming**, and **architectural patterns**.
+
+## Commits
+
+- Prefer **small, focused commits** — avoid bundling unrelated changes.
+
+---
+
+## Tech Stack
+
+- **Framework:** Next.js 16 (App Router), React 19
+- **Backend / DB:** Supabase (Postgres, Auth, Storage)
+- **Styling:** Tailwind CSS 4
+- **Validation:** Zod
+- **AI:** Anthropic (Claude) for FitScore, agents, CV parsing
+- **Infra:** Upstash Redis (cache, queues), Resend (email), Stripe (billing), Sentry, PostHog
+- **Tests:** Vitest (unit/component/functional), Playwright (e2e)
+
+---
+
+## Folder Structure
+
+- **`src/app`** — App Router: `(auth)`, `(dashboard)`, `(public)`, and `api/` route handlers
+- **`src/components`** — Shared UI (e.g. `dashboard/`, `marketing/`)
+- **`src/lib`** — Core logic:
+  - **`api-helpers`** — Auth and response helpers for API routes
+  - **`fitscore`** — FitScore engine (scorer, signals, types; v3 in `fitscore/v3/`)
+  - **`agents`** — CV parser, orchestrator, public-apply, etc.
+  - **`services`** — FitScoreService, Anthropic, email, etc.
+  - **`supabase`** — server client, admin, middleware, cookie options
+  - **`redis`** — cache, auth-profile-cache, keys
+  - **`security`** — RBAC, rate-limit, CSRF, PII, sanitization
+  - **`repositories`** — data access (Application, Candidate, etc.)
+  - **`observability`** — logger, metrics, report-error
+- **`tests`** — `unit/`, `component/`, `functional/`, `integration/`, etc.
+- **`docs`** — Documentation and plans
+- **`scripts`** — Seed, migrations, codegen
+- **`supabase/migrations`** — SQL migrations
+
+---
+
+## API Route Pattern
+
+- Use **`@/lib/api-helpers`**: `getAuthContext`, `requireAuth`, `hasRole`, `jsonError`, `jsonSuccess`, `handleZodError`, `handleApiError`.
+- Validate request body/query with **Zod** (e.g. schemas in `@/lib/validations/`).
+- **Tenant Isolation**: Use **`getTenantScopedClient(ctx)`** from `@/lib/api-helpers` for automatic tenant isolation. This ensures all queries are automatically filtered by organisation. See `src/lib/tenancy/README.md` for usage.
+- For system operations (cron, webhooks), use **`createSupabaseServerClient()`** or **`createSupabaseAdmin()`** from `@/lib/supabase`.
+- Apply security where needed: **`checkRateLimit`**, **`validateOrigin`** (CSRF).
+
+---
+
+## FitScore Engine
+
+- **Types:** `src/lib/fitscore/types.ts` (FitScoreResult, FitScoreSignals, dimensions, flags).
+- **Scoring:** `scorer.ts`, `signals.ts`; v3 logic in `fitscore/v3/` (jd-intel, match-score, pipeline, resume-extract).
+- **API:** `src/app/api/fit-score/route.ts` and related agency/rescore routes; use **FitScoreService** for orchestration.
+
+---
+
+## Conventions
+
+- Keep **typed interfaces** for public APIs; validate at boundaries.
+- Prefer **editing existing files** over creating new ones unless the change clearly warrants a new module.
+- Don't commit **secrets**, **.env**, or **credentials**; use `src/lib/config/env.ts` and validated env for runtime config.
+
+---
+
+## Implementation quick reference (for agents)
+
+Use this together with **API Route Pattern** and **Folder Structure** above. Paths are from repo root.
+
+### Stack touchpoints
+
+- **Next.js** — App Router: pages under `src/app/(dashboard)/`, `src/app/(public)/`, `src/app/(auth)/`; API handlers as `src/app/api/**/route.ts`.
+- **Supabase** — Prefer **`getTenantScopedClient(ctx)`** from `@/lib/api-helpers` for tenant-isolated queries (see `src/lib/tenancy/README.md`). For cron/webhooks/system jobs use **`createSupabaseServerClient()`** or **`createSupabaseAdmin()`** from `@/lib/supabase` — never expose the service role client in browser code.
+- **Inngest** — Register functions in `src/inngest/functions.ts` and wire the serve route; avoid untracked fire-and-forget async for durable/retried work.
+- **Redis** — Caching, feature-flag cache, idempotency: `src/lib/redis/` (e.g. `cache`, `fitscore-cache`, keys).
+- **Stripe** — `src/lib/services/stripe` and billing/checkout routes; check **entitlements / plan limits** (e.g. `src/lib/entitlements/`) before gating premium behavior.
+- **Anthropic / AI** — Prefer **`src/lib/agents/`** (and services such as `@/lib/services/anthropic`) over ad-hoc SDK calls inside route handlers.
+- **Resend** — Transactional email via existing mailer in `src/lib/services/` (e.g. Resend wrappers already used by notifications).
+- **WhatsApp** — `src/lib/whatsapp/` and `src/lib/services/whatsapp`.
+
+### New feature checklist
+
+- **API routes:** auth guard (`getAuthContext`, `requireAuth`, `hasRole`), **`validateOrigin`** where mutating, **`checkRateLimit`** where appropriate, Zod validation, `jsonSuccess` / `jsonError` / `handleApiError` — mirror neighboring `route.ts` files.
+- **New agents:** add under `src/lib/agents/`, export typed entrypoints; invoke from a route or Inngest step — avoid inline LLM calls in UI or routes.
+- **Background / scheduled work:** new **Inngest** function in `src/inngest/functions.ts`; if recurring, add **Vercel cron** (see `vercel.json`) pointing at a **cron-secret–protected** API route when that is the project pattern.
+- **RBAC / entitlements:** use `hasRole` and org entitlements patterns (see existing routes and `src/lib/entitlements/`).
+- **Observability:** use `logger` from `@/lib/observability/logger` (and existing error reporting) — avoid raw `console.log` in production paths.
+- **Dashboard pages:** `src/app/(dashboard)/[area]/` matching role (e.g. `recruit`, `company`, `agency`, `admin`) and existing `DashboardShell` / layout patterns.
+
+### Architecture layers (reference)
+
+When scoping a change, name which layer it touches and follow patterns in that layer:
+
+1. **Personas** → dashboards under `src/app/(dashboard)/…` (candidate, recruit, company, agency, employee, admin, referrer flows).
+2. **Application core** — jobs, pipeline, candidates, applications, hiring requests, offers.
+3. **Intelligence** — FitScore (`src/lib/fitscore/`), AI agents (`src/lib/agents/`), Inngest jobs.
+4. **Platform services** — messaging (email, WhatsApp, in-app notifications), analytics, integrations (OAuth, job board distribution, calendar/video providers).
+5. **Infrastructure** — Supabase, Redis, Stripe, Inngest, external APIs (validated env in `src/lib/config/env.ts`).
+
+### Task prompt template (copy for a focused gap)
+
+> Following the conventions in `.cursorrules`, implement [feature]. Use [closest existing module] as reference. Add a route under `src/app/api/.../route.ts`, an agent under `src/lib/agents/` if there is LLM logic, and an Inngest function in `src/inngest/functions.ts` if work must be async/durable. Enforce auth, CSRF (mutations), rate limits where appropriate, and **check entitlements** before exposing the feature.
+
+**Well-contained gaps** (clear analogues in repo): offer **e-sign** after acceptance (extend existing offers/finance/audit flow); **background check** as a pipeline stage (mirror assessments/share-token patterns); **talent pool / nurture** (extend saved searches + messaging/notifications).

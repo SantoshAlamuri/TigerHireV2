@@ -1,0 +1,48 @@
+# Fallback auto-sync of Inngest functions after every production deploy.
+#
+# Inngest Cloud only invokes functions it learned about at sync time; a deploy
+# that adds a function without a sync silently drops its events (see
+# docs/ops/inngest-deploy.md, incident 2026-07-06). The Vercel<->Inngest
+# marketplace integration is the primary sync mechanism — this workflow is the
+# belt-and-braces fallback and is harmless to run alongside it (idempotent).
+name: Inngest sync
+
+on:
+  push:
+    branches: [main]
+
+permissions:
+  statuses: read
+
+jobs:
+  sync:
+    name: Sync Inngest functions after Vercel deploy
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - name: Wait for Vercel deployment of this commit
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          echo "Waiting for Vercel commit status on ${GITHUB_SHA}..."
+          for i in $(seq 1 55); do
+            state=$(gh api "repos/${GITHUB_REPOSITORY}/commits/${GITHUB_SHA}/status" --jq '.state' || echo "pending")
+            echo "attempt $i: combined status = $state"
+            case "$state" in
+              success) exit 0 ;;
+              failure|error)
+                echo "Vercel deployment failed — skipping sync (old deployment still serving)."
+                exit 1 ;;
+            esac
+            sleep 30
+          done
+          echo "Timed out waiting for the Vercel deployment status."
+          exit 1
+
+      - name: Sync live deployment with Inngest Cloud
+        run: |
+          set -euo pipefail
+          resp=$(curl -sS -X PUT --max-time 30 https://tigerhire.io/api/inngest)
+          echo "PUT /api/inngest → $resp"
+          echo "$resp" | grep -qi "registered" || { echo "Unexpected sync response"; exit 1; }

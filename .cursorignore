@@ -1,0 +1,19 @@
+# Heavy / generated paths — keeps Cursor indexing lighter
+node_modules/
+.next/
+out/
+dist/
+build/
+coverage/
+.turbo/
+playwright-report/
+test-results/
+blob-report/
+.vercel/
+backups/
+docx_extract/
+*.tsbuildinfo
+public/sw.js
+public/workbox-*.js
+public/swe-worker-*.js
+public/fallback-*.js

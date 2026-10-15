@@ -1,0 +1,32 @@
+{
+  "git": {
+    "deploymentEnabled": {
+      "main": true,
+      "dev": true
+    }
+  },
+  "crons": [
+    { "path": "/api/cron/process-signals", "schedule": "0 */4 * * *" },
+    { "path": "/api/cron/unscored-reconciliation", "schedule": "15 */6 * * *" },
+    { "path": "/api/cron/assessment-reminders", "schedule": "0 9 * * *" },
+    { "path": "/api/cron/score-batch", "schedule": "0 2 * * *" },
+    { "path": "/api/cron/embed", "schedule": "30 2 * * *" },
+    { "path": "/api/cron/reminders", "schedule": "*/30 * * * *" },
+    { "path": "/api/cron/user-count-monitor", "schedule": "0 6 * * *" },
+    { "path": "/api/cron/cost-sync", "schedule": "15 3 * * *" },
+    { "path": "/api/cron/fitscore-daily-metrics", "schedule": "30 0 * * *" },
+    { "path": "/api/cron/trust", "schedule": "0 4 * * *" },
+    { "path": "/api/cron/interview-feedback-followups", "schedule": "*/30 * * * *" },
+    { "path": "/api/cron/interview-reminders", "schedule": "*/30 * * * *" },
+    { "path": "/api/cron/workflow-sla", "schedule": "*/15 * * * *" },
+    { "path": "/api/cron/offer-expiry", "schedule": "0 */6 * * *" },
+    { "path": "/api/cron/privacy-retention", "schedule": "0 */6 * * *" },
+    { "path": "/api/cron/privacy-retention-enforce", "schedule": "45 3 * * *" },
+    { "path": "/api/cron/referral-day90", "schedule": "15 3 * * *" },
+    { "path": "/api/cron/prescreen-sweep", "schedule": "0 */6 * * *" },
+    { "path": "/api/jobs/sync?source=all", "schedule": "30 21 * * *" },
+    { "path": "/api/billing/screening-monthly", "schedule": "30 20 1 * *" },
+    { "path": "/api/cron/whatsapp-session-reap", "schedule": "0 5 * * *" },
+    { "path": "/api/cron/idempotency-reap", "schedule": "0 4 * * *" }
+  ]
+}

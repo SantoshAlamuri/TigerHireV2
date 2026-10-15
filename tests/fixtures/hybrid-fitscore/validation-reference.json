@@ -1,0 +1,13 @@
+{
+  "_comment": "Reference only from an earlier hybrid run — not enforced in CI. Update after you lock the production model + JD base.",
+  "candidates": [
+    { "fixture": "resumes/madhan-kumar.txt", "referenceOverall": 83 },
+    { "fixture": "resumes/vijay-golla.txt", "referenceOverall": 79 },
+    { "fixture": "resumes/shashank-garg.txt", "referenceOverall": 67, "tc01_min": 60 }
+  ],
+  "tc01": {
+    "resume": "resumes/shashank-garg.txt",
+    "minScore": 60,
+    "mustNotBeLabel": "Not a Fit"
+  }
+}

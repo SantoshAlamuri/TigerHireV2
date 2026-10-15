@@ -1,0 +1,1031 @@
+@import "tailwindcss";
+
+:root {
+  /* Slightly lifted dark base reduces harsh OLED-black contrast fatigue */
+  --bg: #0f1014;
+  --bg-elevated: #15171d;
+  /* Solid panel background (modals, cards); must be opaque — was missing and broke glass/modal readability */
+  --card: #1a1c22;
+  --surface: #1f2128;
+  --surface-hover: #25272f;
+  --card-highlight: rgba(255, 230, 200, 0.05);
+  --air-amber-strong: rgba(245, 158, 11, 0.07);
+  --air-amber-soft: rgba(245, 158, 11, 0.03);
+  --border: rgba(255, 255, 255, 0.08);
+  --border-interactive: rgba(255, 255, 255, 0.14);
+  --border-hover: rgba(255, 255, 255, 0.14);
+  /* Primary + secondary text: higher contrast on dark bg for long-session readability */
+  --text: #eef1f6;
+  --text-muted: #aeb9d0;
+  --text-subtle: #8493ac;
+  --accent: #f59e0b;
+  --accent-hover: #fbbf24;
+  --accent-muted: rgba(245, 158, 11, 0.1);
+  --accent-glow: rgba(245, 158, 11, 0.15);
+  --glow: rgba(245, 158, 11, 0.2);
+  --amber-warm: #f97316;
+  --green: #22c55e;
+  --green-muted: rgba(34, 197, 94, 0.12);
+  --red: #ef4444;
+  --red-muted: rgba(239, 68, 68, 0.12);
+  --status-success-fg: #4ade80;
+  --status-success-bg: rgba(34, 197, 94, 0.14);
+  --status-success-border: rgba(34, 197, 94, 0.28);
+  --status-info-fg: #60a5fa;
+  --status-info-bg: rgba(59, 130, 246, 0.14);
+  --status-info-border: rgba(59, 130, 246, 0.28);
+  --status-warning-fg: #fbbf24;
+  --status-warning-bg: rgba(245, 158, 11, 0.14);
+  --status-warning-border: rgba(245, 158, 11, 0.3);
+  --status-danger-fg: #f87171;
+  --status-danger-bg: rgba(239, 68, 68, 0.14);
+  --status-danger-border: rgba(239, 68, 68, 0.3);
+  --status-neutral-fg: #a1a1aa;
+  --status-neutral-bg: rgba(113, 113, 122, 0.14);
+  --status-neutral-border: rgba(113, 113, 122, 0.28);
+
+  /* Single 0–100 score ramp (FitScore, intent, any 0–100 metric). One vocabulary,
+     one set of thresholds — consumed via scoreToTone() so the same value never
+     reads as two different colors across components (audit F-03). */
+  --score-strong: #4ade80;
+  --score-good: #fbbf24;
+  --score-fair: #fb923c;
+  --score-weak: #f87171;
+  --score-strong-bg: rgba(34, 197, 94, 0.15);
+  --score-good-bg: rgba(245, 158, 11, 0.15);
+  --score-fair-bg: rgba(249, 115, 22, 0.15);
+  --score-weak-bg: rgba(239, 68, 68, 0.15);
+
+  /* ─── Border-radius scale (audit F-10) ─── */
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 16px;
+  --radius-pill: 9999px;
+
+  /* ─── Single focus-ring colour (audit F-06) ─── */
+  --focus-ring: rgba(245, 158, 11, 0.65);
+}
+
+@theme inline {
+  --color-background: var(--bg);
+  --color-foreground: var(--text);
+  --font-sans: var(--font-jakarta), ui-sans-serif, system-ui, sans-serif;
+  --font-display: var(--font-jakarta), ui-sans-serif, system-ui, sans-serif;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font-jakarta), ui-sans-serif, system-ui, sans-serif;
+  font-size: 1rem;
+  line-height: 1.65;
+  letter-spacing: 0;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+}
+
+html {
+  scrollbar-gutter: stable;
+}
+
+::selection {
+  background: rgba(245, 158, 11, 0.3);
+  color: #fff;
+}
+
+input,
+textarea,
+select {
+  color-scheme: dark;
+}
+
+/* Native <select> option lists render with the OS background; without an
+   explicit colour they show as light-bg with near-white text (invisible until
+   hover) on Chrome/Linux. Force opaque, readable options app-wide. */
+select option,
+select optgroup {
+  background-color: var(--bg-elevated);
+  color: var(--text);
+}
+
+/* Dark UI: keep datetime/time pickers and values readable (WebKit). */
+.th-datetime-input,
+input[type="datetime-local"],
+input[type="date"],
+input[type="time"] {
+  color: var(--text);
+  background-color: var(--bg-elevated);
+}
+
+input[type="datetime-local"]::-webkit-calendar-picker-indicator,
+input[type="date"]::-webkit-calendar-picker-indicator,
+input[type="time"]::-webkit-calendar-picker-indicator {
+  filter: invert(1);
+  opacity: 0.85;
+  cursor: pointer;
+}
+
+.font-display {
+  font-family: var(--font-display);
+  letter-spacing: -0.02em;
+}
+
+/* ─── Standardized focus ring (audit F-06) ───
+   One visible focus treatment for every interactive element. Apply the
+   `focus-ring` class and drop bespoke `focus-visible:ring-*` variants. Uses
+   outline (not box-shadow) so it never fights Tailwind ring utilities. */
+.focus-ring {
+  outline: none;
+}
+.focus-ring:focus-visible {
+  outline: 2px solid var(--focus-ring);
+  outline-offset: 2px;
+  border-radius: var(--radius-sm);
+}
+
+/* ─── Typography scale ─── */
+.heading-hero {
+  font-family: var(--font-display);
+  font-weight: 800;
+  letter-spacing: -0.035em;
+  line-height: 1.08;
+}
+
+.heading-page {
+  font-family: var(--font-display);
+  font-weight: 700;
+  letter-spacing: -0.025em;
+  line-height: 1.15;
+}
+
+.heading-section {
+  font-family: var(--font-display);
+  font-weight: 700;
+  letter-spacing: -0.015em;
+  line-height: 1.2;
+}
+
+.heading-card {
+  font-family: var(--font-display);
+  font-weight: 700;
+  line-height: 1.3;
+}
+
+.text-lead {
+  line-height: 1.7;
+}
+
+.text-body {
+  line-height: 1.7;
+}
+
+/* ─── Marketing display scale ─── */
+.heading-display {
+  font-family: var(--font-display);
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  line-height: 1.08;
+}
+
+.heading-display-light {
+  font-family: var(--font-display);
+  font-weight: 400;
+  letter-spacing: -0.01em;
+  line-height: 1.15;
+}
+
+/* ─── Small-end type scale (audit F-15) ───
+   The heading tiers were systematised but body/label sizes were one-off
+   text-[0.8rem] / text-[0.62rem] / text-[10px] / text-[11px] values. These
+   define the small end so components stop inventing arbitrary sizes. Font-size
+   only — callers keep their own line-height and tracking utilities, drop-in. */
+.text-body-sm {
+  font-size: 0.8rem;
+}
+.text-label {
+  font-size: 0.6875rem;
+}
+.text-caption {
+  font-size: 0.625rem;
+}
+
+@media (prefers-contrast: more) {
+  :root {
+    --text: #f6f8fc;
+    --text-muted: #c5cee0;
+    --text-subtle: #a4b0c8;
+    --border: rgba(255, 255, 255, 0.12);
+    --border-interactive: rgba(255, 255, 255, 0.2);
+    --border-hover: rgba(255, 255, 255, 0.2);
+    --status-success-bg: rgba(34, 197, 94, 0.18);
+    --status-info-bg: rgba(59, 130, 246, 0.18);
+    --status-warning-bg: rgba(245, 158, 11, 0.18);
+    --status-danger-bg: rgba(239, 68, 68, 0.18);
+    --status-neutral-bg: rgba(113, 113, 122, 0.18);
+  }
+}
+
+/* Dynamic progress bar width (set via scoped class, no inline style) */
+.progress-bar-fill {
+  width: var(--progress-pct, 0);
+}
+
+/* Global page-to-page transitions */
+.route-progress {
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 70;
+  height: 3px;
+  width: 100%;
+  opacity: 0;
+  transform: translateY(-2px);
+  transition:
+    opacity 180ms ease,
+    transform 180ms ease;
+  pointer-events: none;
+}
+
+.route-progress--active {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.route-progress__bar {
+  height: 100%;
+  width: var(--route-progress-width, 0%);
+  background: linear-gradient(90deg, #f59e0b 0%, #fbbf24 55%, #fde68a 100%);
+  box-shadow:
+    0 0 18px rgba(245, 158, 11, 0.55),
+    0 0 34px rgba(245, 158, 11, 0.22);
+  transition: width 180ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.route-content {
+  min-height: 100dvh;
+}
+
+/* ─── Grain overlay ─── */
+.grain::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.018'/%3E%3C/svg%3E");
+  pointer-events: none;
+}
+
+/* ─── Staggered reveal ─── */
+@keyframes fadeUp {
+  from {
+    opacity: 0;
+    transform: translateY(24px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes scaleIn {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes slideInLeft {
+  from {
+    opacity: 0;
+    transform: translateX(-32px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes slideInRight {
+  from {
+    opacity: 0;
+    transform: translateX(32px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+.animate-fade-up {
+  animation: fadeUp 0.7s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+.animate-fade-in {
+  animation: fadeIn 0.6s ease-out forwards;
+}
+
+.animate-scale-in {
+  animation: scaleIn 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.animate-fade-up-1 {
+  animation-delay: 0.1s;
+}
+.animate-fade-up-2 {
+  animation-delay: 0.2s;
+}
+.animate-fade-up-3 {
+  animation-delay: 0.35s;
+}
+.animate-fade-up-4 {
+  animation-delay: 0.5s;
+}
+.animate-fade-up-5 {
+  animation-delay: 0.65s;
+}
+.animate-fade-up-6 {
+  animation-delay: 0.8s;
+}
+
+/* ─── Scroll-triggered reveal (via IntersectionObserver) ─── */
+.reveal {
+  opacity: 0;
+  transform: translateY(28px);
+  transition:
+    opacity 0.7s cubic-bezier(0.16, 1, 0.3, 1),
+    transform 0.7s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.reveal.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.reveal-scale {
+  opacity: 0;
+  transform: scale(0.96);
+  transition:
+    opacity 0.6s cubic-bezier(0.16, 1, 0.3, 1),
+    transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.reveal-scale.visible {
+  opacity: 1;
+  transform: scale(1);
+}
+
+/* Staggered children inside a reveal container */
+.reveal-stagger > * {
+  opacity: 0;
+  transform: translateY(20px);
+  transition:
+    opacity 0.5s cubic-bezier(0.16, 1, 0.3, 1),
+    transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.reveal-stagger.visible > *:nth-child(1) {
+  transition-delay: 0.05s;
+  opacity: 1;
+  transform: translateY(0);
+}
+.reveal-stagger.visible > *:nth-child(2) {
+  transition-delay: 0.12s;
+  opacity: 1;
+  transform: translateY(0);
+}
+.reveal-stagger.visible > *:nth-child(3) {
+  transition-delay: 0.19s;
+  opacity: 1;
+  transform: translateY(0);
+}
+.reveal-stagger.visible > *:nth-child(4) {
+  transition-delay: 0.26s;
+  opacity: 1;
+  transform: translateY(0);
+}
+.reveal-stagger.visible > *:nth-child(5) {
+  transition-delay: 0.33s;
+  opacity: 1;
+  transform: translateY(0);
+}
+.reveal-stagger.visible > *:nth-child(6) {
+  transition-delay: 0.4s;
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* ─── Interactive hover effects ─── */
+.hover-lift {
+  /* Dashboard-era lift utility; Stage 5 marketing uses .cta-bloom-lg and .card-lifted-marketing-hover for larger motion. */
+  transition:
+    transform 0.25s cubic-bezier(0.16, 1, 0.3, 1),
+    box-shadow 0.25s ease;
+}
+
+/* Suppress the lift while disabled (e.g. a loading submit button) — Sign In #1. */
+.hover-lift:not(:disabled):hover {
+  transform: translateY(-3px);
+}
+
+.hover-glow:hover {
+  box-shadow:
+    0 0 0 1px rgba(245, 158, 11, 0.2),
+    0 0 32px rgba(245, 158, 11, 0.08),
+    0 8px 32px rgba(0, 0, 0, 0.3);
+}
+
+.card-hover {
+  transition:
+    transform 0.3s cubic-bezier(0.16, 1, 0.3, 1),
+    border-color 0.3s ease,
+    box-shadow 0.3s ease;
+}
+
+.card-hover:hover {
+  transform: translateY(-4px);
+  border-color: var(--border-hover);
+  box-shadow:
+    0 16px 48px rgba(0, 0, 0, 0.25),
+    0 0 0 1px rgba(255, 255, 255, 0.06);
+}
+
+/* ─── Gradient borders ─── */
+.gradient-border {
+  position: relative;
+}
+
+.gradient-border::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  padding: 1px;
+  background: linear-gradient(
+    135deg,
+    rgba(245, 158, 11, 0.3),
+    transparent 40%,
+    transparent 60%,
+    rgba(245, 158, 11, 0.15)
+  );
+  -webkit-mask:
+    linear-gradient(#fff 0 0) content-box,
+    linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask:
+    linear-gradient(#fff 0 0) content-box,
+    linear-gradient(#fff 0 0);
+  mask-composite: exclude;
+  pointer-events: none;
+}
+
+/* ─── Animated gradient mesh background ─── */
+@keyframes meshFloat {
+  0%,
+  100% {
+    transform: translate(0, 0) scale(1);
+  }
+  25% {
+    transform: translate(30px, -20px) scale(1.05);
+  }
+  50% {
+    transform: translate(-20px, 15px) scale(0.97);
+  }
+  75% {
+    transform: translate(15px, 25px) scale(1.03);
+  }
+}
+
+@keyframes meshFloat2 {
+  0%,
+  100% {
+    transform: translate(0, 0) scale(1);
+  }
+  33% {
+    transform: translate(-25px, 30px) scale(1.04);
+  }
+  66% {
+    transform: translate(20px, -15px) scale(0.96);
+  }
+}
+
+.mesh-orb {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(80px);
+  pointer-events: none;
+  will-change: transform;
+}
+
+.mesh-orb-1 {
+  animation: meshFloat 18s ease-in-out infinite;
+}
+
+.mesh-orb-2 {
+  animation: meshFloat2 22s ease-in-out infinite;
+}
+
+.mesh-orb-3 {
+  animation: meshFloat 25s ease-in-out infinite reverse;
+}
+
+/* ─── Gradient orbs (static) ─── */
+.orb {
+  position: absolute;
+  z-index: 0;
+  border-radius: 50%;
+  filter: blur(100px);
+  opacity: 0.2;
+  pointer-events: none;
+}
+
+/* ─── Upgrade banner amber glow ─── */
+.upgrade-banner-glow {
+  border: 1px solid rgba(245, 158, 11, 0.3);
+  box-shadow:
+    0 0 0 1px rgba(245, 158, 11, 0.2),
+    0 0 24px rgba(245, 158, 11, 0.08);
+}
+
+/* ─── Shimmer / loading ─── */
+@keyframes shimmer {
+  from {
+    background-position: -200% 0;
+  }
+  to {
+    background-position: 200% 0;
+  }
+}
+
+.shimmer {
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.04), transparent);
+  background-size: 200% 100%;
+  animation: shimmer 3s ease-in-out infinite;
+}
+
+/* ─── Pulse ring (for live indicators) ─── */
+@keyframes pulseRing {
+  0% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(2);
+    opacity: 0;
+  }
+}
+
+.pulse-ring::after {
+  content: "";
+  position: absolute;
+  inset: -2px;
+  border-radius: 50%;
+  border: 2px solid var(--accent);
+  animation: pulseRing 2s ease-out infinite;
+}
+
+@keyframes pulse {
+  0%,
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.5;
+    transform: scale(0.85);
+  }
+}
+
+/* ─── Flowing line (for pipeline visualization) ─── */
+@keyframes flowLine {
+  from {
+    stroke-dashoffset: 100;
+  }
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+.flow-line {
+  stroke-dasharray: 8 6;
+  animation: flowLine 2s linear infinite;
+}
+
+/* ─── Badge styles ─── */
+.badge-accent {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 14px;
+  border-radius: 9999px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  background: var(--accent-muted);
+  color: var(--accent);
+  border: 1px solid rgba(245, 158, 11, 0.15);
+}
+
+/* ─── Next.js Portal positioning override ─── */
+/* Portal container is intentionally zero-sized; content is positioned absolutely/fixed */
+nextjs-portal {
+  position: relative;
+  display: contents;
+  pointer-events: none;
+}
+
+/* Restore pointer events for portal content (modals, tooltips, etc.) */
+nextjs-portal > * {
+  pointer-events: auto;
+}
+
+/* ─── Public payout ticker (landing): doubled list + translate -50% = seamless loop ─── */
+@keyframes marquee {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+.payout-ticker-track {
+  animation: marquee 45s linear infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .payout-ticker-track {
+    animation: none;
+    transform: none;
+  }
+  .payout-ticker-track > div:last-child {
+    display: none;
+  }
+  .route-progress__bar {
+    transition: width 100ms linear;
+  }
+  /* Stop the continuously-animated, heavily-blurred mesh orbs — animating
+     filter:blur over large surfaces is GPU-expensive and the float keyframes
+     previously ignored reduced-motion (audit F-18). */
+  .mesh-orb-1,
+  .mesh-orb-2,
+  .mesh-orb-3 {
+    animation: none;
+  }
+}
+
+/* ─── Scrollbar ─── */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--bg);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--surface);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--surface-hover);
+}
+
+/* ─── Ambient amber-glow family (audit F-19) ───
+   Six overlapping utilities define "the TigerHire glow" with subtly different
+   radial recipes/opacities: alive-air, alive-air-hero, alive-halo, alive-halo-lg
+   (below) plus mesh-orb / orb (above). Target end-state is ONE parameterized glow
+   utility with size/intensity modifiers. Consolidation is deferred: these back
+   many marketing + dashboard surfaces and need per-surface visual verification —
+   tracked as ongoing polish, not bundled into this pass. */
+.alive-air {
+  position: relative;
+}
+
+.alive-air::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  /* Hide the top band so radial glow cannot skew / soften the dashboard hairline */
+  -webkit-mask-image: linear-gradient(to bottom, transparent 0, transparent 4px, #000 5px);
+  mask-image: linear-gradient(to bottom, transparent 0, transparent 4px, #000 5px);
+  background:
+    radial-gradient(ellipse 900px 620px at 78% 14%, var(--air-amber-strong) 0%, transparent 58%),
+    radial-gradient(ellipse 700px 500px at 0% 100%, var(--air-amber-soft) 0%, transparent 55%);
+}
+
+/*
+  Stack in-flow content above the ambient ::before (z-0).
+  Do NOT force position:relative on Tailwind fixed overlays (fixed / sm:fixed / md:fixed …) —
+  that was overriding position:fixed, so modals rendered as direct children of .alive-air
+  expanded in document flow instead of covering the viewport (e.g. Admin Billing "Manage").
+*/
+.alive-air > *:where(:not([class~="fixed"]):not([class*=":fixed"])) {
+  position: relative;
+  z-index: 1;
+}
+
+/* Avoid doubled vertical rhythm on dashboard pages that already use spaced wrappers. */
+.alive-air.space-y-3 > .page-header,
+.alive-air.space-y-4 > .page-header,
+.alive-air.space-y-5 > .page-header,
+.alive-air.space-y-6 > .page-header {
+  margin-bottom: 0;
+}
+
+/* Reserve the scrollbar gutter on the actual dashboard scroll container so the
+   content width doesn't shift when navigating between short (no scrollbar) and
+   tall (scrollbar) pages — the "screen shake" on tab switch (Home #1). The html
+   scrollbar-gutter rule is inert here because <main> is the scroller. */
+.dashboard-main {
+  scrollbar-gutter: stable;
+}
+
+/* Dashboard-wide section rhythm: keeps page blocks evenly spaced on pages that use fragments. */
+.dashboard-main > .page-header {
+  margin-bottom: 0;
+}
+
+.dashboard-main > * + * {
+  margin-top: 1rem;
+}
+
+.card-lifted {
+  /* Literal fallback retained on purpose: a missing --card here rendered popups
+     transparent (see-through dropdowns over backdrop-blur). This is the one
+     allowed literal-shadowing exception to audit F-04 and is regression-guarded
+     by tests/unit/css-popup-dropdown-guards.ts. */
+  background: var(--card, #1a1c22);
+  border: 1px solid rgba(255, 255, 255, 0.09);
+  border-radius: var(--radius-md);
+  box-shadow:
+    inset 0 1px 0 var(--card-highlight),
+    0 1px 2px rgba(0, 0, 0, 0.4);
+}
+
+.card-lifted-hover {
+  transition:
+    background-color 150ms,
+    border-color 150ms;
+}
+
+.card-lifted-hover:hover {
+  background: #212430;
+  border-color: rgba(255, 255, 255, 0.1);
+}
+
+.alive-halo {
+  position: relative;
+  overflow: hidden;
+}
+
+.alive-halo::before {
+  content: "";
+  position: absolute;
+  top: -80px;
+  right: -120px;
+  width: 400px;
+  height: 400px;
+  background: radial-gradient(circle, rgba(245, 158, 11, 0.18) 0%, transparent 60%);
+  filter: blur(20px);
+  pointer-events: none;
+}
+
+.alive-halo > * {
+  position: relative;
+}
+
+/* Marketing-scale ambient amber atmosphere — louder than .alive-air */
+.alive-air-hero {
+  position: relative;
+}
+
+.alive-air-hero::before {
+  content: "";
+  position: absolute;
+  inset: -50px;
+  pointer-events: none;
+  z-index: 0;
+  background:
+    radial-gradient(ellipse 1400px 900px at 75% 0%, rgba(245, 158, 11, 0.12) 0%, transparent 55%),
+    radial-gradient(ellipse 1000px 700px at 0% 100%, rgba(245, 158, 11, 0.06) 0%, transparent 55%),
+    radial-gradient(ellipse 600px 400px at 100% 100%, rgba(245, 158, 11, 0.04) 0%, transparent 60%);
+  filter: blur(2px);
+}
+
+.alive-air-hero > * {
+  position: relative;
+  z-index: 1;
+}
+
+/* Larger halo for marketing-scale heroes */
+.alive-halo-lg {
+  position: relative;
+  overflow: hidden;
+}
+
+.alive-halo-lg::before {
+  content: "";
+  position: absolute;
+  top: -200px;
+  right: -300px;
+  width: 800px;
+  height: 800px;
+  background: radial-gradient(circle, rgba(245, 158, 11, 0.22) 0%, transparent 60%);
+  filter: blur(40px);
+  pointer-events: none;
+  z-index: 0;
+}
+
+.alive-halo-lg > * {
+  position: relative;
+  z-index: 1;
+}
+
+/* Standardized CTA bloom (dashboard primary CTAs use this) */
+.cta-bloom {
+  box-shadow: 0 0 24px rgba(245, 158, 11, 0.3);
+}
+
+.cta-bloom:hover {
+  box-shadow: 0 0 36px rgba(245, 158, 11, 0.45);
+}
+
+/* Marketing-hero CTA bloom — larger, more presence */
+.cta-bloom-lg {
+  box-shadow:
+    0 0 48px rgba(245, 158, 11, 0.4),
+    0 0 0 1px rgba(245, 158, 11, 0.15);
+}
+
+.cta-bloom-lg:hover {
+  box-shadow:
+    0 0 72px rgba(245, 158, 11, 0.55),
+    0 0 0 1px rgba(245, 158, 11, 0.2);
+}
+
+/* Marketing card — same alive language, larger feel for landing pages */
+.card-lifted-marketing {
+  background: var(--card);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: var(--radius-lg);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 230, 200, 0.07),
+    0 4px 24px rgba(0, 0, 0, 0.3);
+}
+
+.card-lifted-marketing-hover {
+  transition:
+    background-color 200ms,
+    border-color 200ms,
+    transform 200ms,
+    box-shadow 200ms;
+}
+
+.card-lifted-marketing-hover:hover {
+  background: #1f2128;
+  border-color: rgba(255, 255, 255, 0.12);
+  transform: translateY(-2px);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 230, 200, 0.09),
+    0 8px 32px rgba(0, 0, 0, 0.4);
+}
+
+.skeleton-pulse {
+  background: rgba(255, 255, 255, 0.04);
+  animation: skeleton-pulse 1.6s ease-in-out infinite;
+}
+
+@keyframes skeleton-pulse {
+  0%,
+  100% {
+    background-color: rgba(255, 255, 255, 0.04);
+  }
+  50% {
+    background-color: rgba(255, 255, 255, 0.08);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .skeleton-pulse {
+    animation: none;
+  }
+}
+
+/* Hiring workspaces: neutral surfaces, readable metadata and stable controls.
+   Keep brand amber for primary actions and semantic warning states. */
+.hiring-workspace.alive-air::before,
+.hiring-workspace .alive-air::before,
+.hiring-workspace .alive-halo::before,
+.hiring-workspace .alive-halo-lg::before {
+  display: none;
+}
+.hiring-workspace .card-lifted {
+  box-shadow: none;
+  background: var(--card);
+  border-color: var(--border);
+}
+.hiring-workspace
+  :is(
+    .text-white\/35,
+    .text-white\/40,
+    .text-white\/45,
+    .text-white\/50,
+    .text-white\/55,
+    .text-white\/60
+  ) {
+  color: var(--text-muted);
+}
+.hiring-workspace :is(.text-\[10px\], .text-\[11px\]) {
+  font-size: 0.75rem;
+  line-height: 1.5;
+}
+.hiring-workspace :is(button, a, input, select, textarea, summary):focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 3px;
+}
+.hiring-workspace
+  :is(
+    input:not([type="checkbox"]):not([type="radio"]):not([type="range"]):not([type="hidden"]),
+    select,
+    textarea
+  ) {
+  border-color: var(--border-interactive);
+  border-radius: var(--radius-sm);
+}
+.workspace-panel {
+  min-width: 0;
+  padding: 1.25rem;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  background: var(--card);
+}
+.workspace-heading {
+  font-size: 1rem;
+  font-weight: 600;
+  line-height: 1.4;
+  color: var(--text);
+}
+.workspace-tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.25rem;
+  border-bottom: 1px solid var(--border);
+}
+.workspace-tabs > button {
+  padding: 0.65rem 1rem;
+  border-bottom: 2px solid transparent;
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--text-muted);
+}
+.workspace-tabs > button[aria-current="page"] {
+  border-bottom-color: var(--text);
+  color: var(--text);
+}
+.workspace-tabs > button:hover {
+  background: var(--surface);
+}
+.workspace-metrics {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1rem;
+  padding: 1rem 1.25rem;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+}
+.workspace-action-row {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 1rem 0;
+  color: var(--text);
+}
+.workspace-action-row:hover {
+  background: var(--surface);
+}
+@media (min-width: 640px) {
+  .workspace-metrics {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+}
