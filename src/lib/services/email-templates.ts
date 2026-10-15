@@ -142,6 +142,7 @@ export function interviewBookedHtml(p: {
   interviewTime: string;
   timezone: string;
   recordingNotice?: string | null;
+  meetingUrl?: string | null;
 }): string {
   return emailLayout({
     body: `
@@ -151,6 +152,7 @@ export function interviewBookedHtml(p: {
       ${infoBox(`
         <p style="margin:0;"><strong>Date:</strong> ${p.interviewDate}</p>
         <p style="margin:4px 0 0;"><strong>Time:</strong> ${p.interviewTime} (${p.timezone})</p>
+        ${p.meetingUrl ? `<p style="margin:4px 0 0;"><strong>Join:</strong> <a href="${p.meetingUrl}">${p.meetingUrl}</a></p>` : ""}
       `)}
       ${ctaButton(`${env.baseUrl}/candidate`, "View Details")}
       <p style="margin-top:16px;font-size:13px;color:${TEXT_SECONDARY};">If you need to reschedule, please contact your recruiter.</p>

@@ -17,6 +17,7 @@ export function buildInterviewInviteIcs(input: {
   cancelled?: boolean;
   /** Optional recording-disclosure sentence appended to the event description. (#354) */
   recordingNotice?: string;
+  meetingUrl?: string;
 }): string {
   const start = new Date(input.startAt);
   const end = new Date(input.endAt);
@@ -25,6 +26,7 @@ export function buildInterviewInviteIcs(input: {
   const description = input.recordingNotice
     ? `Interview for role: ${input.title}. Candidate: ${input.candidateName}. ${input.recordingNotice}`
     : `Interview for role: ${input.title}. Candidate: ${input.candidateName}.`;
+  const withJoin = input.meetingUrl ? `${description} Join: ${input.meetingUrl}` : description;
   return [
     "BEGIN:VCALENDAR",
     "VERSION:2.0",
@@ -37,7 +39,10 @@ export function buildInterviewInviteIcs(input: {
     `DTSTART:${icsDate(start)}`,
     `DTEND:${icsDate(end)}`,
     `SUMMARY:${icsEscape(`Interview - ${input.title}`)}`,
-    `DESCRIPTION:${icsEscape(description)}`,
+    `DESCRIPTION:${icsEscape(withJoin)}`,
+    ...(input.meetingUrl
+      ? [`LOCATION:${icsEscape(input.meetingUrl)}`, `URL:${input.meetingUrl}`]
+      : []),
     ...(input.cancelled ? ["STATUS:CANCELLED"] : []),
     "END:VEVENT",
     "END:VCALENDAR",

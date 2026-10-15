@@ -250,6 +250,46 @@ export const DASHBOARD_ROUTE_ACCESS_RULES: ReadonlyArray<{
     roles: ["recruiter", "leadership", "hiring_manager", "interviewer", "super_admin"],
   },
   { prefix: "/recruit", roles: ["recruiter", "leadership", "super_admin"] },
+  /** Work-driven UI: the same recruiting work, reached through the work item. */
+  { prefix: "/work", roles: ["recruiter", "leadership", "super_admin"] },
+  { prefix: "/work/hm", roles: ["hiring_manager", "leadership", "super_admin"] },
+  /** Personal setup: anyone who uses the work-driven UI. */
+  ...[
+    "/work/setup/profile",
+    "/work/setup/calendar",
+    "/work/setup/availability",
+    "/work/setup/help",
+  ].map((prefix) => ({
+    prefix,
+    roles: [
+      "recruiter",
+      "hiring_manager",
+      "interviewer",
+      "finance",
+      "leadership",
+      "super_admin",
+    ] as UserRole[],
+  })),
+  /** Interviews: interviewers see their own, everyone else the jobs they can see. */
+  {
+    prefix: "/work/interviews",
+    roles: ["recruiter", "hiring_manager", "interviewer", "leadership", "super_admin"],
+  },
+  /** Decisions: anyone who signs off roles or shortlists. */
+  {
+    prefix: "/work/decisions",
+    roles: ["recruiter", "hiring_manager", "finance", "leadership", "super_admin"],
+  },
+  /** Reports: hiring managers see figures scoped to the jobs they own. */
+  {
+    prefix: "/work/reports",
+    roles: ["recruiter", "hiring_manager", "leadership", "super_admin"],
+  },
+  /** Onboarding: everyone who uses the work-driven UI, hiring managers included. */
+  {
+    prefix: "/work/welcome",
+    roles: ["recruiter", "hiring_manager", "leadership", "super_admin"],
+  },
   { prefix: "/agency", roles: ["agency"] },
   { prefix: "/employee", roles: ["employee"] },
   /** Referrer hub: every signed-in product role may open the page (feature UI may still gate). */

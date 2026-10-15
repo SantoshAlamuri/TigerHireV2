@@ -265,6 +265,7 @@ export async function sendInterviewBooked(params: {
   timezone: string;
   /** Recording disclosure sentence, when the org's AI notetaker is enabled. (#354) */
   recordingNotice?: string | null;
+  meetingUrl?: string | null;
 }): Promise<SendResult> {
   if (!(await shouldSendEmail(params.candidateEmail, "interview_reminders"))) {
     return { skipped: true, reason: "email_preference_disabled" };

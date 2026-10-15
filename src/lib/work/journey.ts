@@ -1,0 +1,369 @@
+/**
+ * The job journey: where a job's work is, who holds it, and where to take the
+ * person who opens it.
+ *
+ * The work-driven UI never asks a recruiter to find the right screen. Opening a
+ * job lands on the first stage that needs a human; stages the agent or
+ * automation is handling show what they are doing and step aside. This module
+ * is that decision, kept pure so it is stated once and tested once.
+ *
+ * Every status is derived from data. Nothing here is a flag someone sets.
+ */
+
+/** Who does the work at a stage. "auto" is deterministic rules, no AI. */
+export type Actor = "agent" | "auto" | "you";
+
+export type StageKey =
+  | "request"
+  | "description"
+  | "profile"
+  | "rubric"
+  | "screening"
+  | "publish"
+  | "applications"
+  | "scoring"
+  | "review"
+  | "interviews"
+  | "offer";
+
+/**
+ * - done: nothing left to do here.
+ * - working: the agent or automation is on it; no human needed.
+ * - needs_you: the person viewing owes an action.
+ * - waiting: an earlier stage has to finish first, or someone else holds it.
+ * - blocked: something is wrong and results downstream cannot be trusted.
+ * - skipped: does not apply to this job.
+ */
+export type StageStatus = "done" | "working" | "needs_you" | "waiting" | "blocked" | "skipped";
+
+export interface JourneyFacts {
+  hiringRequestId?: string | null;
+  hiringRequestStatus?: string | null;
+  jdPublished: boolean;
+  rubricApproved: boolean;
+  /** The organisation has role-specific scoring switched off. */
+  rubricNotRequired: boolean;
+  mustHaveCount: number;
+  roleOpen: boolean;
+  publicApplications: boolean;
+  screeningQuestionCount: number;
+  /** WhatsApp screening is switched on for the organisation. Undefined = unknown. */
+  whatsappScreening?: boolean;
+  /** Questions sent once someone is shortlisted. */
+  postShortlistQuestionCount?: number;
+  /** The person chose to go live without screening questions. */
+  screeningSkipped?: boolean;
+  applicants: number;
+  /** Applied but carrying no score — a silent drop if left alone. */
+  unscored: number;
+  /** A human still owes these applicants a decision. */
+  awaitingReview: number;
+  shortlisted: number;
+  hired: number;
+  interviewsUpcoming: number;
+  /** Interviews that happened with no scorecard yet. */
+  interviewsAwaitingFeedback: number;
+  offersOut: number;
+  /** Offers the offer-state rules flag as needing a nudge or a decision. */
+  offersNeedingAction: number;
+  offersSigned: number;
+}
+
+export interface JourneyStage {
+  key: StageKey;
+  label: string;
+  actors: Actor[];
+  status: StageStatus;
+  /** One line, written for the person looking at it. */
+  headline: string;
+}
+
+export interface Journey {
+  stages: JourneyStage[];
+  /** Where to take the person who opens the job. */
+  currentKey: StageKey;
+  /** How many stages are waiting on the person right now. */
+  needsYouCount: number;
+  /** True when every applicable stage is done. */
+  complete: boolean;
+}
+
+export const STAGE_ORDER: StageKey[] = [
+  "request",
+  "description",
+  "profile",
+  "rubric",
+  "screening",
+  "publish",
+  "applications",
+  "scoring",
+  "review",
+  "interviews",
+  "offer",
+];
+
+const plural = (n: number, one: string, many = `${one}s`) => `${n} ${n === 1 ? one : many}`;
+
+function requestStage(f: JourneyFacts): JourneyStage {
+  const base = { key: "request" as const, label: "Request", actors: ["you"] as Actor[] };
+  if (!f.hiringRequestId)
+    return { ...base, status: "skipped", headline: "Created without a request" };
+  const s = (f.hiringRequestStatus ?? "").toLowerCase();
+  if (["approved", "converted", "closed", "filled"].includes(s))
+    return { ...base, status: "done", headline: "Request approved" };
+  if (s === "rejected") return { ...base, status: "blocked", headline: "Request was rejected" };
+  if (["draft", "changes_requested", "returned"].includes(s))
+    return {
+      ...base,
+      status: "needs_you",
+      headline: "Finish the request and send it for approval",
+    };
+  return { ...base, status: "waiting", headline: "Waiting for approval" };
+}
+
+export function buildJourney(f: JourneyFacts): Journey {
+  const stages: JourneyStage[] = [];
+  stages.push(requestStage(f));
+
+  stages.push({
+    key: "description",
+    label: "Job description",
+    actors: ["agent", "you"],
+    status: f.jdPublished ? "done" : "needs_you",
+    headline: f.jdPublished ? "Description is ready" : "Check the draft and save it",
+  });
+
+  const profileDone = f.rubricNotRequired || f.rubricApproved || f.mustHaveCount > 0;
+  stages.push({
+    key: "profile",
+    label: "Ideal candidate",
+    actors: ["agent", "you"],
+    status: f.rubricNotRequired ? "skipped" : profileDone ? "done" : "needs_you",
+    headline: f.rubricNotRequired
+      ? "Role-specific scoring is off for your organisation"
+      : profileDone
+        ? `${plural(f.mustHaveCount, "must-have")} set`
+        : "Say who you're looking for",
+  });
+
+  const rubricDone = f.rubricNotRequired || f.rubricApproved;
+  stages.push({
+    key: "rubric",
+    label: "Rubric",
+    actors: ["agent", "you"],
+    status: f.rubricNotRequired
+      ? "skipped"
+      : f.rubricApproved
+        ? "done"
+        : profileDone
+          ? "needs_you"
+          : "waiting",
+    headline: f.rubricNotRequired
+      ? "Role-specific scoring is off for your organisation"
+      : f.rubricApproved
+        ? "Approved"
+        : profileDone
+          ? "Check the weights and approve"
+          : "Opens once the ideal candidate is set",
+  });
+
+  const asks = f.screeningQuestionCount + (f.postShortlistQuestionCount ?? 0);
+  const screeningStatus: StageStatus =
+    f.whatsappScreening === false
+      ? "skipped"
+      : asks > 0 || f.screeningSkipped || f.roleOpen
+        ? "done"
+        : rubricDone
+          ? "needs_you"
+          : "waiting";
+  stages.push({
+    key: "screening",
+    label: "Screening",
+    actors: ["auto", "you"],
+    status: screeningStatus,
+    headline:
+      f.whatsappScreening === false
+        ? "WhatsApp screening is off for your organisation"
+        : asks > 0
+          ? `${plural(f.screeningQuestionCount, "question")} at apply, ${plural(f.postShortlistQuestionCount ?? 0, "question")} after shortlist`
+          : screeningStatus === "done"
+            ? "No screening questions"
+            : rubricDone
+              ? "Choose what automation asks on WhatsApp"
+              : "Opens once the rubric is approved",
+  });
+
+  const readyToPublish = f.jdPublished && rubricDone && screeningStatus !== "needs_you";
+  stages.push({
+    key: "publish",
+    label: "Publish",
+    actors: ["auto", "you"],
+    status: f.roleOpen ? "done" : readyToPublish ? "needs_you" : "waiting",
+    headline: f.roleOpen
+      ? f.publicApplications
+        ? "Live on your careers page"
+        : "Open for internal applications"
+      : readyToPublish
+        ? "Ready to go live"
+        : "Opens once the description, rubric and screening are done",
+  });
+
+  stages.push({
+    key: "applications",
+    label: "Applications",
+    actors: ["auto"],
+    status: !f.roleOpen && f.applicants === 0 ? "waiting" : f.applicants > 0 ? "done" : "working",
+    headline:
+      f.applicants > 0
+        ? `${plural(f.applicants, "application")} in${f.screeningQuestionCount ? `, ${plural(f.screeningQuestionCount, "screening question")} asked` : ""}`
+        : f.roleOpen
+          ? "Live and collecting applications"
+          : "Starts when the job goes live",
+  });
+
+  let scoring: Pick<JourneyStage, "status" | "headline">;
+  if (f.applicants === 0) scoring = { status: "waiting", headline: "Nothing to score yet" };
+  else if (!rubricDone)
+    scoring = {
+      status: "blocked",
+      headline: `${plural(f.applicants, "applicant")} scored without a role rubric`,
+    };
+  else if (f.unscored > 0)
+    scoring = { status: "working", headline: `Scoring ${plural(f.unscored, "applicant")}` };
+  else
+    scoring = {
+      status: "done",
+      headline: `All ${plural(f.applicants, "applicant")} scored with evidence`,
+    };
+  stages.push({ key: "scoring", label: "Scoring", actors: ["agent", "auto"], ...scoring });
+
+  stages.push({
+    key: "review",
+    label: "Your review",
+    actors: ["you"],
+    status: f.awaitingReview > 0 ? "needs_you" : f.applicants > 0 ? "done" : "waiting",
+    headline:
+      f.awaitingReview > 0
+        ? `${plural(f.awaitingReview, "candidate")} waiting for your decision`
+        : f.applicants > 0
+          ? `Queue clear, ${f.shortlisted} shortlisted`
+          : "Candidates appear here once scored",
+  });
+
+  let interviews: Pick<JourneyStage, "status" | "headline">;
+  if (f.interviewsAwaitingFeedback > 0)
+    interviews = {
+      status: "needs_you",
+      headline: `${plural(f.interviewsAwaitingFeedback, "scorecard")} still owed`,
+    };
+  else if (f.interviewsUpcoming > 0)
+    interviews = {
+      status: "working",
+      headline: `${plural(f.interviewsUpcoming, "interview")} booked`,
+    };
+  else if (f.shortlisted > 0 && f.offersOut === 0 && f.hired === 0)
+    interviews = {
+      status: "needs_you",
+      headline: `${plural(f.shortlisted, "shortlisted candidate")} to schedule`,
+    };
+  else if (f.offersOut > 0 || f.hired > 0)
+    interviews = { status: "done", headline: "Interviews complete" };
+  else interviews = { status: "waiting", headline: "Starts when you shortlist someone" };
+  stages.push({ key: "interviews", label: "Interviews", actors: ["auto", "you"], ...interviews });
+
+  let offer: Pick<JourneyStage, "status" | "headline">;
+  if (f.offersNeedingAction > 0)
+    offer = {
+      status: "needs_you",
+      headline: `${plural(f.offersNeedingAction, "offer")} need a nudge`,
+    };
+  else if (f.hired > 0 || f.offersSigned > 0)
+    offer = {
+      status: "done",
+      headline: `${plural(Math.max(f.hired, f.offersSigned), "offer")} signed`,
+    };
+  else if (f.offersOut > 0)
+    offer = { status: "working", headline: `${plural(f.offersOut, "offer")} out` };
+  else offer = { status: "waiting", headline: "No offers yet" };
+  stages.push({ key: "offer", label: "Offer", actors: ["you"], ...offer });
+
+  return {
+    stages,
+    currentKey: pickCurrent(stages),
+    needsYouCount: stages.filter((s) => s.status === "needs_you" || s.status === "blocked").length,
+    complete: stages.every((s) => s.status === "done" || s.status === "skipped"),
+  };
+}
+
+/**
+ * Where to take the person: the earliest stage that needs a human (a block
+ * outranks nothing — it is a stage that needs a human), then the earliest
+ * stage the system is working on, then the first stage still waiting, then
+ * the last stage.
+ */
+export function pickCurrent(stages: JourneyStage[]): StageKey {
+  const first = (pred: (s: JourneyStage) => boolean) => stages.find(pred)?.key;
+  return (
+    first((s) => s.status === "needs_you" || s.status === "blocked") ??
+    first((s) => s.status === "working") ??
+    first((s) => s.status === "waiting") ??
+    stages[stages.length - 1].key
+  );
+}
+
+/** The stage after `key` that the journey would take the person to next. */
+export function nextStop(journey: Journey, key: StageKey): StageKey | null {
+  const i = STAGE_ORDER.indexOf(key);
+  const later = journey.stages.filter((s) => STAGE_ORDER.indexOf(s.key) > i);
+  const hit =
+    later.find((s) => s.status === "needs_you" || s.status === "blocked") ??
+    later.find((s) => s.status === "working");
+  return hit?.key ?? null;
+}
+
+export function isStageKey(v: unknown): v is StageKey {
+  return typeof v === "string" && (STAGE_ORDER as string[]).includes(v);
+}
+
+/* ---------- phases: the trail groups stages so only one set shows at a time ---------- */
+
+export type PhaseKey = "prepare" | "progress" | "decide";
+
+export const PHASES: { key: PhaseKey; label: string; stages: StageKey[] }[] = [
+  {
+    key: "prepare",
+    label: "Prepare",
+    stages: ["request", "description", "profile", "rubric", "screening", "publish"],
+  },
+  { key: "progress", label: "Progress", stages: ["applications", "scoring", "review"] },
+  { key: "decide", label: "Decide", stages: ["interviews", "offer"] },
+];
+
+export function phaseOf(key: StageKey): PhaseKey {
+  return PHASES.find((p) => p.stages.includes(key))?.key ?? "prepare";
+}
+
+export type PhaseStatus = "done" | "needs_you" | "blocked" | "working" | "waiting";
+
+/** One status for a whole phase: the most urgent thing inside it. */
+export function phaseStatus(journey: Journey, phase: PhaseKey): PhaseStatus {
+  const keys = PHASES.find((p) => p.key === phase)?.stages ?? [];
+  const st = journey.stages.filter((s) => keys.includes(s.key)).map((s) => s.status);
+  if (st.includes("blocked")) return "blocked";
+  if (st.includes("needs_you")) return "needs_you";
+  if (st.includes("working")) return "working";
+  if (st.every((x) => x === "done" || x === "skipped")) return "done";
+  return "waiting";
+}
+
+/** Where opening a phase lands you: what needs you there, else where it's moving, else its start. */
+export function landingIn(journey: Journey, phase: PhaseKey): StageKey {
+  const keys = PHASES.find((p) => p.key === phase)?.stages ?? [];
+  const inPhase = journey.stages.filter((s) => keys.includes(s.key));
+  const hit =
+    inPhase.find((s) => s.status === "needs_you" || s.status === "blocked") ??
+    inPhase.find((s) => s.status === "working") ??
+    [...inPhase].reverse().find((s) => s.status === "done") ??
+    inPhase.find((s) => s.status !== "skipped");
+  return hit?.key ?? keys[0];
+}

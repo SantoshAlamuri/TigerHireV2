@@ -1,3 +1,4 @@
+import { cancelBookedEvent } from "@/lib/calendar/interviews";
 import { NextRequest } from "next/server";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 import { createSupabaseAdmin } from "@/lib/supabase/admin";
@@ -126,6 +127,13 @@ export async function POST(request: NextRequest, { params }: { params: Promise<{
       });
       return jsonError("Failed to cancel slot", 500);
     }
+  }
+
+  // Take it off the organiser's calendar too (attendees get the cancellation).
+  try {
+    await cancelBookedEvent(createSupabaseAdmin(), slot_id, slot.user_id ?? null);
+  } catch (calErr) {
+    logger.warn("calendar_cancel_failed", { slotId: slot_id, error: String(calErr) });
   }
 
   try {

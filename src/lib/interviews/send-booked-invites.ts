@@ -34,6 +34,10 @@ export interface BookedInviteContext {
   slotStartAt: string;
   slotEndAt: string;
   slotId: string;
+  /** Video link for the interview, when there is one. */
+  meetingUrl?: string | null;
+  /** The event is already on the interviewer's calendar (they got the invite from it). */
+  onCalendar?: boolean;
 }
 
 function fmtDateTime(startAt: string): { date: string; time: string; timeLabel: string } {
@@ -140,6 +144,7 @@ export async function sendBookedInterviewInvites(
         interviewTime: when.time,
         timezone: "IST",
         recordingNotice,
+        meetingUrl: ctx.meetingUrl ?? null,
       });
       const emailOk = !ce.skipped && !(ce.data as { error?: unknown } | null | undefined)?.error;
       candidateEmailStatus = nextDeliveryStatus(candidateEmailStatus, emailOk ? "sent" : "failed");
@@ -180,17 +185,24 @@ export async function sendBookedInterviewInvites(
         startAt: ctx.slotStartAt,
         endAt: ctx.slotEndAt,
         recordingNotice: recordingNotice ?? undefined,
+        meetingUrl: ctx.meetingUrl ?? undefined,
       });
+      const join = ctx.meetingUrl
+        ? `<p><strong>Join:</strong> <a href="${ctx.meetingUrl}">${ctx.meetingUrl}</a></p>`
+        : "";
       const ie = await sendEmail({
         to: ctx.interviewerEmail.trim(),
         subject: `Interview invite: ${candidateName} - ${ctx.jobTitle}`,
-        html: `<p>Hi ${interviewerName},</p><p>${candidateName} has been scheduled for ${ctx.stageName ?? "Interview"}.</p><p><strong>Date:</strong> ${when.date}<br/><strong>Time:</strong> ${when.time} (IST)</p>${recordingNotice ? `<p style="color:#666;font-size:13px">${recordingNotice}</p>` : ""}`,
-        attachments: [
-          {
-            filename: "interview-invite.ics",
-            content: Buffer.from(inviteIcs, "utf-8").toString("base64"),
-          },
-        ],
+        html: `<p>Hi ${interviewerName},</p><p>${candidateName} has been scheduled for ${ctx.stageName ?? "Interview"}.</p><p><strong>Date:</strong> ${when.date}<br/><strong>Time:</strong> ${when.time} (IST)</p>${join}${ctx.onCalendar ? "<p>It is already on your calendar.</p>" : ""}${recordingNotice ? `<p style="color:#666;font-size:13px">${recordingNotice}</p>` : ""}`,
+        // When the event is already on their calendar, a second .ics would duplicate it.
+        attachments: ctx.onCalendar
+          ? []
+          : [
+              {
+                filename: "interview-invite.ics",
+                content: Buffer.from(inviteIcs, "utf-8").toString("base64"),
+              },
+            ],
       });
       const ok = !ie.error;
       interviewerEmailStatus = nextDeliveryStatus(interviewerEmailStatus, ok ? "sent" : "failed");

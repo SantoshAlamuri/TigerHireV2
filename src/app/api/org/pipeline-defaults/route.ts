@@ -110,14 +110,20 @@ export async function POST(request: NextRequest) {
         .eq("id", stage.id)
         .eq("organisation_id", ctx.organisationId)
         .maybeSingle();
+      // Applied and FitScore Review are pinned to the top. Other system stages (Hired,
+      // Rejected, Withdrawn) keep their names but must be free to shift down when a
+      // stage is added above them, or nothing could ever be added.
+      const pinnedOrder =
+        existing?.stage_name === "Applied"
+          ? 0
+          : existing?.stage_name === "FitScore Review"
+            ? 1
+            : null;
       if (existing?.is_locked === true) {
-        const expectedOrder =
-          existing.stage_name === "Applied"
-            ? 0
-            : existing.stage_name === "FitScore Review"
-              ? 1
-              : (existing.stage_order as number);
-        if (stage.stage_order !== expectedOrder || stage.stage_name !== existing.stage_name) {
+        if (
+          stage.stage_name !== existing.stage_name ||
+          (pinnedOrder !== null && stage.stage_order !== pinnedOrder)
+        ) {
           return jsonError("System stages cannot be reordered or renamed", 403);
         }
       }
@@ -125,9 +131,17 @@ export async function POST(request: NextRequest) {
       const patch =
         existing?.is_locked === true
           ? {
-              interviewer_email: stage.interviewer_email ?? null,
-              interviewer_name: stage.interviewer_name ?? null,
-              notify_email_body: stage.notify_email_body ?? null,
+              // Only touch what was sent, so moving a stage never wipes its email or interviewer.
+              ...(stage.interviewer_email !== undefined
+                ? { interviewer_email: stage.interviewer_email }
+                : {}),
+              ...(stage.interviewer_name !== undefined
+                ? { interviewer_name: stage.interviewer_name }
+                : {}),
+              ...(stage.notify_email_body !== undefined
+                ? { notify_email_body: stage.notify_email_body }
+                : {}),
+              ...(pinnedOrder === null ? { stage_order: stage.stage_order } : {}),
             }
           : payloadFields(stage);
 

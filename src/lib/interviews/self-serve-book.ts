@@ -1,6 +1,7 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
-import { createSupabaseAdmin } from "@/lib/supabase/admin";
 import { bookInterviewSlotAtomically } from "@/lib/interviews/book-slot-atomic";
+import { filterStillFree } from "@/lib/calendar/interviews";
+import { createSupabaseAdmin } from "@/lib/supabase/admin";
 import { isSlotEligibleForCandidateSelfServe } from "@/lib/interviews/self-serve-slot-window";
 import { isSelfServeBookable } from "@/lib/interviews/slot-bookable-by";
 import { buildBookedInviteContext } from "@/lib/interviews/build-booked-invite-context";
@@ -50,6 +51,28 @@ export async function bookSelfServeInterviewSlot(
     return {
       ok: false,
       error: "That time is outside the booking window — please pick a time in the next few days",
+    };
+  }
+
+  // The interviewer's calendar may have filled since this time was offered.
+  let stillFree: unknown[] = [slot];
+  try {
+    stillFree = await filterStillFree(createSupabaseAdmin(), [
+      {
+        id: slot.id as string,
+        user_id: (slot.user_id as string | null) ?? null,
+        start_at: slot.start_at as string,
+        end_at: slot.end_at as string,
+      },
+    ]);
+  } catch {
+    // A calendar we can't read never blocks a booking.
+  }
+  if (!stillFree.length) {
+    return {
+      ok: false,
+      error: "That time was just taken. Please pick another.",
+      code: "conflict",
     };
   }
 
