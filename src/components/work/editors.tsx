@@ -239,9 +239,9 @@ export function ScreeningEditor({ jobId, onLog }: { jobId: string; onLog: Log })
                       <li
                         key={it.id}
                         style={{
-                          padding: "10px 0",
+                          padding: "7px 0",
                           borderTop: "1px solid var(--wd-hair)",
-                          fontSize: 16,
+                          fontSize: 14.5,
                           fontWeight: 300,
                           lineHeight: 1.45,
                         }}
@@ -586,29 +586,18 @@ export function ThresholdsEditor({
   );
 }
 
-/** Does the scoring match what the description says? Flags gaps before approval. */
-export function RubricChecks({
-  jobId,
-  weights,
-}: {
-  jobId: string;
+/** Where the scoring and the description disagree (shared with the old wizard's checks). */
+export function rubricIssues(input: {
+  jobDescriptionText: string;
+  jobTitle?: string;
+  icp: Partial<IdealCandidateProfile> | null;
   weights: Record<string, number>;
+  templateId: string | null;
 }) {
-  const q = useApiQuery<{
-    jdBase?: {
-      roleTitle?: string | null;
-      indiaTemplateId?: string | null;
-      idealCandidateProfile?: Partial<IdealCandidateProfile> | null;
-    } | null;
-    jobTitle?: string;
-    jobDescriptionText?: string;
-  }>("/api/fitscore/jd-base", { jobId });
-  const d = q.data;
-  if (!d?.jdBase) return null;
-  const icp = d.jdBase.idealCandidateProfile;
-  const issues = detectJdBaseMismatches({
-    jobDescriptionText: d.jobDescriptionText ?? "",
-    jobTitle: d.jobTitle,
+  const icp = input.icp;
+  return detectJdBaseMismatches({
+    jobDescriptionText: input.jobDescriptionText,
+    jobTitle: input.jobTitle,
     idealProfile: icp
       ? ({
           summary: icp.summary ?? "",
@@ -618,36 +607,34 @@ export function RubricChecks({
           benchmarks: icp.benchmarks ?? {},
         } as IdealCandidateProfile)
       : null,
-    weights,
-    templateId: d.jdBase.indiaTemplateId ?? null,
+    weights: input.weights,
+    templateId: input.templateId,
   });
+}
+
+/** The list of disagreements, quietly. */
+export function RubricChecks({ issues }: { issues: ReturnType<typeof rubricIssues> }) {
+  if (!issues.length)
+    return (
+      <p className="wd-small wd-muted" style={{ margin: 0 }}>
+        The scoring matches what the description asks for.
+      </p>
+    );
   return (
-    <div className="wd-stack" style={{ gap: 6 }}>
-      <div className="wd-small" style={{ color: "var(--wd-soft)" }}>
-        Description against scoring
-      </div>
-      {issues.length === 0 ? (
-        <p className="wd-small" style={{ margin: 0, color: "var(--wd-agent)" }}>
-          The scoring matches the description.
-        </p>
-      ) : (
-        <ul style={{ listStyle: "none", margin: 0, padding: 0 }}>
-          {issues.map((m) => (
-            <li
-              key={m.id}
-              style={{
-                padding: "8px 0 8px 12px",
-                borderTop: "1px solid var(--wd-hair)",
-                fontSize: 13.5,
-                lineHeight: 1.45,
-                color: m.severity === "error" ? "var(--wd-bad)" : "var(--wd-soft)",
-              }}
-            >
-              {m.message}
-            </li>
-          ))}
-        </ul>
-      )}
-    </div>
+    <ul style={{ listStyle: "none", margin: 0, padding: 0 }}>
+      {issues.map((m) => (
+        <li
+          key={m.id}
+          style={{
+            padding: "6px 0",
+            fontSize: 13.5,
+            lineHeight: 1.45,
+            color: m.severity === "error" ? "var(--wd-bad)" : "var(--wd-soft)",
+          }}
+        >
+          {m.message}
+        </li>
+      ))}
+    </ul>
   );
 }

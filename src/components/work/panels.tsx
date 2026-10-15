@@ -9,7 +9,9 @@ import {
   ShortlistBar,
   ThresholdsEditor,
   RubricChecks,
+  rubricIssues,
 } from "@/components/work/editors";
+import { Disclosure, DisclosureGroup } from "@/components/work/Disclosure";
 import type { IdealCandidateProfile } from "@/lib/fitscore/hybrid/ideal-profile";
 import { ProfileBlock } from "@/components/work/profile/ProfileBlock";
 import { ScreeningBlock } from "@/components/work/screening/ScreeningBlock";
@@ -157,6 +159,8 @@ export function DescriptionPanel({ jobId, job, onDone, onLog }: PanelProps) {
 }
 
 interface JdBasePayload {
+  jobTitle?: string;
+  jobDescriptionText?: string;
   jdBase?: {
     weights?: Record<string, number> | null;
     approvedBy?: string | null;
@@ -164,6 +168,7 @@ interface JdBasePayload {
     scoreFloor?: number | null;
     idealCandidateProfile?: Partial<IdealCandidateProfile> | null;
     fitThresholds?: { strong: number; good: number; moderate: number; weak: number } | null;
+    indiaTemplateId?: string | null;
   } | null;
 }
 
@@ -193,6 +198,19 @@ export function RubricPanel({ jobId, onDone, onLog, goTo }: PanelProps) {
   const dirty = keys.some((k) => shown[k] !== original.values[k]);
   const approved = Boolean(doc?.approvedBy);
   const mustHaves = (doc?.idealCandidateProfile?.must_haves ?? []).filter(Boolean);
+  const checks = useMemo(
+    () =>
+      doc
+        ? rubricIssues({
+            jobDescriptionText: base.data?.jobDescriptionText ?? "",
+            jobTitle: base.data?.jobTitle,
+            icp: doc.idealCandidateProfile ?? null,
+            weights: shown,
+            templateId: doc.indiaTemplateId ?? null,
+          })
+        : [],
+    [doc, base.data?.jobDescriptionText, base.data?.jobTitle, shown],
+  );
 
   const nudge = (k: string, d: number) =>
     setWeights({ ...shown, [k]: Math.max(0, Math.min(60, (shown[k] ?? 0) + d)) });
@@ -231,87 +249,53 @@ export function RubricPanel({ jobId, onDone, onLog, goTo }: PanelProps) {
   }
 
   return (
-    <div className="wd-stack" style={{ gap: 32 }}>
-      <div className="wd-split">
-        <div className="wd-stack" style={{ gap: 0 }}>
-          <p className="wd-muted" style={{ margin: "0 0 14px" }}>
-            Every CV is scored on each line. The weights decide what matters most.
-          </p>
-          <div className="wd-lines">
-            {keys.map((k) => (
-              <div
-                key={k}
-                className="wd-line"
-                style={{ gridTemplateColumns: "minmax(0,1fr) minmax(200px,240px)" }}
-              >
-                <div className="wd-line-value">{rubricLabel(k)}</div>
-                <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
-                  <button
-                    type="button"
-                    className="wd-circ"
-                    aria-label={`Lower ${rubricLabel(k)}`}
-                    onClick={() => nudge(k, -5)}
-                    disabled={shown[k] <= 0}
-                  >
-                    −
-                  </button>
-                  <span className="wd-bar">
-                    <span style={{ width: `${Math.min(100, (shown[k] / 60) * 100)}%` }} />
-                  </span>
-                  <button
-                    type="button"
-                    className="wd-circ"
-                    aria-label={`Raise ${rubricLabel(k)}`}
-                    onClick={() => nudge(k, 5)}
-                    disabled={shown[k] >= 60}
-                  >
-                    +
-                  </button>
-                  <span
-                    style={{
-                      width: 30,
-                      textAlign: "right",
-                      fontSize: 15,
-                      fontVariantNumeric: "tabular-nums",
-                    }}
-                  >
-                    {shown[k]}
-                  </span>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-        <div className="wd-panel">
-          <span className="wd-sig agent">What the agent checks for</span>
-          {mustHaves.length ? (
-            <ul style={{ margin: "14px 0 0", padding: 0, listStyle: "none" }}>
-              {mustHaves.map((m) => (
-                <li
-                  key={m}
-                  style={{
-                    padding: "10px 0",
-                    borderTop: "1px solid var(--wd-hair)",
-                    fontSize: 15,
-                    lineHeight: 1.45,
-                  }}
-                >
-                  {m}
-                </li>
-              ))}
-            </ul>
-          ) : (
-            <p className="wd-small wd-muted">No must-haves yet. Add them to score fairly.</p>
-          )}
-          <button
-            type="button"
-            className="wd-btn quiet"
-            style={{ marginTop: 10 }}
-            onClick={() => goTo("profile")}
+    <div className="wd-stack" style={{ gap: 28, maxWidth: 760 }}>
+      <p className="wd-muted" style={{ margin: 0 }}>
+        Every CV is scored on these, weighted by what matters most.
+      </p>
+      <div className="wd-lines">
+        {keys.map((k) => (
+          <div
+            key={k}
+            className="wd-line"
+            style={{ gridTemplateColumns: "minmax(0,1fr) minmax(180px,220px)", padding: "8px 0" }}
           >
-            Edit the ideal candidate
-          </button>
-        </div>
+            <div style={{ fontSize: 14.5 }}>{rubricLabel(k)}</div>
+            <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+              <button
+                type="button"
+                className="wd-circ"
+                aria-label={`Lower ${rubricLabel(k)}`}
+                onClick={() => nudge(k, -5)}
+                disabled={shown[k] <= 0}
+              >
+                −
+              </button>
+              <span className="wd-bar">
+                <span style={{ width: `${Math.min(100, (shown[k] / 60) * 100)}%` }} />
+              </span>
+              <button
+                type="button"
+                className="wd-circ"
+                aria-label={`Raise ${rubricLabel(k)}`}
+                onClick={() => nudge(k, 5)}
+                disabled={shown[k] >= 60}
+              >
+                +
+              </button>
+              <span
+                style={{
+                  width: 26,
+                  textAlign: "right",
+                  fontSize: 14,
+                  fontVariantNumeric: "tabular-nums",
+                }}
+              >
+                {shown[k]}
+              </span>
+            </div>
+          </div>
+        ))}
       </div>
 
       {(put.error || approve.error) && <Problem>{put.error ?? approve.error}</Problem>}
@@ -347,19 +331,64 @@ export function RubricPanel({ jobId, onDone, onLog, goTo }: PanelProps) {
         </span>
       </div>
 
-      <ShortlistBar
-        jobId={jobId}
-        floor={doc.scoreFloor ?? 0}
-        onLog={onLog}
-        onSaved={() => void base.refetch({ silent: true })}
-      />
-      <ThresholdsEditor
-        jobId={jobId}
-        thresholds={doc.fitThresholds ?? null}
-        onLog={onLog}
-        onSaved={() => void base.refetch({ silent: true })}
-      />
-      <RubricChecks jobId={jobId} weights={doc.weights ?? {}} />
+      <DisclosureGroup title="Fine-tune">
+        <Disclosure
+          label="Scored against"
+          summary={`${mustHaves.length} must-have${mustHaves.length === 1 ? "" : "s"} from the ideal candidate`}
+        >
+          <ul style={{ margin: 0, padding: 0, listStyle: "none" }}>
+            {mustHaves.map((m) => (
+              <li key={m} style={{ padding: "5px 0", fontSize: 13.5, color: "var(--wd-soft)" }}>
+                {m}
+              </li>
+            ))}
+          </ul>
+          <button
+            type="button"
+            className="wd-btn quiet"
+            style={{ marginTop: 6 }}
+            onClick={() => goTo("profile")}
+          >
+            Edit the ideal candidate
+          </button>
+        </Disclosure>
+        <Disclosure
+          label="Shortlist bar"
+          summary={`Below ${doc.scoreFloor ?? 0}, held back from review`}
+        >
+          <ShortlistBar
+            jobId={jobId}
+            floor={doc.scoreFloor ?? 0}
+            onLog={onLog}
+            onSaved={() => void base.refetch({ silent: true })}
+          />
+        </Disclosure>
+        <Disclosure
+          label="Verdicts"
+          summary={(() => {
+            const t = doc.fitThresholds ?? { strong: 78, good: 60, moderate: 40 };
+            return `Strong ${t.strong}+, good ${t.good}+, borderline ${t.moderate}+`;
+          })()}
+        >
+          <ThresholdsEditor
+            jobId={jobId}
+            thresholds={doc.fitThresholds ?? null}
+            onLog={onLog}
+            onSaved={() => void base.refetch({ silent: true })}
+          />
+        </Disclosure>
+        <Disclosure
+          label="Description check"
+          summary={
+            checks.length
+              ? `${checks.length} thing${checks.length === 1 ? "" : "s"} to look at`
+              : "Matches the description"
+          }
+          warn={checks.length > 0}
+        >
+          <RubricChecks issues={checks} />
+        </Disclosure>
+      </DisclosureGroup>
     </div>
   );
 }

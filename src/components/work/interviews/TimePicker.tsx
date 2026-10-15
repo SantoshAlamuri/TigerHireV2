@@ -277,30 +277,22 @@ export function TimePicker({
         </div>
       </div>
 
-      {iAmOnPanel && me.data && (!myConn || myConn.status !== "connected") && (
-        <div className={s.connect}>
-          <span>
-            {myConn?.status === "error"
-              ? "Your calendar needs reconnecting, so your busy times aren't being checked."
-              : "Connect your calendar so we only offer times you're free, and add the interview to it."}
-          </span>
-          {me.data.available.google && (
-            <a className="wd-btn" href={connectHref("google_calendar")}>
-              Google Calendar
-            </a>
-          )}
-          {me.data.available.microsoft && (
-            <a className="wd-btn" href={connectHref("outlook")}>
-              Outlook
-            </a>
-          )}
-          {!me.data.available.google && !me.data.available.microsoft && (
-            <span className="wd-src">
-              Calendar sign-in isn&apos;t set up for this workspace yet.
+      {iAmOnPanel &&
+        me.data &&
+        (me.data.available.google || me.data.available.microsoft) &&
+        (!myConn || myConn.status !== "connected") && (
+          <div className={s.connect}>
+            <span>
+              {myConn?.status === "error"
+                ? "Your calendar needs reconnecting, so your busy times aren't being checked."
+                : "Connect your calendar so only your free times are offered:"}
             </span>
-          )}
-        </div>
-      )}
+            {me.data.available.google && (
+              <a href={connectHref("google_calendar")}>Google Calendar</a>
+            )}
+            {me.data.available.microsoft && <a href={connectHref("outlook")}>Outlook</a>}
+          </div>
+        )}
 
       {/* Two weeks of days */}
       <div className={s.days} role="tablist" aria-label="Day">
@@ -322,9 +314,12 @@ export function TimePicker({
             >
               <span className={s.dow}>{d.today ? "Today" : d.weekday}</span>
               <b>{d.date}</b>
-              <span className={s.dayCount} data-chosen={chosen > 0}>
-                {chosen > 0 ? `${chosen} picked` : n > 0 ? `${n} free` : " "}
-              </span>
+              <span
+                className={s.dayCount}
+                data-has={n > 0}
+                data-chosen={chosen > 0}
+                aria-label={chosen ? `${chosen} picked` : n ? `${n} free` : undefined}
+              />
             </button>
           );
         })}
@@ -359,9 +354,7 @@ export function TimePicker({
                     }
                   >
                     {timeLabel(c.start)}
-                    <small>
-                      {c.kind === "open" ? "Open" : c.free === "everyone" ? "Free" : "Likely free"}
-                    </small>
+                    {c.kind === "open" && <small>open</small>}
                   </button>
                 ))}
               </div>
@@ -410,10 +403,7 @@ export function TimePicker({
       </div>
 
       {unchecked && q.data && (
-        <p className={s.hint}>
-          {q.data.unchecked.join(", ")} {q.data.unchecked.length === 1 ? "has" : "have"} no
-          connected calendar, so their times assume 10am to 6pm on weekdays.
-        </p>
+        <p className={s.hint}>Calendars not connected; times assume 10am to 6pm on weekdays.</p>
       )}
 
       {error && (

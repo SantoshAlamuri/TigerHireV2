@@ -6,6 +6,7 @@ import type { PanelProps } from "@/components/work/panels";
 import { ScreeningEditor } from "@/components/work/editors";
 import { postJson } from "@/components/work/interviews/post-json";
 import { setScreeningSkipped } from "@/lib/work/use-job-journey";
+import { Disclosure, DisclosureGroup } from "@/components/work/Disclosure";
 
 interface SendPreview {
   shortlistedTotal: number;
@@ -80,35 +81,28 @@ export function ScreeningBlock({ jobId, facts, onDone, onLog, goTo }: PanelProps
   }
 
   return (
-    <div className="wd-stack" style={{ gap: 32 }}>
-      <div className="wd-split">
-        <div className="wd-stack" style={{ gap: 10 }}>
-          <span className="wd-sig auto">Automation asks on WhatsApp</span>
-          <ScreeningEditor
-            jobId={jobId}
-            onLog={(a, w) => {
-              onLog(a, w);
-              invalidateQueries(`/api/jobs/${jobId}/whatsapp-screening`);
-              void setup.refetch({ silent: true });
-            }}
-          />
-        </div>
-        <div className="wd-stack" style={{ gap: 14 }}>
-          <div className="wd-panel">
-            <span className="wd-sig agent">How it works</span>
-            <p className="wd-small" style={{ margin: "10px 0 0", lineHeight: 1.5 }}>
-              Applicants get the apply questions on WhatsApp straight away. Anyone who answers a
-              knockout question &ldquo;no&rdquo; is held back from your review. Shortlisted people
-              get the second set; those answers are for context and never rule anyone out.
-            </p>
-          </div>
-        </div>
-      </div>
+    <div className="wd-stack" style={{ gap: 28, maxWidth: 760 }}>
+      <p className="wd-muted" style={{ margin: 0 }}>
+        Sent on WhatsApp. A &ldquo;no&rdquo; when they apply holds someone back from your review;
+        answers after the shortlist are for context only.
+      </p>
+      <ScreeningEditor
+        jobId={jobId}
+        onLog={(a, w) => {
+          onLog(a, w);
+          invalidateQueries(`/api/jobs/${jobId}/whatsapp-screening`);
+          void setup.refetch({ silent: true });
+        }}
+      />
 
-      {facts.shortlisted > 0 && (setup.data?.postShortlistQuestions.length ?? 0) > 0 && (
-        <PostShortlistSend jobId={jobId} onLog={onLog} />
+      {(facts.shortlisted > 0 || facts.applicants > 0) && asks > 0 && (
+        <DisclosureGroup title="Progress">
+          {facts.shortlisted > 0 && (setup.data?.postShortlistQuestions.length ?? 0) > 0 && (
+            <PostShortlistSend jobId={jobId} onLog={onLog} />
+          )}
+          {facts.applicants > 0 && <Answers jobId={jobId} />}
+        </DisclosureGroup>
       )}
-      {facts.applicants > 0 && asks > 0 && <Answers jobId={jobId} />}
 
       <div className="wd-row-actions">
         {asks > 0 ? (
@@ -167,62 +161,53 @@ function PostShortlistSend({ jobId, onLog }: { jobId: string; onLog: PanelProps[
   if (q.error || !p)
     return <p className="wd-problem">Couldn&apos;t check who to send to: {q.error}</p>;
 
+  const waiting = p.awaitingConsent + p.inProgress;
   return (
-    <section className="wd-stack" style={{ gap: 14 }} aria-labelledby="wd-post-send">
-      <h3 className="wd-h2" id="wd-post-send">
-        After the shortlist
-      </h3>
-      <div className="wd-numbers">
-        {(
-          [
-            ["Shortlisted", p.shortlistedTotal],
-            ["Answered", p.screeningComplete],
-            ["Waiting on them", p.awaitingConsent + p.inProgress],
-            ["Ruled out", p.knockedOut],
-          ] as const
-        ).map(([k, v]) => (
-          <div key={k} className="wd-number">
-            <b>{v}</b>
-            <span>{k}</span>
-          </div>
-        ))}
-      </div>
-      {p.withoutPhone > 0 && (
+    <Disclosure
+      label="After the shortlist"
+      summary={`${p.screeningComplete} of ${p.shortlistedTotal} answered${p.eligibleToSend ? `, ${p.eligibleToSend} not asked yet` : ""}`}
+      warn={p.eligibleToSend > 0}
+    >
+      <div className="wd-stack" style={{ gap: 10 }}>
         <p className="wd-small wd-muted" style={{ margin: 0 }}>
-          {plural(p.withoutPhone, "shortlisted person")} has no phone number, so can&apos;t be
-          asked.
+          {[
+            `${p.screeningComplete} answered`,
+            waiting ? `${waiting} haven't finished` : null,
+            p.knockedOut ? `${p.knockedOut} ruled out` : null,
+            p.withoutPhone ? `${p.withoutPhone} without a phone number` : null,
+          ]
+            .filter(Boolean)
+            .join(" · ")}
         </p>
-      )}
-      {note && (
-        <p role={note.ok ? "status" : "alert"} className={note.ok ? "wd-small" : "wd-problem"}>
-          {note.text}
-        </p>
-      )}
-      <div className="wd-row-actions">
-        <button
-          type="button"
-          className="wd-btn go"
-          disabled={busy !== null || p.eligibleToSend === 0}
-          onClick={() => void send(false)}
-        >
-          {busy === "send"
-            ? "Sending…"
-            : p.eligibleToSend
-              ? `Send to ${plural(p.eligibleToSend, "person")}`
-              : "Everyone has been asked"}
-        </button>
-        {p.awaitingConsent > 0 && (
-          <button
-            type="button"
-            className="wd-btn"
-            disabled={busy !== null}
-            onClick={() => void send(true)}
-          >
-            {busy === "nudge" ? "Reminding…" : `Remind ${p.awaitingConsent} who haven't replied`}
-          </button>
+        {note && (
+          <p role={note.ok ? "status" : "alert"} className={note.ok ? "wd-small" : "wd-problem"}>
+            {note.text}
+          </p>
         )}
+        <div className="wd-row-actions">
+          {p.eligibleToSend > 0 && (
+            <button
+              type="button"
+              className="wd-btn go"
+              disabled={busy !== null}
+              onClick={() => void send(false)}
+            >
+              {busy === "send" ? "Sending…" : `Ask ${plural(p.eligibleToSend, "person")}`}
+            </button>
+          )}
+          {p.awaitingConsent > 0 && (
+            <button
+              type="button"
+              className="wd-btn"
+              disabled={busy !== null}
+              onClick={() => void send(true)}
+            >
+              {busy === "nudge" ? "Reminding…" : `Remind ${p.awaitingConsent}`}
+            </button>
+          )}
+        </div>
       </div>
-    </section>
+    </Disclosure>
   );
 }
 
@@ -251,17 +236,20 @@ function Answers({ jobId }: { jobId: string }) {
   if (q.error) return <p className="wd-problem">Answers couldn&apos;t be loaded: {q.error}</p>;
   if (!rows.length)
     return (
-      <p className="wd-small wd-muted" style={{ margin: 0 }}>
-        No one has answered yet.
-      </p>
+      <Disclosure label="Answers" summary="No one has answered yet">
+        <p className="wd-small wd-muted" style={{ margin: 0 }}>
+          Answers appear here as people reply on WhatsApp.
+        </p>
+      </Disclosure>
     );
 
   const shown = all ? rows : rows.slice(0, 12);
+  const ruledOut = rows.filter((r) => r.gateStatus === "failed" || r.postShortlistFailed).length;
   return (
-    <section className="wd-stack" style={{ gap: 10 }} aria-labelledby="wd-answers">
-      <h3 className="wd-h2" id="wd-answers">
-        Answers
-      </h3>
+    <Disclosure
+      label="Answers"
+      summary={`${rows.length} answered${ruledOut ? `, ${ruledOut} ruled out` : ""}`}
+    >
       {q.data?.jdApprovalPending && (
         <p className="wd-small wd-muted" style={{ margin: 0 }}>
           The rubric is waiting for approval, so new questions aren&apos;t being asked yet.
@@ -342,6 +330,6 @@ function Answers({ jobId }: { jobId: string }) {
           {all ? "Show fewer" : `Show all ${rows.length}`}
         </button>
       )}
-    </section>
+    </Disclosure>
   );
 }

@@ -18,7 +18,9 @@ interface AppRow {
  * how the pay compares with your bands and with what applicants ask, and how
  * candidates rank against the pool.
  */
-export function MarketColumn({
+type Row = "template" | "pay" | "ranking";
+
+export function MarketRows({
   jobId,
   job,
   doc,
@@ -31,11 +33,100 @@ export function MarketColumn({
   onLog: PanelProps["onLog"];
   onTemplate: () => Promise<void>;
 }) {
+  const [open, setOpen] = useState<Row | null>(null);
+  const bands = useApiQuery<{ bands: PayBand[] }>("/api/compensation-bands");
+  const apps = useApiQuery<{ applications: AppRow[] }>("/api/applications", {
+    jobId,
+    limit: 100,
+    fields: "review",
+  });
+  const [saved, setSaved] = useState<{ min: number | null; max: number | null } | null>(null);
+  const range = saved ?? { min: job.compensation_min ?? null, max: job.compensation_max ?? null };
+  const rows = apps.data?.applications ?? [];
+  const pay = readPay(
+    range,
+    bands.data?.bands ?? [],
+    rows.map((r) => r.expected_ctc_lpa),
+  );
+  const spread = rankingSpread(rows.map((r) => r.fit_scores?.market_label));
+  const tpl = doc.indiaTemplateId ? getIndiaJdTemplateById(doc.indiaTemplateId) : undefined;
+
+  const payWarn =
+    pay.withinRange != null && pay.asks.count >= 5 && pay.withinRange < 30
+      ? `applicants ask ${lpa(pay.asks.median)}`
+      : null;
+  const items: { key: Row; label: string; value: string; warn?: string | null }[] = [
+    {
+      key: "template",
+      label: "Role template",
+      value: tpl ? tpl.roleTitle : "Drafted by the agent",
+    },
+    {
+      key: "pay",
+      label: "Pay",
+      value: range.max ? `${lpa(range.min)} to ${lpa(range.max)}` : "No range set",
+      warn: payWarn,
+    },
+    {
+      key: "ranking",
+      label: "Market ranking",
+      value: spread.length
+        ? spread
+            .map((x) => `${x.count} ${x.label}`)
+            .slice(0, 2)
+            .join(", ")
+        : "Not enough scored yet",
+    },
+  ];
+
   return (
-    <aside className={s.market} aria-label="Market">
-      <TemplateCard jobId={jobId} doc={doc} onLog={onLog} onTemplate={onTemplate} />
-      <PayAndRanking jobId={jobId} job={job} onLog={onLog} />
-    </aside>
+    <section aria-label="Market" className={s.rows}>
+      <h3 className={s.groupTitle} style={{ marginBottom: 4 }}>
+        Market
+      </h3>
+      {items.map((r) => {
+        const isOpen = open === r.key;
+        return (
+          <div key={r.key} className={s.rowWrap}>
+            <button
+              type="button"
+              className={s.discl}
+              aria-expanded={isOpen}
+              onClick={() => setOpen(isOpen ? null : r.key)}
+            >
+              <span className={s.disclLabel}>{r.label}</span>
+              <span className={s.disclPreview}>
+                {r.value}
+                {r.warn && <span className={s.warn}> · {r.warn}</span>}
+              </span>
+              <span className={s.disclCount}>
+                <i aria-hidden="true">{isOpen ? "−" : "+"}</i>
+              </span>
+            </button>
+            {isOpen && (
+              <div className={s.disclBody}>
+                {r.key === "template" && (
+                  <TemplateCard jobId={jobId} doc={doc} onLog={onLog} onTemplate={onTemplate} />
+                )}
+                {r.key === "pay" && (
+                  <PayBody
+                    jobId={jobId}
+                    range={range}
+                    pay={pay}
+                    hasBands={(bands.data?.bands ?? []).length > 0}
+                    onLog={onLog}
+                    onSaved={setSaved}
+                  />
+                )}
+                {r.key === "ranking" && (
+                  <RankingBody spread={spread} loading={apps.loading && !apps.data} />
+                )}
+              </div>
+            )}
+          </div>
+        );
+      })}
+    </section>
   );
 }
 
@@ -79,8 +170,7 @@ function TemplateCard({
     .slice(0, 4);
 
   return (
-    <div className={s.card}>
-      <h4 className={s.cardTitle}>Role template</h4>
+    <div className={s.body}>
       {doc.scoringFoundation === "india_template" && tpl ? (
         <>
           <span className={s.big}>{tpl.roleTitle}</span>
@@ -156,12 +246,7 @@ function TemplateCard({
           </div>
         </div>
       ) : (
-        <button
-          type="button"
-          className="wd-btn quiet"
-          style={{ alignSelf: "flex-start" }}
-          onClick={() => setPicking(true)}
-        >
+        <button type="button" className={s.link} onClick={() => setPicking(true)}>
           {tpl ? "Use a different template" : "Start from a template"}
         </button>
       )}
@@ -169,41 +254,29 @@ function TemplateCard({
   );
 }
 
-function PayAndRanking({
+function PayBody({
   jobId,
-  job,
+  range,
+  pay,
+  hasBands,
   onLog,
+  onSaved,
 }: {
   jobId: string;
-  job: PanelProps["job"];
+  range: { min: number | null; max: number | null };
+  pay: ReturnType<typeof readPay>;
+  hasBands: boolean;
   onLog: PanelProps["onLog"];
+  onSaved: (r: { min: number; max: number }) => void;
 }) {
-  const bands = useApiQuery<{ bands: PayBand[] }>("/api/compensation-bands");
-  const apps = useApiQuery<{ applications: AppRow[]; pagination?: { total: number } }>(
-    "/api/applications",
-    { jobId, limit: 100, fields: "review" },
-  );
   const patch = useApiMutation<{ compensationMin: number; compensationMax: number }, unknown>(
     `/api/jobs/${jobId}`,
     "PATCH",
   );
-  const [saved, setSaved] = useState<{ min: number | null; max: number | null } | null>(null);
-  const range = saved ?? { min: job.compensation_min ?? null, max: job.compensation_max ?? null };
   const [editing, setEditing] = useState(false);
   const [minText, setMinText] = useState("");
   const [maxText, setMaxText] = useState("");
 
-  const rows = apps.data?.applications ?? [];
-  const pay = readPay(
-    range,
-    bands.data?.bands ?? [],
-    rows.map((r) => r.expected_ctc_lpa),
-  );
-  const ranked = rows.filter((r) => r.fit_scores?.market_label);
-  const spread = rankingSpread(ranked.map((r) => r.fit_scores?.market_label));
-  const maxCount = Math.max(1, ...spread.map((x) => x.count));
-
-  // Scale for the pay picture.
   const points = [
     range.min,
     range.max,
@@ -217,170 +290,163 @@ function PayAndRanking({
   const pct = (v: number) => `${Math.max(0, Math.min(100, ((v - lo) / (hi - lo)) * 100))}%`;
   const width = (a: number, b: number) =>
     `${Math.max(1, ((Math.min(b, hi) - Math.max(a, lo)) / (hi - lo)) * 100)}%`;
-
   const fit: Record<typeof pay.bandFit, string> = {
     inside: `Inside your ${pay.band?.label} band.`,
     overlaps: `Partly outside your ${pay.band?.label} band.`,
     below: `Below your ${pay.band?.label} band.`,
     above: `Above your ${pay.band?.label} band.`,
-    no_band: (bands.data?.bands ?? []).length
-      ? "No band overlaps this range."
-      : "No pay bands set up.",
+    no_band: hasBands ? "No pay band overlaps this range." : "No pay bands set up.",
   };
 
   return (
-    <>
-      <div className={s.card}>
-        <h4 className={s.cardTitle}>Pay</h4>
-        {editing ? (
-          <div className="wd-stack" style={{ gap: 8 }}>
-            <span className={s.years}>
-              ₹
-              <input
-                className={s.num}
-                style={{ width: 64 }}
-                inputMode="decimal"
-                aria-label="Minimum LPA"
-                value={minText}
-                onChange={(e) => setMinText(e.target.value)}
-              />
-              to
-              <input
-                className={s.num}
-                style={{ width: 64 }}
-                inputMode="decimal"
-                aria-label="Maximum LPA"
-                value={maxText}
-                onChange={(e) => setMaxText(e.target.value)}
-              />
-              LPA
-            </span>
-            {patch.error && <p className="wd-problem">{patch.error}</p>}
-            <div className="wd-row-actions">
-              <button
-                type="button"
-                className="wd-btn"
-                disabled={patch.loading}
-                onClick={async () => {
-                  const mn = Math.round(Number(minText) * 100_000);
-                  const mx = Math.round(Number(maxText) * 100_000);
-                  if (!(mn > 0 && mx >= mn)) return;
-                  const ok = await patch.mutate({ compensationMin: mn, compensationMax: mx });
-                  if (ok) {
-                    setSaved({ min: mn, max: mx });
-                    setEditing(false);
-                    invalidateQueries(`/api/jobs/${jobId}`);
-                    onLog("you", `Set pay to ${lpa(mn)} to ${lpa(mx)}`);
-                  }
-                }}
-              >
-                {patch.loading ? "Saving…" : "Save range"}
-              </button>
-              <button type="button" className="wd-btn quiet" onClick={() => setEditing(false)}>
-                Cancel
-              </button>
-            </div>
-          </div>
-        ) : (
-          <span className={s.big}>
-            {range.max ? `${lpa(range.min)} to ${lpa(range.max)}` : "No range set"}
+    <div className={s.body}>
+      {editing ? (
+        <div className="wd-stack" style={{ gap: 8 }}>
+          <span className={s.years}>
+            ₹
+            <input
+              className={s.num}
+              style={{ width: 64 }}
+              inputMode="decimal"
+              aria-label="Minimum LPA"
+              value={minText}
+              onChange={(e) => setMinText(e.target.value)}
+            />
+            to
+            <input
+              className={s.num}
+              style={{ width: 64 }}
+              inputMode="decimal"
+              aria-label="Maximum LPA"
+              value={maxText}
+              onChange={(e) => setMaxText(e.target.value)}
+            />
+            LPA
           </span>
-        )}
-        {points.length > 1 && (
-          <>
-            <div className={s.payScale} aria-hidden="true">
-              <span className={s.payTrack} />
-              {pay.band && (
-                <span
-                  className={s.payBand}
-                  style={{
-                    left: pct(pay.band.min_amount),
-                    width: width(pay.band.min_amount, pay.band.max_amount),
-                  }}
-                />
-              )}
-              {range.min && range.max ? (
-                <span
-                  className={s.payRange}
-                  style={{ left: pct(range.min), width: width(range.min, range.max) }}
-                />
-              ) : null}
-              {pay.asks.median ? (
-                <span className={s.payMedian} style={{ left: pct(pay.asks.median) }} />
-              ) : null}
-            </div>
-            <div className={s.legend}>
-              <span>
-                <i style={{ background: "var(--wd-amber)" }} />
-                Your range
-              </span>
-              {pay.band && (
-                <span>
-                  <i
-                    style={{ background: "color-mix(in srgb, var(--wd-agent) 35%, transparent)" }}
-                  />
-                  {pay.band.label} band
-                </span>
-              )}
-              {pay.asks.median ? (
-                <span>
-                  <i style={{ background: "var(--wd-ink)", width: 2 }} />
-                  Applicants&apos; median ask
-                </span>
-              ) : null}
-            </div>
-          </>
-        )}
-        {range.max ? <p className={s.small}>{fit[pay.bandFit]}</p> : null}
-        {pay.asks.count > 0 ? (
-          <p className={s.small}>
-            {pay.asks.count} applicants stated an expectation: median {lpa(pay.asks.median)}, most
-            between {lpa(pay.asks.low)} and {lpa(pay.asks.high)}.
-            {pay.withinRange != null && ` ${pay.withinRange}% fit your range.`}
-          </p>
-        ) : (
-          <p className={`${s.small} ${s.faint}`}>No applicant has stated an expected salary yet.</p>
-        )}
-        {!editing && (
-          <button
-            type="button"
-            className="wd-btn quiet"
-            style={{ alignSelf: "flex-start" }}
-            onClick={() => {
-              setMinText(range.min ? String(range.min / 100_000) : "");
-              setMaxText(range.max ? String(range.max / 100_000) : "");
-              setEditing(true);
-            }}
-          >
-            {range.max ? "Change the range" : "Set a range"}
-          </button>
-        )}
-      </div>
-
-      <div className={s.card}>
-        <h4 className={s.cardTitle}>Market ranking</h4>
-        <p className={s.small}>
-          Each scored candidate is ranked against everyone scored for similar roles in your
-          organisation. Rankings appear once {RANKING_MIN_POOL} have been scored.
-        </p>
-        {spread.length ? (
-          <div className={s.spread}>
-            {spread.map((x) => (
-              <div key={x.label} className={s.spreadRow}>
-                <span>{x.label}</span>
-                <span className={s.spreadBar}>
-                  <span style={{ width: `${(x.count / maxCount) * 100}%` }} />
-                </span>
-                <span style={{ textAlign: "right", color: "var(--wd-soft)" }}>{x.count}</span>
-              </div>
-            ))}
+          {patch.error && <p className="wd-problem">{patch.error}</p>}
+          <div className="wd-row-actions">
+            <button
+              type="button"
+              className="wd-btn"
+              disabled={patch.loading}
+              onClick={async () => {
+                const mn = Math.round(Number(minText) * 100_000);
+                const mx = Math.round(Number(maxText) * 100_000);
+                if (!(mn > 0 && mx >= mn)) return;
+                const ok = await patch.mutate({ compensationMin: mn, compensationMax: mx });
+                if (ok) {
+                  onSaved({ min: mn, max: mx });
+                  setEditing(false);
+                  invalidateQueries(`/api/jobs/${jobId}`);
+                  onLog("you", `Set pay to ${lpa(mn)} to ${lpa(mx)}`);
+                }
+              }}
+            >
+              {patch.loading ? "Saving…" : "Save range"}
+            </button>
+            <button type="button" className="wd-btn quiet" onClick={() => setEditing(false)}>
+              Cancel
+            </button>
           </div>
-        ) : (
-          <p className={`${s.small} ${s.faint}`}>
-            {apps.loading ? "Loading…" : "No ranked applicants for this job yet."}
-          </p>
-        )}
-      </div>
-    </>
+        </div>
+      ) : null}
+      {points.length > 1 && (
+        <>
+          <div className={s.payScale} aria-hidden="true">
+            <span className={s.payTrack} />
+            {pay.band && (
+              <span
+                className={s.payBand}
+                style={{
+                  left: pct(pay.band.min_amount),
+                  width: width(pay.band.min_amount, pay.band.max_amount),
+                }}
+              />
+            )}
+            {range.min && range.max ? (
+              <span
+                className={s.payRange}
+                style={{ left: pct(range.min), width: width(range.min, range.max) }}
+              />
+            ) : null}
+            {pay.asks.median ? (
+              <span className={s.payMedian} style={{ left: pct(pay.asks.median) }} />
+            ) : null}
+          </div>
+          <div className={s.legend}>
+            <span>
+              <i style={{ background: "var(--wd-amber)" }} />
+              Your range
+            </span>
+            {pay.band && (
+              <span>
+                <i style={{ background: "color-mix(in srgb, var(--wd-agent) 35%, transparent)" }} />
+                {pay.band.label}
+              </span>
+            )}
+            {pay.asks.median ? (
+              <span>
+                <i style={{ background: "var(--wd-ink)", width: 2 }} />
+                Median ask
+              </span>
+            ) : null}
+          </div>
+        </>
+      )}
+      {range.max ? <p className={s.small}>{fit[pay.bandFit]}</p> : null}
+      <p className={s.small}>
+        {pay.asks.count > 0
+          ? `${pay.asks.count} applicants gave an expected salary: median ${lpa(pay.asks.median)}, most between ${lpa(pay.asks.low)} and ${lpa(pay.asks.high)}.${pay.withinRange != null ? ` ${pay.withinRange}% fit your range.` : ""}`
+          : "No applicant has given an expected salary yet."}
+      </p>
+      {!editing && (
+        <button
+          type="button"
+          className={s.link}
+          onClick={() => {
+            setMinText(range.min ? String(range.min / 100_000) : "");
+            setMaxText(range.max ? String(range.max / 100_000) : "");
+            setEditing(true);
+          }}
+        >
+          {range.max ? "Change the range" : "Set a range"}
+        </button>
+      )}
+    </div>
+  );
+}
+
+function RankingBody({
+  spread,
+  loading,
+}: {
+  spread: { label: string; count: number }[];
+  loading: boolean;
+}) {
+  const max = Math.max(1, ...spread.map((x) => x.count));
+  return (
+    <div className={s.body}>
+      <p className={s.small}>
+        Each scored candidate is ranked against everyone scored for similar roles in your
+        organisation. Rankings appear once {RANKING_MIN_POOL} have been scored.
+      </p>
+      {spread.length ? (
+        <div className={s.spread}>
+          {spread.map((x) => (
+            <div key={x.label} className={s.spreadRow}>
+              <span>{x.label}</span>
+              <span className={s.spreadBar}>
+                <span style={{ width: `${(x.count / max) * 100}%` }} />
+              </span>
+              <span style={{ textAlign: "right", color: "var(--wd-soft)" }}>{x.count}</span>
+            </div>
+          ))}
+        </div>
+      ) : (
+        <p className={`${s.small} ${s.faint}`}>
+          {loading ? "Loading…" : "No ranked applicants yet."}
+        </p>
+      )}
+    </div>
   );
 }
