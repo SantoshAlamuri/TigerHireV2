@@ -88,9 +88,7 @@ function AdminSetup({ preview }: { preview: boolean }) {
   const [pretend, setPretend] = useState<Set<SetupStepKey>>(new Set());
   const { hints, dismiss } = useOnboardingHints();
   const { queue, waiting, loading: queueLoading } = useWorkQueue();
-  const calendar = useApiQuery<{ integrations: { status: string }[] }>(
-    "/api/settings/me/integrations",
-  );
+  const calendar = useApiQuery<{ connection: { status: string } | null }>("/api/me/calendar");
   const team = useApiQuery<{ members: { is_active?: boolean }[]; pendingInvites: unknown[] }>(
     "/api/organisations/members",
   );
@@ -107,9 +105,7 @@ function AdminSetup({ preview }: { preview: boolean }) {
           hasJob: pretend.has("job"),
         }
       : {
-          calendarConnected: (calendar.data?.integrations ?? []).some(
-            (i) => i.status === "connected",
-          ),
+          calendarConnected: calendar.data?.connection?.status === "connected",
           teamSize: (team.data?.members ?? []).filter((m) => m.is_active !== false).length,
           pendingInvites: team.data?.pendingInvites?.length ?? 0,
           processReviewed: hints.includes(ONBOARDING_HINTS.processReviewed),

@@ -19,13 +19,13 @@ const NAME: Record<string, string> = { google_calendar: "Google Calendar", outlo
  * Your calendar, connected once. TigerHire reads only when you're busy (never
  * what the event is) and adds interviews to it with a Meet or Teams link.
  */
-export function MyCalendar() {
+export function MyCalendar({ returnTo = "/work/setup#calendars" }: { returnTo?: string } = {}) {
   const q = useApiQuery<MyCalendarData>("/api/me/calendar");
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const c = q.data?.connection;
   const ok = c?.status === "connected";
-  const here = "/work/setup#calendars";
+  const here = returnTo;
   const href = (p: string) =>
     `/api/settings/me/integrations/oauth/${p}?next=${encodeURIComponent(here)}`;
 
