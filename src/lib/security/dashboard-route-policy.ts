@@ -253,6 +253,28 @@ export const DASHBOARD_ROUTE_ACCESS_RULES: ReadonlyArray<{
   /** Work-driven UI: the same recruiting work, reached through the work item. */
   { prefix: "/work", roles: ["recruiter", "leadership", "super_admin"] },
   { prefix: "/work/hm", roles: ["hiring_manager", "leadership", "super_admin"] },
+  /** Personal setup: anyone who uses the work-driven UI. */
+  ...[
+    "/work/setup/profile",
+    "/work/setup/calendar",
+    "/work/setup/availability",
+    "/work/setup/help",
+  ].map((prefix) => ({
+    prefix,
+    roles: [
+      "recruiter",
+      "hiring_manager",
+      "interviewer",
+      "finance",
+      "leadership",
+      "super_admin",
+    ] as UserRole[],
+  })),
+  /** Decisions: anyone who signs off roles or shortlists. */
+  {
+    prefix: "/work/decisions",
+    roles: ["recruiter", "hiring_manager", "finance", "leadership", "super_admin"],
+  },
   /** Reports: hiring managers see figures scoped to the jobs they own. */
   {
     prefix: "/work/reports",

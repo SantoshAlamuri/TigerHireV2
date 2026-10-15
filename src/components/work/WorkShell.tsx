@@ -9,6 +9,8 @@ import { ROLE_DASHBOARD_PATH } from "@/types/database";
 import { resolveDashboardRouteAccessRule } from "@/lib/security/dashboard-route-policy";
 import type { JobApplicantCounts } from "@/lib/v2/ta-portfolio";
 import { buildQueue, type QueueEntry } from "@/lib/work/queue";
+import type { ApprovalTaskItem } from "@/lib/approvals/task-types";
+import { cardsFromApprovals } from "@/lib/work/hm";
 import { isOnboardingEntry, needsOnboarding, onboardingKind } from "@/lib/work/onboarding";
 import { useOnboardingHints } from "@/components/work/use-onboarding";
 import { Brand } from "@/components/work/Brand";
@@ -107,7 +109,9 @@ function Sidebar() {
     onboarding.ready &&
     needsOnboarding("admin", onboarding.hints);
 
-  const needCount = queue.needsYou.length + (setupOpen ? 1 : 0);
+  const approvals = useApiQuery<{ items: ApprovalTaskItem[] }>("/api/approvals");
+  const decisions = cardsFromApprovals(approvals.data?.items ?? []).length;
+  const needCount = queue.needsYou.length + (setupOpen ? 1 : 0) + (decisions ? 1 : 0);
 
   const rail = (
     <>
@@ -194,8 +198,27 @@ function Sidebar() {
           <p className="wd-qsub" role="alert">
             Could not load your jobs. Reload to try again.
           </p>
-        ) : queue.needsYou.length || setupOpen ? (
+        ) : queue.needsYou.length || setupOpen || decisions ? (
           <>
+            {decisions > 0 && (
+              <ul className="wd-qlist">
+                <li>
+                  <Link
+                    href="/work/decisions"
+                    className="wd-qitem"
+                    aria-current={pathname.startsWith("/work/decisions") ? "page" : undefined}
+                  >
+                    <span className="wd-qdot you" aria-hidden="true" />
+                    <span style={{ minWidth: 0 }}>
+                      <span className="wd-qtitle">
+                        {decisions === 1 ? "1 decision" : `${decisions} decisions`} waiting
+                      </span>
+                      <span className="wd-qsub">Roles and shortlists to approve</span>
+                    </span>
+                  </Link>
+                </li>
+              </ul>
+            )}
             {setupOpen && (
               <ul className="wd-qlist">
                 <li>

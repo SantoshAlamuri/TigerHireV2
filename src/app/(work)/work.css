@@ -1383,3 +1383,78 @@
   font-size: 12px;
   color: var(--wd-bad);
 }
+
+/* ---------- connections ---------- */
+.wd-conns {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  border-top: 1px solid var(--wd-hair);
+}
+.wd-conn {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  padding: 16px 0;
+  border-bottom: 1px solid var(--wd-hair);
+}
+.wd-conn-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+.wd-conn-form {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: 16px 20px;
+  padding: 18px 20px;
+  border-radius: 16px;
+  background: var(--wd-panel);
+}
+.wd-conn-form .wd-row-actions {
+  grid-column: 1 / -1;
+}
+
+/* ---------- plans ---------- */
+.wd-plans {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 12px;
+}
+.wd-plan {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 20px;
+  border-radius: 18px;
+  border: 1px solid var(--wd-hair-strong);
+}
+.wd-plan.on {
+  border-color: var(--wd-amber);
+  background: var(--wd-amber-soft);
+}
+.wd-plan-price {
+  margin: 0;
+  font-size: 20px;
+  font-variant-numeric: tabular-nums;
+}
+.wd-plan ul {
+  margin: 0 0 6px;
+  padding-left: 18px;
+  color: var(--wd-soft);
+  font-size: 14px;
+  line-height: 1.6;
+  flex: 1;
+}
+.wd-plan .wd-btn {
+  align-self: flex-start;
+}
+.wd-perm td {
+  text-align: center;
+  width: 160px;
+}
+.wd-perm thead th:not(:first-child) {
+  text-align: center;
+}

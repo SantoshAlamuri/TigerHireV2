@@ -7,6 +7,9 @@ import { useWorkQueue } from "@/components/work/WorkShell";
 import { useOnboardingHints } from "@/components/work/use-onboarding";
 import { needsOnboarding, onboardingKind } from "@/lib/work/onboarding";
 import { groupNeedsYou, type QueueEntry, type QueueTone } from "@/lib/work/queue";
+import { useApiQuery } from "@/lib/hooks/use-api";
+import type { ApprovalTaskItem } from "@/lib/approvals/task-types";
+import { cardsFromApprovals } from "@/lib/work/hm";
 
 function greeting(now = new Date()) {
   const h = now.getHours();
@@ -82,6 +85,8 @@ export default function WorkHome() {
     onboarding.ready &&
     needsOnboarding("admin", onboarding.hints);
 
+  const approvals = useApiQuery<{ items: ApprovalTaskItem[] }>("/api/approvals");
+  const decisions = cardsFromApprovals(approvals.data?.items ?? []).length;
   const first = queue.needsYou[0];
   const name = user?.name?.split(" ")[0];
   const hello = `${greeting()}${name ? `, ${name}` : ""}`;
@@ -164,6 +169,22 @@ export default function WorkHome() {
             <span className="wd-sig you">Set up your team</span>
             <span className="wd-row-line" style={{ display: "block", marginTop: 6 }}>
               Calendar, team, hiring process. A few minutes, once.
+            </span>
+          </span>
+          <span className="wd-row-go" aria-hidden="true">
+            →
+          </span>
+        </Link>
+      )}
+
+      {decisions > 0 && (
+        <Link href="/work/decisions" className="wd-panel you wd-home-setup">
+          <span>
+            <span className="wd-sig you">
+              {decisions === 1 ? "1 decision" : `${decisions} decisions`} waiting on you
+            </span>
+            <span className="wd-row-line" style={{ display: "block", marginTop: 6 }}>
+              New roles and shortlisted candidates to approve, one at a time.
             </span>
           </span>
           <span className="wd-row-go" aria-hidden="true">

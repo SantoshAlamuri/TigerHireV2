@@ -29,109 +29,110 @@ export interface SetupSection {
 export const SETUP_SECTIONS: SetupSection[] = [
   {
     id: "calendars",
-    title: "Calendars and availability",
-    why: "So interviews can be booked without back-and-forth.",
+    title: "You",
+    why: "Your details, your calendar and when you can interview.",
     links: [
-      { name: "My availability", note: "When you can interview", href: "/work/setup/availability" },
-      { name: "Team calendar", note: "Everyone's interviews in one view", href: "/calendar" },
+      {
+        name: "Your profile",
+        note: "Name, sign-in and the emails you get",
+        href: "/work/setup/profile",
+      },
       { name: "Your calendar", note: "Google or Microsoft", href: "/work/setup/calendar" },
-    ],
-  },
-  {
-    id: "process",
-    title: "Hiring process",
-    why: "The stages every job moves through, and who approves what.",
-    links: [
-      {
-        name: "Stages and approvals",
-        note: "The stages new jobs start with, and who signs off roles and offers",
-        href: "/work/setup/process",
-      },
-      {
-        name: "Approval cover",
-        note: "Who approves when someone is away",
-        href: "/recruit/settings/requisition-delegations",
-      },
-    ],
-  },
-  {
-    id: "scoring",
-    title: "Scoring and screening",
-    why: "How the agent judges candidates before you see them.",
-    links: [
-      {
-        name: "Rubric library",
-        note: "Rubrics you can reuse across jobs",
-        href: "/recruit/v2/setup/rubric",
-      },
-      {
-        name: "Screening questions",
-        note: "Default questions on the apply form",
-        href: "/recruit/settings/screening",
-      },
-      {
-        name: "Benchmarks",
-        note: "What good looks like in your market",
-        href: "/recruit/v2/setup/benchmarks",
-      },
-    ],
-  },
-  {
-    id: "templates",
-    title: "Templates",
-    why: "Words and numbers you reuse, written once.",
-    links: [
-      {
-        name: "Request templates",
-        note: "Starting points for new roles",
-        href: "/recruit/settings/requisition-templates",
-      },
-      {
-        name: "Message templates",
-        note: "Emails and WhatsApp messages",
-        href: "/recruit/settings/templates",
-      },
-      {
-        name: "Offer letters",
-        note: "Letter templates",
-        href: "/recruit/settings/offer-letter-templates",
-      },
-      {
-        name: "Pay bands",
-        note: "Ranges offers are checked against",
-        href: "/recruit/settings/compensation-bands",
-      },
-    ],
-  },
-  {
-    id: "channels",
-    title: "Channels and integrations",
-    why: "Where jobs are posted and which tools TigerHire talks to.",
-    links: [
-      {
-        name: "Job boards",
-        note: "LinkedIn, Naukri and others",
-        href: "/company/settings/job-boards",
-      },
-      {
-        name: "Integrations",
-        note: "Your ATS, HRIS and other tools",
-        href: "/recruit/v2/setup/integrations",
-      },
+      { name: "My availability", note: "When you can interview", href: "/work/setup/availability" },
     ],
   },
   {
     id: "team",
-    title: "Team and sharing",
-    why: "Who can see and do what.",
+    title: "Company and team",
+    why: "Who you are, who's on the team and what each person can do.",
     links: [
+      {
+        name: "Company",
+        note: "Name and work email domain",
+        href: "/work/setup/company",
+        adminOnly: true,
+      },
       {
         name: "Team",
         note: "Invite people and choose what they do",
         href: "/work/setup/team",
         adminOnly: true,
       },
-      { name: "Permissions", note: "What each role can do", href: "/company/settings/permissions" },
+      {
+        name: "Permissions",
+        note: "What recruiters and hiring managers may do",
+        href: "/work/setup/permissions",
+        adminOnly: true,
+      },
+      {
+        name: "Plan",
+        note: "What you're on and what you've used",
+        href: "/work/setup/plan",
+        adminOnly: true,
+      },
+    ],
+  },
+  {
+    id: "process",
+    title: "Hiring process",
+    why: "The stages every job moves through, who approves, and how candidates are screened.",
+    links: [
+      {
+        name: "Stages and approvals",
+        note: "The stages new jobs start with, and who signs off roles",
+        href: "/work/setup/process",
+      },
+      {
+        name: "Approval cover",
+        note: "Who approves when someone is away",
+        href: "/work/setup/approval-cover",
+        adminOnly: true,
+      },
+      {
+        name: "Screening",
+        note: "WhatsApp or voice, the score bar and calling hours",
+        href: "/work/setup/screening",
+      },
+    ],
+  },
+  {
+    id: "channels",
+    title: "Boards and tools",
+    why: "Where jobs are posted and which tools TigerHire talks to.",
+    links: [
+      {
+        name: "Job boards",
+        note: "idibu, Indeed and Adzuna",
+        href: "/work/setup/job-boards",
+        adminOnly: true,
+      },
+      {
+        name: "Connected tools",
+        note: "HR system, background checks, email and company sign-in",
+        href: "/work/setup/integrations",
+        adminOnly: true,
+      },
+    ],
+  },
+  {
+    id: "privacy",
+    title: "Privacy",
+    why: "Recording consent, how long things are kept, and a log of changes.",
+    links: [
+      {
+        name: "Privacy and records",
+        note: "Consent, retention and the change log",
+        href: "/work/setup/privacy",
+        adminOnly: true,
+      },
+    ],
+  },
+  {
+    id: "help",
+    title: "Help",
+    why: "A person at TigerHire reads every request.",
+    links: [
+      { name: "Ask for help", note: "And see what you've asked before", href: "/work/setup/help" },
     ],
   },
 ];
