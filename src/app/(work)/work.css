@@ -87,7 +87,7 @@
   grid-template-columns: auto minmax(0, 1fr);
   min-height: 100dvh;
 }
-@media (max-width: 900px) {
+@media (max-width: 640px) {
   .wd-shell {
     grid-template-columns: minmax(0, 1fr);
   }
@@ -103,7 +103,7 @@
   height: 100dvh;
   overflow: auto;
 }
-@media (max-width: 900px) {
+@media (max-width: 640px) {
   /* On a phone the work comes first; the queue follows it. */
   .wd-side {
     order: 2;
@@ -1005,7 +1005,7 @@
     transition: none !important;
   }
 }
-@media (max-width: 900px) {
+@media (max-width: 640px) {
   /* On a phone the work comes first; the queue follows it, always shown. */
   .wd-sideframe,
   .wd-sideframe.pinned {
