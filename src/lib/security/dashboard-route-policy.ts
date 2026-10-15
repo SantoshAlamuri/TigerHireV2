@@ -250,6 +250,8 @@ export const DASHBOARD_ROUTE_ACCESS_RULES: ReadonlyArray<{
     roles: ["recruiter", "leadership", "hiring_manager", "interviewer", "super_admin"],
   },
   { prefix: "/recruit", roles: ["recruiter", "leadership", "super_admin"] },
+  /** Work-driven UI: the same recruiting work, reached through the work item. */
+  { prefix: "/work", roles: ["recruiter", "leadership", "super_admin"] },
   { prefix: "/agency", roles: ["agency"] },
   { prefix: "/employee", roles: ["employee"] },
   /** Referrer hub: every signed-in product role may open the page (feature UI may still gate). */

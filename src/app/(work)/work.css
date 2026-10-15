@@ -1,0 +1,686 @@
+/*
+ * Work-driven UI theme.
+ *
+ * Playful, but minimal: one bold idea (the stepping-stone trail and its
+ * tiger-striped marker) and quiet everything else. Colour carries meaning —
+ * amber is always "you", lagoon is the agent, periwinkle is automation — so a
+ * glance at any screen says who holds the work.
+ *
+ * The existing app tokens (--bg, --text, --accent…) are re-pointed inside
+ * .wd so the screens reused from the classic UI take on this theme.
+ */
+.wd {
+  --wd-paper: #f5f7f3;
+  --wd-card: #ffffff;
+  --wd-ink: #1c1f1d;
+  --wd-muted: #5a625d;
+  --wd-faint: #8b938e;
+  --wd-line: #e1e6e1;
+  --wd-hover: #eef1ec;
+
+  --wd-you: #e8900a;
+  --wd-you-soft: #fff0d3;
+  --wd-you-ink: #7a4300;
+  --wd-agent: #1f8a78;
+  --wd-agent-soft: #dcf2ec;
+  --wd-agent-ink: #0d5a4d;
+  --wd-auto: #5a68e6;
+  --wd-auto-soft: #e8eafd;
+  --wd-auto-ink: #2c37a3;
+  --wd-bad: #c2412d;
+  --wd-bad-soft: #fde8e3;
+
+  --wd-radius: 14px;
+  --wd-ease: cubic-bezier(0.34, 1.4, 0.64, 1);
+
+  /* Classic tokens, re-pointed */
+  --bg: var(--wd-paper);
+  --bg-elevated: var(--wd-card);
+  --card: var(--wd-card);
+  --surface: var(--wd-card);
+  --surface-hover: var(--wd-hover);
+  --border: var(--wd-line);
+  --border-interactive: #cfd6d0;
+  --border-hover: #cfd6d0;
+  --text: var(--wd-ink);
+  --text-muted: var(--wd-muted);
+  --text-subtle: var(--wd-faint);
+  --accent: var(--wd-you);
+  --accent-hover: #f59e0b;
+  --accent-muted: var(--wd-you-soft);
+  --focus-ring: rgba(232, 144, 10, 0.55);
+  --status-success-fg: #17795f;
+  --status-success-bg: #dcf2ec;
+  --status-success-border: #a9dccd;
+  --status-warning-fg: #8a4b00;
+  --status-warning-bg: #fff0d3;
+  --status-warning-border: #f5cf8e;
+  --status-danger-fg: #b2361f;
+  --status-danger-bg: #fde8e3;
+  --status-danger-border: #f4b8aa;
+  --status-info-fg: #2c37a3;
+  --status-info-bg: #e8eafd;
+  --status-info-border: #c4c9f8;
+  --status-neutral-fg: #5a625d;
+  --status-neutral-bg: #eef1ec;
+  --status-neutral-border: #dde3dd;
+  --score-strong: #17795f;
+  --score-good: #a15c00;
+  --score-fair: #b5531a;
+  --score-weak: #b2361f;
+
+  color-scheme: light;
+  min-height: 100dvh;
+  background: var(--wd-paper);
+  color: var(--wd-ink);
+  font-family: var(--font-sans);
+  font-size: 15px;
+  line-height: 1.55;
+}
+
+@media (prefers-color-scheme: dark) {
+  .wd {
+    --wd-paper: #141714;
+    --wd-card: #1c201d;
+    --wd-ink: #edf1ec;
+    --wd-muted: #aab3ad;
+    --wd-faint: #828b85;
+    --wd-line: #2c322e;
+    --wd-hover: #232824;
+    --wd-you: #f5a524;
+    --wd-you-soft: #3a2a0d;
+    --wd-you-ink: #ffd18a;
+    --wd-agent: #4cc3ac;
+    --wd-agent-soft: #15302a;
+    --wd-agent-ink: #9fe3d4;
+    --wd-auto: #8d97ff;
+    --wd-auto-soft: #20244a;
+    --wd-auto-ink: #c4c9ff;
+    --wd-bad: #ff8a73;
+    --wd-bad-soft: #3b1d17;
+    --border-interactive: #3a413c;
+    --border-hover: #3a413c;
+    --status-success-fg: #7ee0c5;
+    --status-success-bg: #15302a;
+    --status-warning-fg: #ffd18a;
+    --status-warning-bg: #3a2a0d;
+    --status-danger-fg: #ff9d89;
+    --status-danger-bg: #3b1d17;
+    --status-info-fg: #c4c9ff;
+    --status-info-bg: #20244a;
+    --status-neutral-bg: #232824;
+    --score-strong: #7ee0c5;
+    --score-good: #ffd18a;
+    --score-fair: #ffb48a;
+    --score-weak: #ff9d89;
+    color-scheme: dark;
+  }
+}
+
+.wd :focus-visible {
+  outline: 2px solid var(--wd-you);
+  outline-offset: 2px;
+  border-radius: 6px;
+}
+
+/* ---------- shell ---------- */
+.wd-shell {
+  display: grid;
+  grid-template-columns: 300px minmax(0, 1fr);
+  min-height: 100dvh;
+}
+@media (max-width: 900px) {
+  .wd-shell {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+.wd-side {
+  border-right: 1px solid var(--wd-line);
+  padding: 20px 14px 24px max(14px, env(safe-area-inset-left));
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  position: sticky;
+  top: 0;
+  height: 100dvh;
+  overflow: auto;
+}
+@media (max-width: 900px) {
+  /* On a phone the work comes first; the queue follows it. */
+  .wd-side {
+    order: 2;
+    position: static;
+    height: auto;
+    border-right: 0;
+    border-top: 1px solid var(--wd-line);
+  }
+}
+.wd-main {
+  min-width: 0;
+  padding: 24px max(16px, 4vw) 64px;
+}
+.wd-brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-weight: 800;
+  font-size: 17px;
+  letter-spacing: -0.01em;
+  color: var(--wd-ink);
+  text-decoration: none;
+}
+.wd-brand small {
+  font-weight: 600;
+  font-size: 12px;
+  color: var(--wd-muted);
+}
+
+/* ---------- type ---------- */
+.wd-h1 {
+  margin: 0;
+  font-size: clamp(26px, 3.2vw, 34px);
+  font-weight: 800;
+  letter-spacing: -0.025em;
+  line-height: 1.15;
+  text-wrap: balance;
+}
+.wd-h2 {
+  margin: 0;
+  font-size: 20px;
+  font-weight: 750;
+  letter-spacing: -0.015em;
+  text-wrap: balance;
+}
+.wd-muted {
+  color: var(--wd-muted);
+}
+.wd-small {
+  font-size: 13px;
+}
+
+/* ---------- actor pills ---------- */
+.wd-who {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 12px;
+  font-weight: 650;
+  padding: 2px 9px 2px 7px;
+  border-radius: 999px;
+  white-space: nowrap;
+}
+.wd-who::before {
+  content: "";
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: currentColor;
+}
+.wd-who.you {
+  background: var(--wd-you-soft);
+  color: var(--wd-you-ink);
+}
+.wd-who.agent {
+  background: var(--wd-agent-soft);
+  color: var(--wd-agent-ink);
+}
+.wd-who.auto {
+  background: var(--wd-auto-soft);
+  color: var(--wd-auto-ink);
+}
+
+/* ---------- buttons ---------- */
+.wd-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: 44px;
+  padding: 0 18px;
+  border-radius: 12px;
+  border: 1px solid var(--wd-line);
+  background: var(--wd-card);
+  color: var(--wd-ink);
+  font: inherit;
+  font-weight: 650;
+  cursor: pointer;
+  text-decoration: none;
+  transition:
+    transform 0.12s var(--wd-ease),
+    background 0.15s;
+}
+.wd-btn:hover {
+  background: var(--wd-hover);
+}
+.wd-btn:active {
+  transform: scale(0.97);
+}
+.wd-btn:disabled {
+  opacity: 0.5;
+  cursor: default;
+  transform: none;
+}
+.wd-btn.go {
+  background: var(--wd-ink);
+  border-color: var(--wd-ink);
+  color: var(--wd-paper);
+}
+.wd-btn.go:hover {
+  background: var(--wd-ink);
+  opacity: 0.9;
+}
+.wd-btn.quiet {
+  border-color: transparent;
+  background: transparent;
+  color: var(--wd-muted);
+  padding: 0 10px;
+}
+
+/* ---------- queue ---------- */
+.wd-qhead {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--wd-muted);
+  padding: 0 6px;
+}
+.wd-qlist {
+  list-style: none;
+  margin: 6px 0 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.wd-qitem {
+  display: grid;
+  grid-template-columns: 10px minmax(0, 1fr);
+  gap: 10px;
+  align-items: start;
+  padding: 9px 10px;
+  border-radius: 10px;
+  color: inherit;
+  text-decoration: none;
+}
+.wd-qitem:hover {
+  background: var(--wd-hover);
+}
+.wd-qitem[aria-current="page"] {
+  background: var(--wd-card);
+  box-shadow: 0 0 0 1px var(--wd-line);
+}
+.wd-qdot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  margin-top: 6px;
+  background: var(--wd-line);
+}
+.wd-qdot.you {
+  background: var(--wd-you);
+}
+.wd-qdot.bad {
+  background: var(--wd-bad);
+}
+.wd-qdot.moving {
+  background: var(--wd-agent);
+}
+.wd-qtitle {
+  font-weight: 650;
+  font-size: 14px;
+  line-height: 1.3;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.wd-qsub {
+  font-size: 12.5px;
+  color: var(--wd-muted);
+  line-height: 1.35;
+}
+
+/* ---------- the trail (the one bold thing) ---------- */
+.wd-trail {
+  position: relative;
+  overflow-x: auto;
+  padding: 6px 2px 4px;
+  margin: 0 -2px;
+}
+.wd-trail ol {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(9, minmax(84px, 1fr));
+  min-width: 760px;
+  position: relative;
+}
+.wd-trail ol::before {
+  content: "";
+  position: absolute;
+  left: 21px;
+  right: 21px;
+  top: 21px;
+  border-top: 2px dashed var(--wd-line);
+}
+.wd-stone {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 8px;
+  padding: 0 6px 0 0;
+  background: none;
+  border: 0;
+  color: inherit;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+.wd-stone:disabled {
+  cursor: default;
+}
+.wd-pebble {
+  position: relative;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  background: var(--wd-paper);
+  border: 2px solid var(--wd-line);
+  color: var(--wd-faint);
+  transition:
+    transform 0.35s var(--wd-ease),
+    background 0.2s,
+    border-color 0.2s;
+}
+.wd-stone:hover:not(:disabled) .wd-pebble {
+  transform: translateY(-2px);
+}
+.wd-pebble svg {
+  width: 18px;
+  height: 18px;
+}
+.wd-stone.done .wd-pebble {
+  background: var(--wd-ink);
+  border-color: var(--wd-ink);
+  color: var(--wd-paper);
+}
+.wd-stone.working .wd-pebble {
+  border-color: var(--wd-agent);
+  color: var(--wd-agent);
+}
+.wd-stone.working.auto .wd-pebble {
+  border-color: var(--wd-auto);
+  color: var(--wd-auto);
+}
+.wd-stone.needs_you .wd-pebble {
+  border-color: var(--wd-you);
+  background: var(--wd-you-soft);
+  color: var(--wd-you-ink);
+}
+.wd-stone.blocked .wd-pebble {
+  border-color: var(--wd-bad);
+  background: var(--wd-bad-soft);
+  color: var(--wd-bad);
+}
+.wd-stone.skipped .wd-pebble {
+  border-style: dotted;
+}
+/* The stone you are on: bigger, with tiger stripes. */
+.wd-stone.here .wd-pebble {
+  transform: scale(1.18);
+  background: repeating-linear-gradient(-45deg, var(--wd-you) 0 6px, #f7b84a 6px 12px);
+  border-color: var(--wd-ink);
+  color: var(--wd-ink);
+  box-shadow: 0 6px 18px -6px rgba(232, 144, 10, 0.7);
+}
+.wd-stone.here .wd-pebble svg {
+  background: var(--wd-card);
+  border-radius: 50%;
+  padding: 3px;
+  width: 24px;
+  height: 24px;
+}
+.wd-stone-label {
+  font-size: 13px;
+  font-weight: 700;
+  line-height: 1.2;
+}
+.wd-stone-sub {
+  font-size: 12px;
+  color: var(--wd-muted);
+  line-height: 1.3;
+}
+.wd-stone.here .wd-stone-label {
+  color: var(--wd-ink);
+}
+.wd-stone:not(.here):not(.done) .wd-stone-label {
+  color: var(--wd-muted);
+}
+
+@keyframes wd-hop {
+  0% {
+    transform: scale(1) translateY(0);
+  }
+  45% {
+    transform: scale(1.1) translateY(-10px);
+  }
+  100% {
+    transform: scale(1.18) translateY(0);
+  }
+}
+.wd-stone.here.arrived .wd-pebble {
+  animation: wd-hop 0.55s var(--wd-ease);
+}
+
+/* ---------- headline strip ---------- */
+.wd-now {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px 14px;
+  padding: 14px 18px;
+  border-radius: var(--wd-radius);
+  background: var(--wd-card);
+  border: 1px solid var(--wd-line);
+}
+.wd-now.you {
+  background: var(--wd-you-soft);
+  border-color: transparent;
+  color: var(--wd-you-ink);
+}
+.wd-now.blocked {
+  background: var(--wd-bad-soft);
+  border-color: transparent;
+  color: var(--wd-bad);
+}
+.wd-now strong {
+  font-size: 16px;
+  font-weight: 700;
+}
+
+/* ---------- panel ---------- */
+.wd-panel {
+  background: var(--wd-card);
+  border: 1px solid var(--wd-line);
+  border-radius: 18px;
+  padding: clamp(16px, 2.4vw, 28px);
+  min-width: 0;
+}
+.wd-stack {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+.wd-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  align-items: center;
+}
+.wd-field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.wd-field label {
+  font-weight: 650;
+  font-size: 14px;
+}
+.wd-input,
+.wd-textarea {
+  width: 100%;
+  border: 1px solid var(--wd-line);
+  border-radius: 12px;
+  background: var(--wd-paper);
+  color: var(--wd-ink);
+  font: inherit;
+  padding: 11px 13px;
+}
+.wd-textarea {
+  min-height: 380px;
+  resize: vertical;
+  line-height: 1.6;
+}
+.wd-stats {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(96px, 1fr));
+  gap: 10px;
+}
+.wd-stat {
+  border: 1px solid var(--wd-line);
+  border-radius: 12px;
+  padding: 12px 14px;
+}
+.wd-stat b {
+  display: block;
+  font-size: 28px;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  font-variant-numeric: tabular-nums;
+}
+.wd-stat span {
+  font-size: 13px;
+  color: var(--wd-muted);
+}
+
+/* ---------- handoff toast ---------- */
+.wd-handoff {
+  position: fixed;
+  left: 50%;
+  bottom: max(20px, env(safe-area-inset-bottom));
+  transform: translateX(-50%);
+  z-index: 50;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 12px 12px 12px 18px;
+  border-radius: 16px;
+  background: var(--wd-ink);
+  color: var(--wd-paper);
+  box-shadow: 0 18px 40px -16px rgba(0, 0, 0, 0.45);
+  max-width: calc(100vw - 32px);
+}
+.wd-handoff .wd-btn {
+  min-height: 38px;
+  background: transparent;
+  color: var(--wd-paper);
+  border-color: rgba(255, 255, 255, 0.25);
+}
+.wd-handoff-bar {
+  position: absolute;
+  left: 14px;
+  right: 14px;
+  bottom: 6px;
+  height: 3px;
+  border-radius: 3px;
+  background: var(--wd-you);
+  transform-origin: left;
+  animation: wd-shrink var(--wd-handoff-ms, 2600ms) linear forwards;
+}
+@keyframes wd-shrink {
+  from {
+    transform: scaleX(1);
+  }
+  to {
+    transform: scaleX(0);
+  }
+}
+
+/* ---------- queue-clear moment ---------- */
+.wd-clear {
+  text-align: center;
+  padding: 48px 16px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+}
+.wd-stripes {
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  background: repeating-linear-gradient(-45deg, var(--wd-you) 0 10px, #f7b84a 10px 20px);
+  display: grid;
+  place-items: center;
+  animation: wd-pop 0.7s var(--wd-ease);
+}
+.wd-stripes svg {
+  width: 56px;
+  height: 56px;
+  background: var(--wd-card);
+  border-radius: 50%;
+  padding: 10px;
+  color: var(--wd-ink);
+}
+@keyframes wd-pop {
+  from {
+    transform: scale(0.4) rotate(-30deg);
+  }
+  to {
+    transform: scale(1) rotate(0);
+  }
+}
+
+/* ---------- activity ---------- */
+.wd-log {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  font-size: 13px;
+}
+.wd-log li {
+  display: flex;
+  gap: 8px;
+  align-items: baseline;
+  flex-wrap: wrap;
+}
+.wd-log time {
+  color: var(--wd-faint);
+  font-variant-numeric: tabular-nums;
+  font-size: 12px;
+}
+
+/* Embedded classic screens: soften their dark-theme leftovers. */
+.wd-embed {
+  min-width: 0;
+}
+.wd-embed [class*="bg-white/"] {
+  background-color: var(--wd-paper);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .wd *,
+  .wd *::before,
+  .wd *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}

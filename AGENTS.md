@@ -36,3 +36,13 @@ These rules exist because each one maps to a real production-bound bug class fou
 3. **React hooks: `react-hooks/exhaustive-deps` is `error` for `src/components/fitscore/**`and`src/components/dashboard/FitScore\*.tsx`\*\* (eslint.config.mjs override). A stale closure in the JD wizard silently discarded recruiter-entered scoring requirements. When cleaning up other directories, extend that override list — never weaken it.
 4. **Scoring invariants:** dedupe flags BEFORE the score engine (never only at persist); the displayed score, band label, verdict, and market ranking must all derive from the SAME final (calibrated, rounded) number; never persist model "quotes" that failed verbatim-substring validation against the resume.
 5. **Degraded paths must be visible:** any fallback/degraded acceptance (deterministic fallback score, sanitized quotes, demolished extraction fields) needs a distinct `logger.warn` event name and, where recruiter-facing, a UI indicator (`scoring_method` → fallback badge).
+
+<!-- BEGIN:nextjs-agent-rules -->
+
+# This is NOT the Next.js you know
+
+This version has breaking changes — APIs, conventions, and file structure may all differ from your training data. Read the relevant guide in `node_modules/next/dist/docs/` (resolved from this file's directory; in monorepos the `next` package may not be visible from the repo root) before writing any code. Heed deprecation notices.
+
+This block is written and re-added by `next dev` — verify at `node_modules/next/dist/server/lib/generate-agent-files.js`. Removing it from a diff only re-creates the uncommitted change; committing it with your work keeps the tree clean.
+
+<!-- END:nextjs-agent-rules -->
