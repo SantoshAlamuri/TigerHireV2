@@ -271,7 +271,7 @@ export function TimePicker({
                 setPicked((p) => p.filter((c) => c.kind === "open"));
               }}
             >
-              {m < 60 ? `${m}m` : `${m / 60}${m % 60 ? ".5" : ""}h`}
+              {m < 60 ? `${m}m` : `${m / 60}h`}
             </button>
           ))}
         </div>

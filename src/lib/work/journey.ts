@@ -16,7 +16,9 @@ export type Actor = "agent" | "auto" | "you";
 export type StageKey =
   | "request"
   | "description"
+  | "profile"
   | "rubric"
+  | "screening"
   | "publish"
   | "applications"
   | "scoring"
@@ -45,6 +47,12 @@ export interface JourneyFacts {
   roleOpen: boolean;
   publicApplications: boolean;
   screeningQuestionCount: number;
+  /** WhatsApp screening is switched on for the organisation. Undefined = unknown. */
+  whatsappScreening?: boolean;
+  /** Questions sent once someone is shortlisted. */
+  postShortlistQuestionCount?: number;
+  /** The person chose to go live without screening questions. */
+  screeningSkipped?: boolean;
   applicants: number;
   /** Applied but carrying no score — a silent drop if left alone. */
   unscored: number;
@@ -83,7 +91,9 @@ export interface Journey {
 export const STAGE_ORDER: StageKey[] = [
   "request",
   "description",
+  "profile",
   "rubric",
+  "screening",
   "publish",
   "applications",
   "scoring",
@@ -123,22 +133,67 @@ export function buildJourney(f: JourneyFacts): Journey {
     headline: f.jdPublished ? "Description is ready" : "Check the draft and save it",
   });
 
+  const profileDone = f.rubricNotRequired || f.rubricApproved || f.mustHaveCount > 0;
+  stages.push({
+    key: "profile",
+    label: "Ideal candidate",
+    actors: ["agent", "you"],
+    status: f.rubricNotRequired ? "skipped" : profileDone ? "done" : "needs_you",
+    headline: f.rubricNotRequired
+      ? "Role-specific scoring is off for your organisation"
+      : profileDone
+        ? `${plural(f.mustHaveCount, "must-have")} set`
+        : "Say who you're looking for",
+  });
+
   const rubricDone = f.rubricNotRequired || f.rubricApproved;
   stages.push({
     key: "rubric",
     label: "Rubric",
     actors: ["agent", "you"],
-    status: f.rubricNotRequired ? "skipped" : f.rubricApproved ? "done" : "needs_you",
+    status: f.rubricNotRequired
+      ? "skipped"
+      : f.rubricApproved
+        ? "done"
+        : profileDone
+          ? "needs_you"
+          : "waiting",
     headline: f.rubricNotRequired
       ? "Role-specific scoring is off for your organisation"
       : f.rubricApproved
-        ? `Approved, ${plural(f.mustHaveCount, "must-have")}`
-        : f.mustHaveCount > 0
-          ? "Review the rubric and approve it"
-          : "Set the must-haves the agent scores against",
+        ? "Approved"
+        : profileDone
+          ? "Check the weights and approve"
+          : "Opens once the ideal candidate is set",
   });
 
-  const readyToPublish = f.jdPublished && rubricDone;
+  const asks = f.screeningQuestionCount + (f.postShortlistQuestionCount ?? 0);
+  const screeningStatus: StageStatus =
+    f.whatsappScreening === false
+      ? "skipped"
+      : asks > 0 || f.screeningSkipped || f.roleOpen
+        ? "done"
+        : rubricDone
+          ? "needs_you"
+          : "waiting";
+  stages.push({
+    key: "screening",
+    label: "Screening",
+    actors: ["auto", "you"],
+    status: screeningStatus,
+    headline:
+      f.whatsappScreening === false
+        ? "WhatsApp screening is off for your organisation"
+        : asks > 0
+          ? `${plural(f.screeningQuestionCount, "question")} at apply, ${plural(f.postShortlistQuestionCount ?? 0, "question")} after shortlist`
+          : screeningStatus === "done"
+            ? "No screening questions"
+            : rubricDone
+              ? "Choose what automation asks on WhatsApp"
+              : "Opens once the rubric is approved",
+  });
+
+  const readyToPublish = f.jdPublished && rubricDone && screeningStatus !== "needs_you";
   stages.push({
     key: "publish",
     label: "Publish",
@@ -150,7 +205,7 @@ export function buildJourney(f: JourneyFacts): Journey {
         : "Open for internal applications"
       : readyToPublish
         ? "Ready to go live"
-        : "Opens once the description and rubric are done",
+        : "Opens once the description, rubric and screening are done",
   });
 
   stages.push({

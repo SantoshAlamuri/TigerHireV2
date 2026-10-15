@@ -110,3 +110,31 @@ describe("work journey", () => {
     ).toBe("offer");
   });
 });
+
+describe("ideal candidate and screening stages", () => {
+  const fresh = { rubricApproved: false, roleOpen: false, screeningQuestionCount: 0 };
+
+  it("asks for the ideal candidate before the rubric", () => {
+    const s = status({ ...fresh, mustHaveCount: 0 });
+    expect(s.profile).toBe("needs_you");
+    expect(s.rubric).toBe("waiting");
+    expect(buildJourney({ ...base, ...fresh, mustHaveCount: 0 }).currentKey).toBe("profile");
+  });
+
+  it("asks for screening after the rubric, before going live", () => {
+    const j = buildJourney({ ...base, ...fresh, rubricApproved: true, whatsappScreening: true });
+    expect(j.currentKey).toBe("screening");
+    expect(status({ ...fresh, rubricApproved: true, whatsappScreening: true }).publish).toBe(
+      "waiting",
+    );
+  });
+
+  it("lets the person skip screening, and skips it when WhatsApp is off", () => {
+    expect(
+      buildJourney({ ...base, ...fresh, rubricApproved: true, screeningSkipped: true }).currentKey,
+    ).toBe("publish");
+    expect(status({ ...fresh, rubricApproved: true, whatsappScreening: false }).screening).toBe(
+      "skipped",
+    );
+  });
+});

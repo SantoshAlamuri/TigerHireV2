@@ -132,6 +132,10 @@ export const idealCandidateProfileSchema = z.object({
   benchmarks: z.record(z.string(), z.string()),
   traits: z.array(z.string()).optional(),
   background_preferences: z.array(z.string()).optional(),
+  /** Measurable results the hire must deliver. Were silently stripped before. */
+  outcomes: z.array(z.string()).optional(),
+  /** Behavioural competencies for the role. Were silently stripped before. */
+  competencies: z.array(z.string()).optional(),
 });
 
 export const jdBaseUpdateSchema = z.object({

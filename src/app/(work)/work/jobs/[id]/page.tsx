@@ -13,6 +13,8 @@ import {
   DescriptionPanel,
   InterviewsPanel,
   OfferPanel,
+  ProfilePanel,
+  ScreeningPanel,
   PublishPanel,
   RequestPanel,
   ReviewPanel,
@@ -24,7 +26,9 @@ import {
 const PANELS: Record<StageKey, (p: PanelProps) => React.ReactNode> = {
   request: RequestPanel,
   description: DescriptionPanel,
+  profile: ProfilePanel,
   rubric: RubricPanel,
+  screening: ScreeningPanel,
   publish: PublishPanel,
   applications: ApplicationsPanel,
   scoring: ScoringPanel,

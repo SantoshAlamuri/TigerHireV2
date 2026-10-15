@@ -6,14 +6,16 @@ import { useApiMutation, useApiQuery } from "@/lib/hooks/use-api";
 import {
   AddCandidates,
   ApprovalTimeline,
-  MustHavesEditor,
-  ScreeningEditor,
   ShortlistBar,
+  ThresholdsEditor,
+  RubricChecks,
 } from "@/components/work/editors";
-import type { IdealCandidateProfile } from "@/lib/work/icp";
+import type { IdealCandidateProfile } from "@/lib/fitscore/hybrid/ideal-profile";
+import { ProfileBlock } from "@/components/work/profile/ProfileBlock";
+import { ScreeningBlock } from "@/components/work/screening/ScreeningBlock";
 import { ReviewBlock } from "@/components/work/review/ReviewBlock";
 import { InterviewsBlock } from "@/components/work/interviews/InterviewsBlock";
-import type { JourneyFacts } from "@/lib/work/journey";
+import type { JourneyFacts, StageKey } from "@/lib/work/journey";
 import type { WorkJob } from "@/lib/work/use-job-journey";
 import {
   fromDisplayWeights,
@@ -29,7 +31,7 @@ export interface PanelProps {
   facts: JourneyFacts;
   onDone: (what: string) => void;
   onLog: (actor: "agent" | "auto" | "you", what: string) => void;
-  goTo: (key: "rubric" | "review" | "publish") => void;
+  goTo: (key: StageKey) => void;
 }
 
 function Numbers({ items }: { items: [string, number | string][] }) {
@@ -161,6 +163,7 @@ interface JdBasePayload {
     roleTitle?: string | null;
     scoreFloor?: number | null;
     idealCandidateProfile?: Partial<IdealCandidateProfile> | null;
+    fitThresholds?: { strong: number; good: number; moderate: number; weak: number } | null;
   } | null;
 }
 
@@ -169,9 +172,8 @@ interface JdBasePayload {
  * matters; you nudge the weights until they add up to 100, then approve.
  * Must-haves stay editable through the detailed setup underneath.
  */
-export function RubricPanel({ jobId, job, onDone, onLog }: PanelProps) {
+export function RubricPanel({ jobId, onDone, onLog, goTo }: PanelProps) {
   const base = useApiQuery<JdBasePayload>("/api/fitscore/jd-base", { jobId });
-  const build = useApiMutation<{ jobId: string }, unknown>("/api/fitscore/jd-base", "POST");
   const put = useApiMutation<{ jobId: string; weights: Record<string, number> }, unknown>(
     "/api/fitscore/jd-base",
     "PUT",
@@ -180,8 +182,6 @@ export function RubricPanel({ jobId, job, onDone, onLog }: PanelProps) {
     "/api/fitscore/jd-base/approve",
     "POST",
   );
-  const [details, setDetails] = useState(false);
-
   const doc = base.data?.jdBase ?? null;
   const original = useMemo(() => toDisplayWeights(doc?.weights ?? {}), [doc?.weights]);
   // Edits belong to the version of the weights they were made against; a refetch resets them.
@@ -215,28 +215,15 @@ export function RubricPanel({ jobId, job, onDone, onLog }: PanelProps) {
 
   if (base.loading && !base.data) return <p className="wd-muted">Loading the rubric…</p>;
 
-  if (!doc) {
+  if (!doc || mustHaves.length === 0) {
     return (
-      <div className="wd-stack" style={{ gap: 24 }}>
+      <div className="wd-stack" style={{ gap: 20 }}>
         <p className="wd-lede">
-          The agent reads the job description and proposes what to score and how much each part
-          matters. You check it before anyone is scored.
+          The rubric scores candidates against the ideal candidate, so set that first.
         </p>
-        {build.error && <Problem>{build.error}</Problem>}
         <div className="wd-row-actions">
-          <button
-            type="button"
-            className="wd-btn go"
-            disabled={build.loading}
-            onClick={async () => {
-              const ok = await build.mutate({ jobId });
-              if (ok) {
-                onLog("agent", "Built a rubric from the job description");
-                await base.refetch({ silent: true });
-              }
-            }}
-          >
-            {build.loading ? "The agent is building it…" : "Build the rubric"}
+          <button type="button" className="wd-btn go" onClick={() => goTo("profile")}>
+            Set the ideal candidate
           </button>
         </div>
       </div>
@@ -320,10 +307,9 @@ export function RubricPanel({ jobId, job, onDone, onLog }: PanelProps) {
             type="button"
             className="wd-btn quiet"
             style={{ marginTop: 10 }}
-            onClick={() => setDetails((d) => !d)}
-            aria-expanded={details}
+            onClick={() => goTo("profile")}
           >
-            {details ? "Close the editor" : "Edit the ideal candidate"}
+            Edit the ideal candidate
           </button>
         </div>
       </div>
@@ -361,34 +347,25 @@ export function RubricPanel({ jobId, job, onDone, onLog }: PanelProps) {
         </span>
       </div>
 
-      {details && (
-        <div className="wd-panel">
-          <MustHavesEditor
-            jobId={jobId}
-            profile={doc.idealCandidateProfile ?? null}
-            roleTitle={doc.roleTitle ?? job.title ?? ""}
-            onLog={onLog}
-            onCancel={() => setDetails(false)}
-            onSaved={() => {
-              void base.refetch({ silent: true });
-              setDetails(false);
-            }}
-          />
-        </div>
-      )}
-
       <ShortlistBar
         jobId={jobId}
         floor={doc.scoreFloor ?? 0}
         onLog={onLog}
         onSaved={() => void base.refetch({ silent: true })}
       />
+      <ThresholdsEditor
+        jobId={jobId}
+        thresholds={doc.fitThresholds ?? null}
+        onLog={onLog}
+        onSaved={() => void base.refetch({ silent: true })}
+      />
+      <RubricChecks jobId={jobId} weights={doc.weights ?? {}} />
     </div>
   );
 }
 
 /** Where the job goes, and the questions automation asks. One button to go live. */
-export function PublishPanel({ jobId, job, facts, onDone, onLog }: PanelProps) {
+export function PublishPanel({ jobId, job, facts, onDone, onLog, goTo }: PanelProps) {
   const [careers, setCareers] = useState(job.list_on_public_job_board ?? true);
   const [referrals, setReferrals] = useState(job.list_for_internal_referrals ?? true);
   const patch = useApiMutation<
@@ -463,10 +440,17 @@ export function PublishPanel({ jobId, job, facts, onDone, onLog }: PanelProps) {
           </div>
         </div>
         <div className="wd-panel">
-          <span className="wd-sig auto">Automation asks on WhatsApp</span>
-          <div style={{ marginTop: 16 }}>
-            <ScreeningEditor jobId={jobId} onLog={onLog} />
-          </div>
+          <span className="wd-sig auto">Screening on WhatsApp</span>
+          <p className="wd-small" style={{ margin: "12px 0 8px", lineHeight: 1.5 }}>
+            {facts.whatsappScreening === false
+              ? "Off for your organisation. Applicants go straight to scoring."
+              : facts.screeningQuestionCount + (facts.postShortlistQuestionCount ?? 0) > 0
+                ? `${facts.screeningQuestionCount} question${facts.screeningQuestionCount === 1 ? "" : "s"} when they apply, ${facts.postShortlistQuestionCount ?? 0} after you shortlist.`
+                : "No questions. Applicants go straight to scoring."}
+          </p>
+          <button type="button" className="wd-btn quiet" onClick={() => goTo("screening")}>
+            Change screening
+          </button>
         </div>
       </div>
 
@@ -588,4 +572,11 @@ export function OfferPanel() {
       </p>
     </div>
   );
+}
+
+export function ProfilePanel(props: PanelProps) {
+  return <ProfileBlock {...props} />;
+}
+export function ScreeningPanel(props: PanelProps) {
+  return <ScreeningBlock {...props} />;
 }

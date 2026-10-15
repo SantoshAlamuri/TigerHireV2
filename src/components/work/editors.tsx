@@ -2,16 +2,10 @@
 
 import { useState } from "react";
 import { useApiMutation, useApiQuery } from "@/lib/hooks/use-api";
-import {
-  draftChanged,
-  draftFromProfile,
-  icpProblems,
-  nudgeFloor,
-  profileFromDraft,
-  questionsFromText,
-  type IcpDraft,
-  type IdealCandidateProfile,
-} from "@/lib/work/icp";
+import { nudgeFloor, questionsFromText } from "@/lib/work/icp";
+import { DEFAULT_FIT_THRESHOLDS } from "@/lib/fitscore/hybrid/constants";
+import { detectJdBaseMismatches } from "@/lib/fitscore/jd-base-approval/mismatch-detection";
+import type { IdealCandidateProfile } from "@/lib/fitscore/hybrid/ideal-profile";
 import { CompanyBulkUploadModal } from "@/app/(dashboard)/recruit/candidates/components/CompanyBulkUploadModal";
 
 type Log = (actor: "agent" | "auto" | "you", what: string) => void;
@@ -33,107 +27,6 @@ function Field({
       {children}
       {hint && <span className="wd-src">{hint}</span>}
     </label>
-  );
-}
-
-/**
- * The ideal candidate: summary, must-haves, nice-to-haves, years. One save.
- * Keeps the agent's benchmarks and traits untouched.
- */
-export function MustHavesEditor({
-  jobId,
-  profile,
-  roleTitle,
-  onSaved,
-  onCancel,
-  onLog,
-}: {
-  jobId: string;
-  profile: Partial<IdealCandidateProfile> | null;
-  roleTitle: string;
-  onSaved: () => void;
-  onCancel: () => void;
-  onLog: Log;
-}) {
-  const start = draftFromProfile(profile);
-  const [d, setD] = useState<IcpDraft>(start);
-  const put = useApiMutation<
-    { jobId: string; idealCandidateProfile: IdealCandidateProfile },
-    unknown
-  >("/api/fitscore/jd-base", "PUT");
-  const problems = icpProblems(d);
-  const changed = draftChanged(start, d);
-  const set =
-    (k: keyof IcpDraft) => (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) =>
-      setD({ ...d, [k]: e.target.value });
-
-  return (
-    <form
-      className="wd-stack"
-      style={{ gap: 24 }}
-      onSubmit={async (e) => {
-        e.preventDefault();
-        if (problems.length || !changed) return;
-        const ok = await put.mutate({
-          jobId,
-          idealCandidateProfile: profileFromDraft(d, profile, roleTitle),
-        });
-        if (ok) {
-          onLog("you", "Changed the ideal candidate");
-          onSaved();
-        }
-      }}
-    >
-      <h3 className="wd-h2" style={{ fontSize: 19 }}>
-        The ideal candidate
-      </h3>
-      <Field label="In one line" hint="How you'd describe the right person to a friend">
-        <input className="wd-input" value={d.summary} onChange={set("summary")} />
-      </Field>
-      <div className="wd-split" style={{ gridTemplateColumns: "minmax(0,1fr) minmax(0,1fr)" }}>
-        <Field label="Must-haves" hint="One per line. Missing one lowers the score a lot.">
-          <textarea
-            className="wd-textarea"
-            rows={7}
-            value={d.mustHaves}
-            onChange={set("mustHaves")}
-          />
-        </Field>
-        <Field label="Nice to have" hint="One per line. Adds to the score, never rules anyone out.">
-          <textarea
-            className="wd-textarea"
-            rows={7}
-            value={d.niceToHaves}
-            onChange={set("niceToHaves")}
-          />
-        </Field>
-      </div>
-      <Field label="Years of experience" hint="For example 4 to 7">
-        <input
-          className="wd-input"
-          style={{ maxWidth: 220 }}
-          value={d.years}
-          onChange={set("years")}
-        />
-      </Field>
-      {(put.error || (changed && problems.length > 0)) && (
-        <p role="alert" className="wd-problem">
-          {put.error ?? problems.join(" ")}
-        </p>
-      )}
-      <div className="wd-row-actions">
-        <button
-          type="submit"
-          className="wd-btn go"
-          disabled={put.loading || !changed || problems.length > 0}
-        >
-          {put.loading ? "Saving…" : "Save the ideal candidate"}
-        </button>
-        <button type="button" className="wd-btn quiet" onClick={onCancel}>
-          Close
-        </button>
-      </div>
-    </form>
   );
 }
 
@@ -589,5 +482,172 @@ export function AddCandidates({
         )}
       </div>
     </>
+  );
+}
+
+type Thresholds = { strong: number; good: number; moderate: number; weak: number };
+const BANDS: { key: keyof Thresholds; label: string; note: string }[] = [
+  { key: "strong", label: "Strong fit", note: "The agent recommends an interview" },
+  { key: "good", label: "Good fit", note: "Worth a look" },
+  { key: "moderate", label: "Borderline", note: "Your call" },
+];
+
+/** Where each verdict starts. Kept in order: strong above good above borderline. */
+export function ThresholdsEditor({
+  jobId,
+  thresholds,
+  onSaved,
+  onLog,
+}: {
+  jobId: string;
+  thresholds: Thresholds | null;
+  onSaved: () => void;
+  onLog: Log;
+}) {
+  const current: Thresholds = thresholds ?? { ...DEFAULT_FIT_THRESHOLDS };
+  const [edit, setEdit] = useState<{ from: Thresholds; value: Thresholds } | null>(null);
+  const v = edit && edit.from === current ? edit.value : current;
+  const changed = BANDS.some((b) => v[b.key] !== current[b.key]);
+  const put = useApiMutation<{ jobId: string; fitThresholds: Thresholds }, unknown>(
+    "/api/fitscore/jd-base",
+    "PUT",
+  );
+  const ordered = v.strong > v.good && v.good > v.moderate && v.moderate > v.weak;
+  const nudge = (k: keyof Thresholds, d: number) =>
+    setEdit({ from: current, value: { ...v, [k]: Math.max(5, Math.min(95, v[k] + d)) } });
+
+  return (
+    <div className="wd-stack" style={{ gap: 6 }}>
+      <div className="wd-small" style={{ color: "var(--wd-soft)" }}>
+        Where each verdict starts
+      </div>
+      <div className="wd-lines">
+        {BANDS.map((b) => (
+          <div
+            key={b.key}
+            className="wd-line"
+            style={{ gridTemplateColumns: "minmax(0,1fr) auto", alignItems: "center" }}
+          >
+            <div>
+              <div className="wd-line-value">{b.label}</div>
+              <div className="wd-src">{b.note}</div>
+            </div>
+            <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+              <button
+                type="button"
+                className="wd-circ"
+                aria-label={`Lower ${b.label}`}
+                onClick={() => nudge(b.key, -5)}
+              >
+                −
+              </button>
+              <span style={{ width: 54, textAlign: "center", fontSize: 15 }}>{v[b.key]}+</span>
+              <button
+                type="button"
+                className="wd-circ"
+                aria-label={`Raise ${b.label}`}
+                onClick={() => nudge(b.key, 5)}
+              >
+                +
+              </button>
+            </div>
+          </div>
+        ))}
+      </div>
+      {!ordered && (
+        <p className="wd-problem" style={{ margin: 0 }}>
+          Keep them in order: strong above good, good above borderline.
+        </p>
+      )}
+      {put.error && <p className="wd-problem">{put.error}</p>}
+      {changed && (
+        <div className="wd-row-actions">
+          <button
+            type="button"
+            className="wd-btn"
+            disabled={!ordered || put.loading}
+            onClick={async () => {
+              const ok = await put.mutate({ jobId, fitThresholds: v });
+              if (ok) {
+                onLog("you", "Changed where verdicts start");
+                setEdit(null);
+                onSaved();
+              }
+            }}
+          >
+            {put.loading ? "Saving…" : "Save verdicts"}
+          </button>
+          <button type="button" className="wd-btn quiet" onClick={() => setEdit(null)}>
+            Undo
+          </button>
+        </div>
+      )}
+    </div>
+  );
+}
+
+/** Does the scoring match what the description says? Flags gaps before approval. */
+export function RubricChecks({
+  jobId,
+  weights,
+}: {
+  jobId: string;
+  weights: Record<string, number>;
+}) {
+  const q = useApiQuery<{
+    jdBase?: {
+      roleTitle?: string | null;
+      indiaTemplateId?: string | null;
+      idealCandidateProfile?: Partial<IdealCandidateProfile> | null;
+    } | null;
+    jobTitle?: string;
+    jobDescriptionText?: string;
+  }>("/api/fitscore/jd-base", { jobId });
+  const d = q.data;
+  if (!d?.jdBase) return null;
+  const icp = d.jdBase.idealCandidateProfile;
+  const issues = detectJdBaseMismatches({
+    jobDescriptionText: d.jobDescriptionText ?? "",
+    jobTitle: d.jobTitle,
+    idealProfile: icp
+      ? ({
+          summary: icp.summary ?? "",
+          must_haves: icp.must_haves ?? [],
+          nice_to_haves: icp.nice_to_haves ?? [],
+          years_range: icp.years_range ?? "",
+          benchmarks: icp.benchmarks ?? {},
+        } as IdealCandidateProfile)
+      : null,
+    weights,
+    templateId: d.jdBase.indiaTemplateId ?? null,
+  });
+  return (
+    <div className="wd-stack" style={{ gap: 6 }}>
+      <div className="wd-small" style={{ color: "var(--wd-soft)" }}>
+        Description against scoring
+      </div>
+      {issues.length === 0 ? (
+        <p className="wd-small" style={{ margin: 0, color: "var(--wd-agent)" }}>
+          The scoring matches the description.
+        </p>
+      ) : (
+        <ul style={{ listStyle: "none", margin: 0, padding: 0 }}>
+          {issues.map((m) => (
+            <li
+              key={m.id}
+              style={{
+                padding: "8px 0 8px 12px",
+                borderTop: "1px solid var(--wd-hair)",
+                fontSize: 13.5,
+                lineHeight: 1.45,
+                color: m.severity === "error" ? "var(--wd-bad)" : "var(--wd-soft)",
+              }}
+            >
+              {m.message}
+            </li>
+          ))}
+        </ul>
+      )}
+    </div>
   );
 }

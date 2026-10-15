@@ -19,6 +19,9 @@ export interface WorkJob {
   is_active?: boolean;
   list_on_public_job_board?: boolean;
   list_for_internal_referrals?: boolean;
+  compensation_min?: number | null;
+  compensation_max?: number | null;
+  seniority_level?: string | null;
   hiring_request_id?: string | null;
   hiring_requests?:
     | { id?: string; status?: string }
@@ -89,9 +92,11 @@ export function useJobJourney(jobId: string | undefined) {
     hired: number;
     screened: number;
   }>(jobId ? `/api/jobs/${jobId}/application-summary` : null);
-  const screening = useApiQuery<{ applyQuestions?: { id: string }[] }>(
-    jobId ? `/api/jobs/${jobId}/whatsapp-screening` : null,
-  );
+  const screening = useApiQuery<{
+    whatsappEnabled?: boolean;
+    applyQuestions?: { id: string }[];
+    postShortlistQuestions?: { id: string }[];
+  }>(jobId ? `/api/jobs/${jobId}/whatsapp-screening` : null);
   const portfolio = useApiQuery<{ jobs: { id: string; counts: JobApplicantCounts }[] }>(
     jobId ? "/api/portfolio" : null,
   );
@@ -138,6 +143,9 @@ export function useJobJourney(jobId: string | undefined) {
       roleOpen: j.status === "open",
       publicApplications: publication.publicApplications,
       screeningQuestionCount: screening.data?.applyQuestions?.length ?? 0,
+      whatsappScreening: screening.data ? Boolean(screening.data.whatsappEnabled) : undefined,
+      postShortlistQuestionCount: screening.data?.postShortlistQuestions?.length ?? 0,
+      screeningSkipped: jobId ? screeningSkipped(jobId) : false,
       applicants: counts?.applicants ?? s?.total ?? 0,
       unscored: counts?.unscored ?? 0,
       awaitingReview: counts?.awaitingReview ?? s?.applied ?? 0,
@@ -207,4 +215,24 @@ export function useJobJourney(jobId: string | undefined) {
     error: job.error,
     refresh,
   };
+}
+
+const SKIP_KEY = (jobId: string) => `tigerhire.work.screeningSkipped:${jobId}`;
+
+/** The person chose to go live without screening questions (remembered on this device). */
+export function screeningSkipped(jobId: string): boolean {
+  try {
+    return typeof window !== "undefined" && window.localStorage.getItem(SKIP_KEY(jobId)) === "1";
+  } catch {
+    return false;
+  }
+}
+
+export function setScreeningSkipped(jobId: string, on: boolean): void {
+  try {
+    if (on) window.localStorage.setItem(SKIP_KEY(jobId), "1");
+    else window.localStorage.removeItem(SKIP_KEY(jobId));
+  } catch {
+    // Storage unavailable: the person is simply asked again next time.
+  }
 }
