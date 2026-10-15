@@ -11,6 +11,7 @@ import type { JobApplicantCounts } from "@/lib/v2/ta-portfolio";
 import { buildQueue, type QueueEntry } from "@/lib/work/queue";
 import { isOnboardingEntry, needsOnboarding, onboardingKind } from "@/lib/work/onboarding";
 import { useOnboardingHints } from "@/components/work/use-onboarding";
+import { Brand } from "@/components/work/Brand";
 
 interface PortfolioJob {
   id: string;
@@ -108,10 +109,7 @@ function Sidebar() {
   return (
     <aside className="wd-side" aria-label="Your work">
       <div>
-        <Link href="/work" className="wd-brand">
-          tigerhire
-          <i aria-hidden="true" />
-        </Link>
+        <Brand href="/work" />
         <div className="wd-org">{user?.organisationName ?? "Your work"}</div>
       </div>
 
@@ -215,10 +213,7 @@ function HmSidebar() {
   return (
     <aside className="wd-side" aria-label="Your work">
       <div>
-        <Link href="/work/hm" className="wd-brand">
-          tigerhire
-          <i aria-hidden="true" />
-        </Link>
+        <Brand href="/work/hm" />
         <div className="wd-org">{user?.organisationName ?? "Your decisions"}</div>
       </div>
       <nav aria-label="Your work" style={{ display: "flex", flexDirection: "column", gap: 2 }}>

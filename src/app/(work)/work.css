@@ -120,18 +120,16 @@
 .wd-brand {
   display: inline-flex;
   align-items: center;
-  gap: 8px;
-  font-size: 18px;
-  font-weight: 500;
-  letter-spacing: -0.02em;
+  gap: 6px;
+  font-size: 20px;
+  font-weight: 700;
+  letter-spacing: -0.03em;
+  text-transform: none;
   color: var(--wd-ink);
   text-decoration: none;
 }
-.wd-brand i {
-  width: 7px;
-  height: 7px;
-  border-radius: 50%;
-  background: var(--wd-amber);
+.wd-brand svg {
+  flex: none;
 }
 .wd-org {
   font-size: 13px;
