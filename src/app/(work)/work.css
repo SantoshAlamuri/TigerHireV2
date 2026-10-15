@@ -10,111 +10,40 @@
  * .wd so the screens reused from the classic UI take on this theme.
  */
 .wd {
-  --wd-paper: #f5f7f3;
-  --wd-card: #ffffff;
-  --wd-ink: #1c1f1d;
-  --wd-muted: #5a625d;
-  --wd-faint: #8b938e;
-  --wd-line: #e1e6e1;
-  --wd-hover: #eef1ec;
+  /*
+   * TigerHire's own palette: the classic dark ground with tiger amber.
+   * Amber is always "you"; blue is the agent; slate is automation.
+   */
+  --wd-paper: var(--bg, #0f1014);
+  --wd-card: var(--card, #1a1c22);
+  --wd-ink: var(--text, #eef1f6);
+  --wd-muted: var(--text-muted, #aeb9d0);
+  --wd-faint: var(--text-subtle, #8493ac);
+  --wd-line: rgba(255, 255, 255, 0.09);
+  --wd-hover: var(--surface-hover, #25272f);
 
-  --wd-you: #e8900a;
-  --wd-you-soft: #fff0d3;
-  --wd-you-ink: #7a4300;
-  --wd-agent: #1f8a78;
-  --wd-agent-soft: #dcf2ec;
-  --wd-agent-ink: #0d5a4d;
-  --wd-auto: #5a68e6;
-  --wd-auto-soft: #e8eafd;
-  --wd-auto-ink: #2c37a3;
-  --wd-bad: #c2412d;
-  --wd-bad-soft: #fde8e3;
+  --wd-you: #f59e0b;
+  --wd-you-soft: rgba(245, 158, 11, 0.14);
+  --wd-you-ink: #fbbf24;
+  --wd-agent: #60a5fa;
+  --wd-agent-soft: rgba(59, 130, 246, 0.16);
+  --wd-agent-ink: #93c5fd;
+  --wd-auto: #a1a1aa;
+  --wd-auto-soft: rgba(161, 161, 170, 0.14);
+  --wd-auto-ink: #d4d4d8;
+  --wd-bad: #f87171;
+  --wd-bad-soft: rgba(239, 68, 68, 0.14);
 
   --wd-radius: 14px;
   --wd-ease: cubic-bezier(0.34, 1.4, 0.64, 1);
 
-  /* Classic tokens, re-pointed */
-  --bg: var(--wd-paper);
-  --bg-elevated: var(--wd-card);
-  --card: var(--wd-card);
-  --surface: var(--wd-card);
-  --surface-hover: var(--wd-hover);
-  --border: var(--wd-line);
-  --border-interactive: #cfd6d0;
-  --border-hover: #cfd6d0;
-  --text: var(--wd-ink);
-  --text-muted: var(--wd-muted);
-  --text-subtle: var(--wd-faint);
-  --accent: var(--wd-you);
-  --accent-hover: #f59e0b;
-  --accent-muted: var(--wd-you-soft);
-  --focus-ring: rgba(232, 144, 10, 0.55);
-  --status-success-fg: #17795f;
-  --status-success-bg: #dcf2ec;
-  --status-success-border: #a9dccd;
-  --status-warning-fg: #8a4b00;
-  --status-warning-bg: #fff0d3;
-  --status-warning-border: #f5cf8e;
-  --status-danger-fg: #b2361f;
-  --status-danger-bg: #fde8e3;
-  --status-danger-border: #f4b8aa;
-  --status-info-fg: #2c37a3;
-  --status-info-bg: #e8eafd;
-  --status-info-border: #c4c9f8;
-  --status-neutral-fg: #5a625d;
-  --status-neutral-bg: #eef1ec;
-  --status-neutral-border: #dde3dd;
-  --score-strong: #17795f;
-  --score-good: #a15c00;
-  --score-fair: #b5531a;
-  --score-weak: #b2361f;
-
-  color-scheme: light;
+  color-scheme: dark;
   min-height: 100dvh;
   background: var(--wd-paper);
   color: var(--wd-ink);
   font-family: var(--font-sans);
   font-size: 15px;
   line-height: 1.55;
-}
-
-@media (prefers-color-scheme: dark) {
-  .wd {
-    --wd-paper: #141714;
-    --wd-card: #1c201d;
-    --wd-ink: #edf1ec;
-    --wd-muted: #aab3ad;
-    --wd-faint: #828b85;
-    --wd-line: #2c322e;
-    --wd-hover: #232824;
-    --wd-you: #f5a524;
-    --wd-you-soft: #3a2a0d;
-    --wd-you-ink: #ffd18a;
-    --wd-agent: #4cc3ac;
-    --wd-agent-soft: #15302a;
-    --wd-agent-ink: #9fe3d4;
-    --wd-auto: #8d97ff;
-    --wd-auto-soft: #20244a;
-    --wd-auto-ink: #c4c9ff;
-    --wd-bad: #ff8a73;
-    --wd-bad-soft: #3b1d17;
-    --border-interactive: #3a413c;
-    --border-hover: #3a413c;
-    --status-success-fg: #7ee0c5;
-    --status-success-bg: #15302a;
-    --status-warning-fg: #ffd18a;
-    --status-warning-bg: #3a2a0d;
-    --status-danger-fg: #ff9d89;
-    --status-danger-bg: #3b1d17;
-    --status-info-fg: #c4c9ff;
-    --status-info-bg: #20244a;
-    --status-neutral-bg: #232824;
-    --score-strong: #7ee0c5;
-    --score-good: #ffd18a;
-    --score-fair: #ffb48a;
-    --score-weak: #ff9d89;
-    color-scheme: dark;
-  }
 }
 
 .wd :focus-visible {
@@ -261,13 +190,12 @@
   transform: none;
 }
 .wd-btn.go {
-  background: var(--wd-ink);
-  border-color: var(--wd-ink);
-  color: var(--wd-paper);
+  background: var(--wd-you);
+  border-color: var(--wd-you);
+  color: #111111;
 }
 .wd-btn.go:hover {
-  background: var(--wd-ink);
-  opacity: 0.9;
+  background: #fbbf24;
 }
 .wd-btn.quiet {
   border-color: transparent;
@@ -580,16 +508,17 @@
   gap: 14px;
   padding: 12px 12px 12px 18px;
   border-radius: 16px;
-  background: var(--wd-ink);
-  color: var(--wd-paper);
-  box-shadow: 0 18px 40px -16px rgba(0, 0, 0, 0.45);
+  background: var(--surface, #1f2128);
+  border: 1px solid var(--wd-line);
+  color: var(--wd-ink);
+  box-shadow: 0 18px 40px -16px rgba(0, 0, 0, 0.6);
   max-width: calc(100vw - 32px);
 }
 .wd-handoff .wd-btn {
   min-height: 38px;
   background: transparent;
-  color: var(--wd-paper);
-  border-color: rgba(255, 255, 255, 0.25);
+  color: var(--wd-ink);
+  border-color: rgba(255, 255, 255, 0.2);
 }
 .wd-handoff-bar {
   position: absolute;
