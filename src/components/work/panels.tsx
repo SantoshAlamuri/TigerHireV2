@@ -284,7 +284,7 @@ export function RubricPanel({ jobId, job, onDone, onLog }: PanelProps) {
                     style={{
                       width: 30,
                       textAlign: "right",
-                      fontSize: 17,
+                      fontSize: 15,
                       fontVariantNumeric: "tabular-nums",
                     }}
                   >
@@ -507,7 +507,7 @@ export function PublishPanel({ jobId, job, facts, onDone, onLog }: PanelProps) {
 
 export function ApplicationsPanel({ jobId, job, facts, onLog }: PanelProps) {
   return (
-    <div className="wd-stack" style={{ gap: 36 }}>
+    <div className="wd-stack" style={{ gap: 24 }}>
       <Numbers
         items={[
           ["Applications", facts.applicants],
@@ -533,7 +533,7 @@ export function ApplicationsPanel({ jobId, job, facts, onLog }: PanelProps) {
 export function ScoringPanel({ facts, goTo }: PanelProps) {
   const blocked = !facts.rubricApproved && !facts.rubricNotRequired && facts.applicants > 0;
   return (
-    <div className="wd-stack" style={{ gap: 36 }}>
+    <div className="wd-stack" style={{ gap: 24 }}>
       <Numbers
         items={[
           ["Scored", Math.max(0, facts.applicants - facts.unscored)],

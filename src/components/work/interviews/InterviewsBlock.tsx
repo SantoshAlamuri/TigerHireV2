@@ -163,7 +163,7 @@ export function InterviewsBlock({ jobId, onDone, onLog }: PanelProps) {
   }
 
   return (
-    <div className="wd-stack" style={{ gap: 48 }}>
+    <div className="wd-stack" style={{ gap: 30 }}>
       <div className="wd-numbers">
         <div className="wd-number">
           <b>{degraded ? "–" : board.owed.length}</b>

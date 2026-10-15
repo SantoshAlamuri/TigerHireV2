@@ -27,7 +27,7 @@ export default function WorkSetupPage() {
         </p>
       </header>
 
-      <div className="wd-stack" style={{ gap: 48 }}>
+      <div className="wd-stack" style={{ gap: 30 }}>
         {sections.map((s) => (
           <section key={s.id} id={s.id} className="wd-split" aria-labelledby={`setup-${s.id}`}>
             <div className="wd-stack" style={{ gap: 6 }}>
@@ -52,7 +52,7 @@ export default function WorkSetupPage() {
                     }}
                   >
                     <span>
-                      <span style={{ display: "block", fontSize: 17 }}>{l.name}</span>
+                      <span style={{ display: "block", fontSize: 15 }}>{l.name}</span>
                       <span className="wd-src" style={{ display: "block" }}>
                         {l.note}
                       </span>

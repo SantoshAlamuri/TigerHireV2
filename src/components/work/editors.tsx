@@ -84,7 +84,7 @@ export function MustHavesEditor({
         }
       }}
     >
-      <h3 className="wd-h2" style={{ fontSize: 22 }}>
+      <h3 className="wd-h2" style={{ fontSize: 19 }}>
         The ideal candidate
       </h3>
       <Field label="In one line" hint="How you'd describe the right person to a friend">
@@ -191,7 +191,7 @@ export function ShortlistBar({
           >
             +
           </button>
-          <span style={{ width: 30, textAlign: "right", fontSize: 17 }}>{value}</span>
+          <span style={{ width: 30, textAlign: "right", fontSize: 15 }}>{value}</span>
         </div>
       </div>
       {put.error && (

@@ -142,7 +142,7 @@
 /* ---------- type ---------- */
 .wd-h1 {
   margin: 0;
-  font-size: clamp(36px, 4.4vw, 56px);
+  font-size: clamp(26px, 2.6vw, 36px);
   font-weight: 300;
   letter-spacing: -0.035em;
   line-height: 1.05;
@@ -150,7 +150,7 @@
 }
 .wd-h2 {
   margin: 0;
-  font-size: clamp(24px, 2.6vw, 32px);
+  font-size: clamp(19px, 1.8vw, 22px);
   font-weight: 300;
   letter-spacing: -0.025em;
   line-height: 1.15;
@@ -158,7 +158,7 @@
 }
 .wd-lede {
   margin: 0;
-  font-size: 19px;
+  font-size: 16px;
   font-weight: 300;
   line-height: 1.55;
   color: var(--wd-soft);
@@ -452,10 +452,10 @@
 /* ---------- layout pieces ---------- */
 .wd-page {
   max-width: 1040px;
-  padding-top: 56px;
+  padding-top: 36px;
   display: flex;
   flex-direction: column;
-  gap: 36px;
+  gap: 26px;
 }
 .wd-stack {
   display: flex;
@@ -471,7 +471,7 @@
 .wd-split {
   display: grid;
   grid-template-columns: minmax(0, 1fr) minmax(260px, 340px);
-  gap: clamp(32px, 6vw, 72px);
+  gap: clamp(24px, 4vw, 48px);
   align-items: start;
 }
 @media (max-width: 900px) {
@@ -504,7 +504,7 @@
   grid-template-columns: 160px minmax(0, 1fr) auto;
   gap: 24px;
   align-items: baseline;
-  padding: 18px 0;
+  padding: 12px 0;
   border-top: 1px solid var(--wd-hair);
 }
 @media (max-width: 700px) {
@@ -520,7 +520,7 @@
   color: var(--wd-muted);
 }
 .wd-line-value {
-  font-size: 19px;
+  font-size: 15.5px;
   font-weight: 400;
   line-height: 1.4;
   min-width: 0;
@@ -533,7 +533,7 @@
   background: transparent;
   color: var(--wd-ink);
   font: inherit;
-  font-size: 19px;
+  font-size: 16px;
   font-weight: 300;
   line-height: 1.5;
   padding: 6px 0 12px;
@@ -561,7 +561,7 @@
 }
 .wd-number b {
   display: block;
-  font-size: 48px;
+  font-size: 32px;
   font-weight: 300;
   letter-spacing: -0.03em;
   line-height: 1;

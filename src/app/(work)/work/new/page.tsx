@@ -75,7 +75,7 @@ function Field({
           <textarea
             id={id}
             className="wd-textarea"
-            style={{ minHeight: 120, fontSize: 17, fontWeight: 400 }}
+            style={{ minHeight: 120, fontSize: 15, fontWeight: 400 }}
             value={value}
             onChange={(e) => onChange(e.target.value)}
           />
