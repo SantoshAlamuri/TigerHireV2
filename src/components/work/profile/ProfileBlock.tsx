@@ -180,6 +180,7 @@ function ProfileEditor({
   const [d, setD] = useState<ProfileDraft>(start);
   const [open, setOpen] = useState<SectionKey | null>(null);
   const [editingWho, setEditingWho] = useState(false);
+  const [fullSummary, setFullSummary] = useState(false);
   const put = useApiMutation<ReturnType<typeof saveBody>, unknown>("/api/fitscore/jd-base", "PUT");
   const problems = profileProblems(d);
   const dirty = !sameDraft(start, d);
@@ -227,7 +228,16 @@ function ProfileEditor({
   return (
     <div className={s.calm}>
       <div className={s.intro}>
-        {d.summary && <p className={s.summary}>{d.summary}</p>}
+        {d.summary && (
+          <p
+            className={s.summary}
+            data-full={fullSummary}
+            onClick={() => setFullSummary((f) => !f)}
+            title={fullSummary ? undefined : "Show all"}
+          >
+            {d.summary}
+          </p>
+        )}
         {editingWho ? (
           <div className={s.who}>
             <div role="radiogroup" aria-label="Level" className={s.levels}>
