@@ -4,7 +4,7 @@ import Link from "next/link";
  * The TigerHire mark (three claw strokes, orange to amber) with the wordmark
  * in lower case: "tigerhire".
  */
-export function Brand({ href }: { href: string }) {
+export function Brand({ href, compact = false }: { href: string; compact?: boolean }) {
   return (
     <Link href={href} className="wd-brand" aria-label="tigerhire home">
       <svg viewBox="0 0 34 44" width="20" height="26" aria-hidden="true" focusable="false">
@@ -44,7 +44,7 @@ export function Brand({ href }: { href: string }) {
           />
         </g>
       </svg>
-      <span>tigerhire</span>
+      {!compact && <span>tigerhire</span>}
     </Link>
   );
 }

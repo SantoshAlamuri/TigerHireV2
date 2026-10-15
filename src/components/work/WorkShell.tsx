@@ -12,6 +12,7 @@ import { buildQueue, type QueueEntry } from "@/lib/work/queue";
 import { isOnboardingEntry, needsOnboarding, onboardingKind } from "@/lib/work/onboarding";
 import { useOnboardingHints } from "@/components/work/use-onboarding";
 import { Brand } from "@/components/work/Brand";
+import { SideFrame } from "@/components/work/SideFrame";
 
 interface PortfolioJob {
   id: string;
@@ -106,8 +107,57 @@ function Sidebar() {
     onboarding.ready &&
     needsOnboarding("admin", onboarding.hints);
 
+  const needCount = queue.needsYou.length + (setupOpen ? 1 : 0);
+
+  const rail = (
+    <>
+      <Brand href="/work" compact />
+      <Link href="/work/new" className="wd-rail-btn go" aria-label="New job" title="New job">
+        <svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true">
+          <path d="M8 3v10M3 8h10" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" />
+        </svg>
+      </Link>
+      <Link
+        href="/work"
+        className="wd-rail-btn"
+        aria-label={loading ? "Your work" : `${needCount} need you`}
+        aria-current={pathname === "/work" ? "page" : undefined}
+        title="Needs you"
+      >
+        <svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true">
+          <path
+            d="M2.5 4.5h11M2.5 8h11M2.5 11.5h7"
+            stroke="currentColor"
+            strokeWidth="1.5"
+            strokeLinecap="round"
+          />
+        </svg>
+        {!loading && needCount > 0 && <span className="wd-rail-count">{needCount}</span>}
+      </Link>
+      <Link
+        href="/work/setup"
+        className="wd-rail-btn"
+        style={{ marginTop: "auto" }}
+        aria-label="Setup"
+        aria-current={pathname.startsWith("/work/setup") ? "page" : undefined}
+        title="Setup"
+      >
+        <svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true">
+          <path
+            d="M3 4.5h6M12 4.5h1M3 11.5h1M7 11.5h6"
+            stroke="currentColor"
+            strokeWidth="1.5"
+            strokeLinecap="round"
+          />
+          <circle cx="10.5" cy="4.5" r="1.6" fill="none" stroke="currentColor" strokeWidth="1.4" />
+          <circle cx="5.5" cy="11.5" r="1.6" fill="none" stroke="currentColor" strokeWidth="1.4" />
+        </svg>
+      </Link>
+    </>
+  );
+
   return (
-    <aside className="wd-side" aria-label="Your work">
+    <SideFrame rail={rail} label="Your work">
       <div>
         <Brand href="/work" />
         <div className="wd-org">{user?.organisationName ?? "Your work"}</div>
@@ -120,7 +170,7 @@ function Sidebar() {
       <section aria-label="Needs you">
         <div className="wd-qhead">
           <span>Needs you</span>
-          <span>{loading ? "" : queue.needsYou.length + (setupOpen ? 1 : 0)}</span>
+          <span>{loading ? "" : needCount}</span>
         </div>
         {loading ? (
           <p className="wd-qsub">Loading your work…</p>
@@ -199,7 +249,7 @@ function Sidebar() {
           <span className="wd-qtitle">Setup</span>
         </Link>
       </nav>
-    </aside>
+    </SideFrame>
   );
 }
 
@@ -210,8 +260,25 @@ function Sidebar() {
 /** Hiring managers get no queue: their page is the queue. */
 function HmSidebar() {
   const { user } = useAuth();
+  const rail = (
+    <>
+      <Brand href="/work/hm" compact />
+      <Link href="/work/hm" className="wd-rail-btn" aria-label="Your decisions" aria-current="page">
+        <svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true">
+          <path
+            d="M3 8.5l3 3 7-7"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="1.6"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          />
+        </svg>
+      </Link>
+    </>
+  );
   return (
-    <aside className="wd-side" aria-label="Your work">
+    <SideFrame rail={rail} label="Your work">
       <div>
         <Brand href="/work/hm" />
         <div className="wd-org">{user?.organisationName ?? "Your decisions"}</div>
@@ -222,7 +289,7 @@ function HmSidebar() {
           <span className="wd-qtitle">Your decisions</span>
         </Link>
       </nav>
-    </aside>
+    </SideFrame>
   );
 }
 

@@ -60,3 +60,30 @@ describe("work queue", () => {
     ).toBe("1 candidate to review");
   });
 });
+
+describe("grouping what needs you", () => {
+  it("groups like with like, most urgent first, and totals the candidates", async () => {
+    const { buildQueue, groupNeedsYou } = await import("@/lib/work/queue");
+    const counts = (awaitingReview: number, applicants = awaitingReview) => ({
+      applicants,
+      awaitingReview,
+      unscored: 0,
+    });
+    const q = buildQueue([
+      { id: "r1", title: "QA", status: "open", rubricApproved: true, counts: counts(51) as never },
+      { id: "r2", title: "BE", status: "open", rubricApproved: true, counts: counts(1) as never },
+      { id: "d1", title: "Pilot", status: "draft", rubricApproved: false, counts: null },
+      {
+        id: "x1",
+        title: "Ops",
+        status: "open",
+        rubricApproved: false,
+        counts: counts(0, 4) as never,
+      },
+    ]);
+    const groups = groupNeedsYou(q.needsYou);
+    expect(groups.map((g) => g.kind)).toEqual(["no_rubric", "review", "publish"]);
+    expect(groups[1].summary).toBe("52 candidates across 2 jobs");
+    expect(groups[2].summary).toBe("1 job");
+  });
+});

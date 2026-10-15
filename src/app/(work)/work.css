@@ -84,7 +84,7 @@
 /* ---------- shell ---------- */
 .wd-shell {
   display: grid;
-  grid-template-columns: 280px minmax(0, 1fr);
+  grid-template-columns: auto minmax(0, 1fr);
   min-height: 100dvh;
 }
 @media (max-width: 900px) {
@@ -885,5 +885,298 @@
   }
   .wd-stage > select {
     grid-column: 1;
+  }
+}
+
+/* ---------- auto-hiding side panel ---------- */
+.wd-sideframe {
+  position: sticky;
+  top: 0;
+  z-index: 40;
+  width: 68px;
+  height: 100dvh;
+}
+.wd-sideframe.pinned {
+  width: 280px;
+}
+.wd-rail {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  padding: 22px 0 20px;
+  border-right: 1px solid var(--wd-hair);
+}
+.wd-rail .wd-brand {
+  margin-bottom: 14px;
+}
+.wd-rail-btn {
+  position: relative;
+  width: 40px;
+  height: 40px;
+  border-radius: 12px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--wd-muted);
+  text-decoration: none;
+  transition:
+    background 0.2s var(--wd-ease),
+    color 0.2s var(--wd-ease);
+}
+.wd-rail-btn:hover,
+.wd-rail-btn[aria-current="page"] {
+  background: var(--wd-panel);
+  color: var(--wd-ink);
+}
+.wd-rail-btn.go {
+  border-radius: 50%;
+  background: var(--wd-amber);
+  color: #141210;
+}
+.wd-rail-btn.go:hover {
+  background: var(--wd-amber-hover);
+  color: #141210;
+}
+.wd-rail-count {
+  position: absolute;
+  top: 2px;
+  right: 0;
+  min-width: 18px;
+  height: 18px;
+  padding: 0 5px;
+  border-radius: 999px;
+  background: var(--wd-amber);
+  color: #141210;
+  font-size: 11px;
+  font-weight: 600;
+  line-height: 18px;
+  text-align: center;
+  font-variant-numeric: tabular-nums;
+}
+.wd-sideframe .wd-side {
+  height: 100dvh;
+  background: var(--wd-bg);
+}
+.wd-sideframe:not(.pinned) .wd-side {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 300px;
+  border-right: 1px solid var(--wd-hair);
+  box-shadow: 24px 0 60px rgba(0, 0, 0, 0.45);
+  transform: translateX(-104%);
+  visibility: hidden;
+  transition:
+    transform 0.28s var(--wd-ease),
+    visibility 0s linear 0.28s;
+}
+.wd-sideframe.open:not(.pinned) .wd-side {
+  transform: none;
+  visibility: visible;
+  transition: transform 0.28s var(--wd-ease);
+}
+.wd-sideframe.pinned .wd-side {
+  position: relative;
+}
+.wd-pin {
+  position: absolute;
+  top: 22px;
+  right: 14px;
+  width: 30px;
+  height: 30px;
+  border: 0;
+  border-radius: 8px;
+  background: transparent;
+  color: var(--wd-muted);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+.wd-pin:hover,
+.wd-pin[aria-pressed="true"] {
+  color: var(--wd-ink);
+  background: var(--wd-panel);
+}
+@media (prefers-reduced-motion: reduce) {
+  .wd-sideframe .wd-side {
+    transition: none !important;
+  }
+}
+@media (max-width: 900px) {
+  /* On a phone the work comes first; the queue follows it, always shown. */
+  .wd-sideframe,
+  .wd-sideframe.pinned {
+    order: 2;
+    position: static;
+    width: auto;
+    height: auto;
+  }
+  .wd-rail,
+  .wd-pin {
+    display: none;
+  }
+  .wd-sideframe .wd-side,
+  .wd-sideframe:not(.pinned) .wd-side {
+    position: static;
+    width: auto;
+    height: auto;
+    transform: none;
+    visibility: visible;
+    box-shadow: none;
+    border-right: 0;
+  }
+}
+
+/* ---------- home ---------- */
+.wd-home {
+  gap: 44px;
+  padding-top: clamp(36px, 8vh, 88px);
+  max-width: 980px;
+}
+.wd-home .wd-h1 {
+  max-width: 20ch;
+}
+.wd-home-numbers {
+  margin: 0;
+  padding: 22px 0;
+  border-top: 1px solid var(--wd-hair);
+  border-bottom: 1px solid var(--wd-hair);
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 24px;
+}
+@media (max-width: 700px) {
+  .wd-home-numbers {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+.wd-home-numbers dt {
+  font-size: 13.5px;
+  color: var(--wd-muted);
+}
+.wd-home-numbers dd {
+  margin: 8px 0 0;
+  font-size: 34px;
+  font-weight: 300;
+  letter-spacing: -0.03em;
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
+}
+.wd-home-numbers .wd-number:first-child dd {
+  color: var(--wd-amber);
+}
+.wd-home-setup {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  color: inherit;
+  text-decoration: none;
+}
+.wd-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  min-width: 0;
+}
+.wd-group-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 16px;
+  padding-bottom: 8px;
+}
+.wd-rows {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  border-top: 1px solid var(--wd-hair);
+}
+.wd-row {
+  display: grid;
+  grid-template-columns: 8px minmax(0, 1.2fr) minmax(0, 1fr) 20px;
+  gap: 16px;
+  align-items: center;
+  padding: 14px 12px;
+  margin: 0 -12px;
+  border-bottom: 1px solid var(--wd-hair);
+  border-radius: 0;
+  color: inherit;
+  text-decoration: none;
+  transition: background 0.2s var(--wd-ease);
+}
+.wd-row:hover,
+.wd-row:focus-visible {
+  background: var(--wd-panel);
+  border-radius: 12px;
+  border-bottom-color: transparent;
+}
+.wd-row .wd-qdot {
+  margin-top: 0;
+}
+.wd-row-title {
+  font-size: 15.5px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.wd-row-line {
+  font-size: 14px;
+  color: var(--wd-muted);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.wd-row-go {
+  color: var(--wd-faint);
+  transition:
+    transform 0.2s var(--wd-ease),
+    color 0.2s var(--wd-ease);
+}
+.wd-row:hover .wd-row-go,
+.wd-home-setup:hover .wd-row-go {
+  color: var(--wd-amber);
+  transform: translateX(3px);
+}
+@media (max-width: 640px) {
+  .wd-row {
+    grid-template-columns: 8px minmax(0, 1fr) 20px;
+  }
+  .wd-row-line {
+    grid-column: 2;
+    grid-row: 2;
+  }
+}
+.wd-more {
+  align-self: flex-start;
+  margin-top: 6px;
+  border: 0;
+  background: transparent;
+  color: var(--wd-muted);
+  font: inherit;
+  font-size: 13.5px;
+  cursor: pointer;
+  padding: 6px 0;
+}
+.wd-more:hover {
+  color: var(--wd-ink);
+}
+.wd-home-pair {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: clamp(24px, 4vw, 48px);
+}
+.wd-home-pair .wd-row {
+  grid-template-columns: 8px minmax(0, 1fr) 20px;
+}
+.wd-home-pair .wd-row-line {
+  grid-column: 2;
+  grid-row: 2;
+}
+@media (max-width: 800px) {
+  .wd-home-pair {
+    grid-template-columns: minmax(0, 1fr);
   }
 }
