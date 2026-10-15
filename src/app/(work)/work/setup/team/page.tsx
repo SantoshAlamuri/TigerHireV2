@@ -107,6 +107,7 @@ function TeamSetup() {
           <textarea
             className="wd-textarea"
             rows={2}
+            style={{ minHeight: 0, height: 64 }}
             value={emails}
             placeholder="priya@company.com, arjun@company.com"
             onChange={(e) => setEmails(e.target.value)}
