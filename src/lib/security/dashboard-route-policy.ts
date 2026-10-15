@@ -270,6 +270,11 @@ export const DASHBOARD_ROUTE_ACCESS_RULES: ReadonlyArray<{
       "super_admin",
     ] as UserRole[],
   })),
+  /** Interviews: interviewers see their own, everyone else the jobs they can see. */
+  {
+    prefix: "/work/interviews",
+    roles: ["recruiter", "hiring_manager", "interviewer", "leadership", "super_admin"],
+  },
   /** Decisions: anyone who signs off roles or shortlists. */
   {
     prefix: "/work/decisions",

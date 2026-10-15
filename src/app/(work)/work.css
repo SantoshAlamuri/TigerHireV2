@@ -1458,3 +1458,114 @@
 .wd-perm thead th:not(:first-child) {
   text-align: center;
 }
+
+/* ---------- interviews ---------- */
+.wd-iv {
+  border-bottom: 1px solid var(--wd-hair);
+}
+.wd-iv-row {
+  display: grid;
+  grid-template-columns: 64px minmax(0, 1fr) minmax(0, 1.4fr) auto;
+  gap: 16px;
+  align-items: center;
+  padding: 12px 0;
+}
+.wd-iv-row .wd-qdot {
+  margin: 0 0 0 4px;
+}
+.wd-iv-time {
+  font-size: 14.5px;
+  color: var(--wd-amber);
+  font-variant-numeric: tabular-nums;
+}
+.wd-iv-body {
+  padding: 4px 0 20px 80px;
+}
+.wd-prep {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding: 18px 20px;
+  border-radius: 16px;
+  background: var(--wd-panel);
+}
+.wd-prep .wd-chip {
+  align-self: flex-start;
+}
+@media (max-width: 700px) {
+  .wd-iv-row {
+    grid-template-columns: 56px minmax(0, 1fr) auto;
+  }
+  .wd-iv-row .wd-row-line {
+    grid-column: 2;
+    grid-row: 2;
+  }
+  .wd-iv-body {
+    padding-left: 0;
+  }
+}
+.wd-months {
+  display: grid;
+  grid-auto-flow: column;
+  grid-auto-columns: minmax(44px, 1fr);
+  gap: 10px;
+  align-items: end;
+  height: 220px;
+  padding-top: 16px;
+  border-top: 1px solid var(--wd-hair);
+  overflow-x: auto;
+}
+.wd-month {
+  display: grid;
+  grid-template-rows: auto 1fr auto;
+  gap: 6px;
+  height: 100%;
+  min-width: 0;
+  text-align: center;
+}
+.wd-month-n {
+  font-size: 12.5px;
+  color: var(--wd-muted);
+  font-variant-numeric: tabular-nums;
+}
+.wd-month-bars {
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  gap: 3px;
+}
+.wd-month-bar {
+  width: 9px;
+  min-height: 0;
+  border-radius: 4px 4px 0 0;
+  background: rgba(244, 241, 234, 0.4);
+}
+.wd-month-bar.go {
+  background: var(--wd-amber);
+}
+.wd-month-bar.good {
+  background: var(--wd-good);
+}
+.wd-month-label {
+  font-size: 12.5px;
+  color: var(--wd-muted);
+  white-space: nowrap;
+}
+.wd-month-key .k {
+  display: inline-block;
+  width: 9px;
+  height: 9px;
+  border-radius: 2px;
+  margin: 0 4px 0 10px;
+  background: rgba(244, 241, 234, 0.4);
+  vertical-align: middle;
+}
+.wd-month-key .k:first-child {
+  margin-left: 0;
+}
+.wd-month-key .k.go {
+  background: var(--wd-amber);
+}
+.wd-month-key .k.good {
+  background: var(--wd-good);
+}

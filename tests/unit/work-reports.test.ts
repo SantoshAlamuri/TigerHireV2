@@ -52,3 +52,18 @@ describe("reports", () => {
     expect(barWidth(0, 10)).toBe("0%");
   });
 });
+
+describe("month by month", () => {
+  it("counts arrivals per month and what became of them, oldest first", async () => {
+    const { byMonth } = await import("@/lib/work/reports");
+    const m = byMonth([
+      row({ createdAt: "2026-08-10T10:00:00Z", status: "hired" }),
+      row({ createdAt: "2026-08-12T10:00:00Z", status: "shortlisted" }),
+      row({ createdAt: "2026-07-01T10:00:00Z" }),
+    ]);
+    expect(m.map((p) => [p.key, p.applied, p.shortlisted, p.hired])).toEqual([
+      ["2026-07", 1, 0, 0],
+      ["2026-08", 2, 2, 1],
+    ]);
+  });
+});

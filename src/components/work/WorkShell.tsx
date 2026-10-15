@@ -139,6 +139,15 @@ function Sidebar() {
         {!loading && needCount > 0 && <span className="wd-rail-count">{needCount}</span>}
       </Link>
       <Link
+        href="/work/interviews"
+        className="wd-rail-btn"
+        aria-label="Interviews"
+        title="Interviews"
+        aria-current={pathname.startsWith("/work/interviews") ? "page" : undefined}
+      >
+        <Icon d={ICONS.calendar} />
+      </Link>
+      <Link
         href="/work/reports"
         className="wd-rail-btn"
         aria-label="Reports"
@@ -280,6 +289,14 @@ function Sidebar() {
         style={{ marginTop: "auto", display: "flex", flexDirection: "column", gap: 2 }}
       >
         <Link
+          href="/work/interviews"
+          className="wd-qitem"
+          aria-current={pathname.startsWith("/work/interviews") ? "page" : undefined}
+        >
+          <span aria-hidden="true" />
+          <span className="wd-qtitle">Interviews</span>
+        </Link>
+        <Link
           href="/work/reports"
           className="wd-qitem"
           aria-current={pathname.startsWith("/work/reports") ? "page" : undefined}
@@ -304,71 +321,93 @@ function Sidebar() {
  * The work-driven shell: your queue on the left, the work item on the right.
  * No menus — the work decides which screen you see. Setup sits in one place.
  */
-/** Hiring managers get no queue: their page is the queue. */
-function HmSidebar() {
+/** Where each role's work starts in the new view. */
+export const WORK_HOME: Partial<Record<string, string>> = {
+  hiring_manager: "/work/hm",
+  interviewer: "/work/interviews",
+  finance: "/work/decisions",
+};
+
+const ICONS = {
+  check: "M3 8.5l3 3 7-7",
+  calendar:
+    "M3 5.5h10M5 2.5v2M11 2.5v2M3.5 4h9a.5.5 0 0 1 .5.5v8a.5.5 0 0 1-.5.5h-9a.5.5 0 0 1-.5-.5v-8a.5.5 0 0 1 .5-.5z",
+  chart: "M3 13V8M8 13V3M13 13v-7",
+  person: "M8 8a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5zM3 13.5c.6-2.3 2.6-3.5 5-3.5s4.4 1.2 5 3.5",
+};
+
+function Icon({ d }: { d: string }) {
+  return (
+    <svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true">
+      <path
+        d={d}
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="1.6"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+    </svg>
+  );
+}
+
+/**
+ * Hiring managers, interviewers and finance get no queue: their page is the
+ * queue. The panel just lists the few places that are theirs.
+ */
+function LiteSidebar() {
   const pathname = usePathname();
   const { user } = useAuth();
+  const role = user?.role;
+  const home = (role && WORK_HOME[role]) ?? "/work/hm";
+  const links: { href: string; name: string; icon: keyof typeof ICONS }[] = [
+    ...(role === "hiring_manager"
+      ? [
+          { href: "/work/hm", name: "Your decisions", icon: "check" as const },
+          { href: "/work/interviews", name: "Interviews", icon: "calendar" as const },
+          { href: "/work/reports", name: "Reports", icon: "chart" as const },
+        ]
+      : role === "interviewer"
+        ? [{ href: "/work/interviews", name: "Your interviews", icon: "calendar" as const }]
+        : [{ href: "/work/decisions", name: "Decisions", icon: "check" as const }]),
+    { href: "/work/setup/profile", name: "You", icon: "person" },
+  ];
   const rail = (
     <>
-      <Brand href="/work/hm" compact />
-      <Link
-        href="/work/hm"
-        className="wd-rail-btn"
-        aria-label="Your decisions"
-        aria-current={pathname.startsWith("/work/hm") ? "page" : undefined}
-      >
-        <svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true">
-          <path
-            d="M3 8.5l3 3 7-7"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="1.6"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-          />
-        </svg>
-      </Link>
-      <Link
-        href="/work/reports"
-        className="wd-rail-btn"
-        aria-label="Reports"
-        title="Reports"
-        aria-current={pathname.startsWith("/work/reports") ? "page" : undefined}
-      >
-        <svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true">
-          <path
-            d="M3 13V8M8 13V3M13 13v-7"
-            stroke="currentColor"
-            strokeWidth="1.8"
-            strokeLinecap="round"
-          />
-        </svg>
-      </Link>
+      <Brand href={home} compact />
+      {links.map((l) => (
+        <Link
+          key={l.href}
+          href={l.href}
+          className="wd-rail-btn"
+          aria-label={l.name}
+          title={l.name}
+          aria-current={pathname.startsWith(l.href) ? "page" : undefined}
+          style={l.icon === "person" ? { marginTop: "auto" } : undefined}
+        >
+          <Icon d={ICONS[l.icon]} />
+        </Link>
+      ))}
     </>
   );
   return (
     <SideFrame rail={rail} label="Your work">
       <div>
-        <Brand href="/work/hm" />
-        <div className="wd-org">{user?.organisationName ?? "Your decisions"}</div>
+        <Brand href={home} />
+        <div className="wd-org">{user?.organisationName ?? "Your work"}</div>
       </div>
       <nav aria-label="Your work" style={{ display: "flex", flexDirection: "column", gap: 2 }}>
-        <Link
-          href="/work/hm"
-          className="wd-qitem"
-          aria-current={pathname.startsWith("/work/hm") ? "page" : undefined}
-        >
-          <span aria-hidden="true" />
-          <span className="wd-qtitle">Your decisions</span>
-        </Link>
-        <Link
-          href="/work/reports"
-          className="wd-qitem"
-          aria-current={pathname.startsWith("/work/reports") ? "page" : undefined}
-        >
-          <span aria-hidden="true" />
-          <span className="wd-qtitle">Reports</span>
-        </Link>
+        {links.map((l) => (
+          <Link
+            key={l.href}
+            href={l.href}
+            className="wd-qitem"
+            aria-current={pathname.startsWith(l.href) ? "page" : undefined}
+          >
+            <span aria-hidden="true" />
+            <span className="wd-qtitle">{l.name}</span>
+          </Link>
+        ))}
       </nav>
     </SideFrame>
   );
@@ -384,7 +423,7 @@ export function WorkShell({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     if (loading) return;
     if (!user) router.replace("/login");
-    else if (!allowed) router.replace(ROLE_DASHBOARD_PATH[user.role]);
+    else if (!allowed) router.replace(WORK_HOME[user.role] ?? ROLE_DASHBOARD_PATH[user.role]);
   }, [loading, user, allowed, router]);
 
   // First visit: the home screen hands over to onboarding until it is finished or skipped.
@@ -410,7 +449,7 @@ export function WorkShell({ children }: { children: React.ReactNode }) {
         </p>
       ) : (
         <div className="wd-shell">
-          {user?.role === "hiring_manager" ? <HmSidebar /> : <Sidebar />}
+          {user && WORK_HOME[user.role] ? <LiteSidebar /> : <Sidebar />}
           <main className="wd-main" id="main">
             {children}
           </main>

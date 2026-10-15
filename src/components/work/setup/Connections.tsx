@@ -117,7 +117,7 @@ function ConnectionRow({
           )}
           <button
             type="button"
-            className={`wd-btn ${on ? "" : "go"}`}
+            className="wd-btn"
             aria-expanded={open}
             onClick={() => setOpen(!open)}
           >

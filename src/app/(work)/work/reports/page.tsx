@@ -10,6 +10,7 @@ import {
   REPORT_PERIODS,
   barWidth,
   buildReport,
+  byMonth,
   sourceName,
   type ReportPeriodKey,
 } from "@/lib/work/reports";
@@ -51,6 +52,9 @@ export default function ReportsPage() {
   const params = periodParams(period);
   const { data, loading, error } = useApiQuery<AnalyticsRollup>("/api/analytics/rollup", params);
   const report = useMemo(() => (data ? buildReport(data.rows, data.jobs ?? {}) : null), [data]);
+
+  const months = useMemo(() => (data ? byMonth(data.rows) : []), [data]);
+  const maxMonth = Math.max(0, ...months.map((m) => m.applied));
 
   const exportHref = (metric: string) => {
     const q = new URLSearchParams({ metric, ...params });
@@ -189,6 +193,46 @@ export default function ReportsPage() {
               </ul>
             </Section>
           </div>
+
+          {months.length > 1 && (
+            <Section id="trend" title="Month by month" note="Applications, shortlisted and hired">
+              <div
+                className="wd-months"
+                role="img"
+                aria-label={months
+                  .map(
+                    (m) =>
+                      `${m.label}: ${m.applied} applied, ${m.shortlisted} shortlisted, ${m.hired} hired`,
+                  )
+                  .join("; ")}
+              >
+                {months.map((m) => (
+                  <div key={m.key} className="wd-month">
+                    <span className="wd-month-n">{fmt(m.applied)}</span>
+                    <span className="wd-month-bars">
+                      <span
+                        className="wd-month-bar"
+                        style={{ height: barWidth(m.applied, maxMonth) }}
+                      />
+                      <span
+                        className="wd-month-bar go"
+                        style={{ height: barWidth(m.shortlisted, maxMonth) }}
+                      />
+                      <span
+                        className="wd-month-bar good"
+                        style={{ height: barWidth(m.hired, maxMonth) }}
+                      />
+                    </span>
+                    <span className="wd-month-label">{m.label}</span>
+                  </div>
+                ))}
+              </div>
+              <p className="wd-small wd-muted wd-month-key" style={{ margin: 0 }}>
+                <span className="k" /> Applied <span className="k go" /> Shortlisted{" "}
+                <span className="k good" /> Hired
+              </p>
+            </Section>
+          )}
 
           <Section id="jobs" title="Each job" note={`${report.jobs.length} jobs with applications`}>
             <div className="wd-table-wrap">

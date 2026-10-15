@@ -119,3 +119,34 @@ export function barWidth(value: number, max: number): string {
   if (max <= 0 || value <= 0) return "0%";
   return `${Math.max(2, Math.round((value / max) * 100))}%`;
 }
+
+export interface MonthPoint {
+  key: string;
+  label: string;
+  applied: number;
+  shortlisted: number;
+  hired: number;
+}
+
+/** Applications by the month they arrived, with how many of them were later shortlisted or hired. */
+export function byMonth(rows: RollupRow[]): MonthPoint[] {
+  const fmt = new Intl.DateTimeFormat(undefined, { month: "short", year: "2-digit" });
+  const map = new Map<string, MonthPoint>();
+  for (const r of rows) {
+    if (!r.createdAt) continue;
+    const d = new Date(r.createdAt);
+    const key = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}`;
+    const p = map.get(key) ?? {
+      key,
+      label: fmt.format(new Date(d.getFullYear(), d.getMonth(), 1)),
+      applied: 0,
+      shortlisted: 0,
+      hired: 0,
+    };
+    p.applied += 1;
+    if (r.status === "shortlisted" || r.status === "hired") p.shortlisted += 1;
+    if (r.status === "hired") p.hired += 1;
+    map.set(key, p);
+  }
+  return [...map.values()].sort((a, b) => a.key.localeCompare(b.key)).slice(-12);
+}

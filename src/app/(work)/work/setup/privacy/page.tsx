@@ -229,8 +229,8 @@ function PrivacySetup() {
                 </tr>
               </thead>
               <tbody>
-                {entries.map((e) => (
-                  <tr key={e.id}>
+                {entries.map((e, i) => (
+                  <tr key={`${e.id}-${i}`}>
                     <th scope="row">
                       {plain(e.event_type)}
                       {e.resource_type ? (
