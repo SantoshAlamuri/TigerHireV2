@@ -18,6 +18,7 @@ export interface WorkJob {
   status?: string;
   is_active?: boolean;
   list_on_public_job_board?: boolean;
+  list_for_internal_referrals?: boolean;
   hiring_request_id?: string | null;
   hiring_requests?:
     | { id?: string; status?: string }

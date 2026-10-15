@@ -3,7 +3,6 @@
 import Link from "next/link";
 import { useAuth } from "@/lib/auth/AuthProvider";
 import { useWorkQueue } from "@/components/work/WorkShell";
-import { AllClear } from "@/components/work/AllClear";
 
 function greeting(now = new Date()) {
   const h = now.getHours();
@@ -16,61 +15,64 @@ function greeting(now = new Date()) {
  */
 export default function WorkHome() {
   const { user } = useAuth();
-  const { queue, loading } = useWorkQueue();
+  const { queue, waiting, loading } = useWorkQueue();
   const first = queue.needsYou[0];
   const name = user?.name?.split(" ")[0];
+  const hello = `${greeting()}${name ? `, ${name}` : ""}`;
 
   if (loading) {
     return (
-      <p role="status" className="wd-muted">
-        Loading your work…
-      </p>
-    );
-  }
-
-  if (!first) {
-    return (
-      <AllClear
-        title={`${greeting()}${name ? `, ${name}` : ""}. You're all clear.`}
-        detail={
-          queue.moving.length
-            ? `The agent and automation are handling ${queue.moving.length} ${queue.moving.length === 1 ? "job" : "jobs"}. We'll bring anything that needs you back here.`
-            : "No open jobs yet. Start one from a hiring request."
-        }
-        action={
-          queue.moving.length ? null : (
-            <Link href="/recruit/hiring-requests" className="wd-btn go">
-              Start a new job
-            </Link>
-          )
-        }
-      />
+      <div className="wd-page">
+        <p role="status" className="wd-muted">
+          Loading your work…
+        </p>
+      </div>
     );
   }
 
   const count = queue.needsYou.length;
+  const moving = queue.moving.length;
+
   return (
-    <section className="wd-stack" style={{ maxWidth: 720, paddingTop: "6vh" }}>
-      <p className="wd-muted" style={{ margin: 0 }}>
-        {greeting()}
-        {name ? `, ${name}` : ""}
-      </p>
-      <h1 className="wd-h1">
-        {count === 1 ? "One job needs you." : `${count} jobs need you.`} Start with {first.title}.
-      </h1>
-      <p className="wd-muted" style={{ margin: 0, maxWidth: "60ch" }}>
-        {first.line}. Open it and we&apos;ll take you straight to the step, then on to the next job
-        when you&apos;re done.
-      </p>
-      <div className="wd-row">
-        <Link href={`/work/jobs/${first.id}`} className="wd-btn go" autoFocus>
-          Start
-        </Link>
-        <span className="wd-small wd-muted">
-          {queue.moving.length > 0 &&
-            `${queue.moving.length} more ${queue.moving.length === 1 ? "is" : "are"} moving on their own`}
-        </span>
+    <div className="wd-page" style={{ paddingTop: "12vh" }}>
+      <div className="wd-stack" style={{ gap: 18 }}>
+        <span className={`wd-sig ${first ? "you" : "auto"}`}>{hello}</span>
+        <h1 className="wd-h1" style={{ maxWidth: "16ch" }}>
+          {first
+            ? count === 1
+              ? `One job needs you. Start with ${first.title}.`
+              : `${count} jobs need you. Start with ${first.title}.`
+            : "You're all clear."}
+        </h1>
+        <p className="wd-lede">
+          {first
+            ? `${first.line}. We'll take you straight to the step, then on to the next job when you're done.`
+            : moving
+              ? `The agent and automation are handling ${moving} ${moving === 1 ? "job" : "jobs"}. Anything that needs you comes back here.`
+              : "No open jobs yet. Start one with a few lines about the role."}
+        </p>
       </div>
-    </section>
+      <div className="wd-row-actions">
+        {first ? (
+          <Link href={`/work/jobs/${first.id}`} className="wd-btn go" autoFocus>
+            Start
+          </Link>
+        ) : (
+          <Link href="/work/new" className="wd-btn go" autoFocus>
+            New job
+          </Link>
+        )}
+        {(moving > 0 || waiting.length > 0) && (
+          <span className="wd-small wd-muted">
+            {[
+              moving ? `${moving} moving on their own` : "",
+              waiting.length ? `${waiting.length} waiting on approval` : "",
+            ]
+              .filter(Boolean)
+              .join(", ")}
+          </span>
+        )}
+      </div>
+    </div>
   );
 }

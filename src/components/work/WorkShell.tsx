@@ -17,34 +17,21 @@ interface PortfolioJob {
   counts: JobApplicantCounts;
 }
 
-function TigerMark() {
-  return (
-    <svg viewBox="0 0 32 32" width="28" height="28" aria-hidden="true">
-      <circle cx="16" cy="16" r="15" fill="var(--wd-you)" />
-      <path
-        d="M9 7l4 6M16 4v7M23 7l-4 6"
-        stroke="var(--wd-ink)"
-        strokeWidth="2.6"
-        strokeLinecap="round"
-      />
-      <circle cx="12" cy="18" r="1.8" fill="var(--wd-ink)" />
-      <circle cx="20" cy="18" r="1.8" fill="var(--wd-ink)" />
-      <path
-        d="M13.5 23c1.5 1.2 3.5 1.2 5 0"
-        stroke="var(--wd-ink)"
-        strokeWidth="2"
-        fill="none"
-        strokeLinecap="round"
-      />
-    </svg>
-  );
+interface PendingRequest {
+  id: string;
+  title: string;
+  status: string;
 }
 
-/** The shared queue, so the job screen can offer "next job" when this one is clear. */
+/** The shared queue, so any screen can offer "next job" when the current one is clear. */
 export function useWorkQueue() {
   const portfolio = useApiQuery<{ jobs: PortfolioJob[] }>("/api/portfolio");
   const drafts = useApiQuery<{ jobs: { id: string; title: string }[] }>("/api/jobs", {
     status: "draft",
+    limit: 50,
+  });
+  const requests = useApiQuery<{ requests: PendingRequest[] }>("/api/hiring-requests", {
+    status: "pending",
     limit: 50,
   });
   const queue = useMemo(
@@ -69,10 +56,15 @@ export function useWorkQueue() {
   );
   return {
     queue,
+    waiting: requests.data?.requests ?? [],
     loading: portfolio.loading && !portfolio.data,
     error: portfolio.error,
     refresh: async () => {
-      await Promise.all([portfolio.refetch({ silent: true }), drafts.refetch({ silent: true })]);
+      await Promise.all([
+        portfolio.refetch({ silent: true }),
+        drafts.refetch({ silent: true }),
+        requests.refetch({ silent: true }),
+      ]);
     },
   };
 }
@@ -89,9 +81,7 @@ function QueueList({ entries, activeId }: { entries: QueueEntry[]; activeId: str
           >
             <span className={`wd-qdot ${e.tone}`} aria-hidden="true" />
             <span style={{ minWidth: 0 }}>
-              <span className="wd-qtitle" style={{ display: "block" }}>
-                {e.title}
-              </span>
+              <span className="wd-qtitle">{e.title}</span>
               <span className="wd-qsub">{e.line}</span>
             </span>
           </Link>
@@ -105,43 +95,64 @@ function Sidebar() {
   const pathname = usePathname();
   const activeId = pathname.match(/^\/work\/jobs\/([^/]+)/)?.[1] ?? null;
   const { user } = useAuth();
-  const { queue, loading, error } = useWorkQueue();
+  const { queue, waiting, loading, error } = useWorkQueue();
 
   return (
     <aside className="wd-side" aria-label="Your work">
-      <Link href="/work" className="wd-brand">
-        <TigerMark />
-        <span>
-          TigerHire
-          <br />
-          <small>{user?.organisationName ?? "Your work"}</small>
-        </span>
+      <div>
+        <Link href="/work" className="wd-brand">
+          tigerhire
+          <i aria-hidden="true" />
+        </Link>
+        <div className="wd-org">{user?.organisationName ?? "Your work"}</div>
+      </div>
+
+      <Link href="/work/new" className="wd-btn go" style={{ minHeight: 42 }}>
+        New job
       </Link>
 
-      <section>
+      <section aria-label="Needs you">
         <div className="wd-qhead">
           <span>Needs you</span>
           <span>{loading ? "" : queue.needsYou.length}</span>
         </div>
         {loading ? (
-          <p className="wd-qsub" style={{ padding: "8px 6px" }}>
-            Loading your work…
-          </p>
+          <p className="wd-qsub">Loading your work…</p>
         ) : error ? (
-          <p className="wd-qsub" role="alert" style={{ padding: "8px 6px" }}>
+          <p className="wd-qsub" role="alert">
             Could not load your jobs. Reload to try again.
           </p>
         ) : queue.needsYou.length ? (
           <QueueList entries={queue.needsYou} activeId={activeId} />
         ) : (
-          <p className="wd-qsub" style={{ padding: "8px 6px" }}>
-            Nothing is waiting on you.
-          </p>
+          <p className="wd-qsub">Nothing is waiting on you.</p>
         )}
       </section>
 
+      {waiting.length > 0 && (
+        <section aria-label="Waiting on others">
+          <div className="wd-qhead">
+            <span>Waiting on others</span>
+            <span>{waiting.length}</span>
+          </div>
+          <ul className="wd-qlist">
+            {waiting.map((r) => (
+              <li key={r.id}>
+                <Link href={`/work/new?request=${r.id}`} className="wd-qitem">
+                  <span className="wd-qdot" aria-hidden="true" />
+                  <span style={{ minWidth: 0 }}>
+                    <span className="wd-qtitle">{r.title}</span>
+                    <span className="wd-qsub">Waiting for approval</span>
+                  </span>
+                </Link>
+              </li>
+            ))}
+          </ul>
+        </section>
+      )}
+
       {queue.moving.length > 0 && (
-        <section>
+        <section aria-label="In motion">
           <div className="wd-qhead">
             <span>In motion</span>
             <span>{queue.moving.length}</span>
@@ -150,21 +161,30 @@ function Sidebar() {
         </section>
       )}
 
-      <div style={{ marginTop: "auto", display: "flex", flexDirection: "column", gap: 6 }}>
-        <Link href="/recruit/hiring-requests" className="wd-btn">
-          Start a new job
+      <nav
+        aria-label="More"
+        style={{ marginTop: "auto", display: "flex", flexDirection: "column", gap: 2 }}
+      >
+        <Link
+          href="/work/setup"
+          className="wd-qitem"
+          aria-current={pathname.startsWith("/work/setup") ? "page" : undefined}
+        >
+          <span aria-hidden="true" />
+          <span className="wd-qtitle">Setup</span>
         </Link>
-        <Link href="/recruit/jobs" className="wd-btn quiet">
-          Open the classic view
+        <Link href="/recruit/jobs" className="wd-qitem">
+          <span aria-hidden="true" />
+          <span className="wd-qtitle wd-muted">Classic view</span>
         </Link>
-      </div>
+      </nav>
     </aside>
   );
 }
 
 /**
  * The work-driven shell: your queue on the left, the work item on the right.
- * No menus — the work decides which screen you see.
+ * No menus — the work decides which screen you see. Setup sits in one place.
  */
 export function WorkShell({ children }: { children: React.ReactNode }) {
   const { user, loading } = useAuth();
