@@ -749,3 +749,15 @@
 .wd-onb-item.done .wd-h2 {
   color: var(--wd-muted);
 }
+.wd-preview {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px 16px;
+  padding: 10px 0;
+  border-bottom: 1px solid var(--wd-hair);
+}
+.wd-btn.quiet.on {
+  color: var(--wd-amber);
+}

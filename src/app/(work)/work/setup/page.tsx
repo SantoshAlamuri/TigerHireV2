@@ -25,11 +25,23 @@ export default function WorkSetupPage() {
           Change how your team hires here. Jobs pick up the changes, and still ask you at the moment
           they need something that isn&apos;t set up.
         </p>
-        {user.isOrgAdmin && (
-          <Link href="/work/welcome" className="wd-small wd-muted">
-            Open the setup checklist
+        <div className="wd-row-actions" style={{ gap: 4 }}>
+          {user.isOrgAdmin && (
+            <Link href="/work/welcome" className="wd-btn quiet">
+              Setup checklist
+            </Link>
+          )}
+          <span className="wd-small wd-muted">See onboarding as:</span>
+          <Link href="/work/welcome?preview=admin" className="wd-btn quiet">
+            Admin
           </Link>
-        )}
+          <Link href="/work/welcome?preview=user" className="wd-btn quiet">
+            Recruiter
+          </Link>
+          <Link href="/work/welcome?preview=hm" className="wd-btn quiet">
+            Hiring manager
+          </Link>
+        </div>
       </header>
 
       <div className="wd-stack" style={{ gap: 30 }}>

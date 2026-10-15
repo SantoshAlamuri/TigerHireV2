@@ -1,8 +1,8 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
+import { Suspense, useEffect, useState } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useAuth } from "@/lib/auth/AuthProvider";
 import { useApiQuery } from "@/lib/hooks/use-api";
 import { useWorkQueue } from "@/components/work/WorkShell";
@@ -13,6 +13,7 @@ import {
   currentStep,
   onboardingKind,
   type OnboardingKind,
+  type SetupStepKey,
 } from "@/lib/work/onboarding";
 
 /**
@@ -20,16 +21,71 @@ import {
  * opens on the step that isn't done. Everyone else gets a short welcome.
  */
 export default function WelcomePage() {
+  return (
+    <Suspense fallback={null}>
+      <WelcomeRouter />
+    </Suspense>
+  );
+}
+
+const PREVIEWS: { kind: OnboardingKind; label: string }[] = [
+  { kind: "admin", label: "Admin" },
+  { kind: "user", label: "Recruiter" },
+  { kind: "hm", label: "Hiring manager" },
+];
+
+function isKind(v: string | null): v is OnboardingKind {
+  return v === "admin" || v === "user" || v === "hm";
+}
+
+/** `?preview=admin|user|hm` shows any flow from the start without saving anything. */
+function WelcomeRouter() {
   const { user } = useAuth();
+  const asked = useSearchParams().get("preview");
   if (!user) return null;
-  const kind = onboardingKind(user.role, Boolean(user.isOrgAdmin));
-  return kind === "admin" ? <AdminSetup /> : <Welcome kind={kind} />;
+  const preview = isKind(asked) ? asked : null;
+  const kind = preview ?? onboardingKind(user.role, Boolean(user.isOrgAdmin));
+  return (
+    <>
+      {preview && <PreviewBar kind={preview} />}
+      {kind === "admin" ? (
+        <AdminSetup key="admin" preview={!!preview} />
+      ) : (
+        <Welcome key={kind} kind={kind} preview={!!preview} />
+      )}
+    </>
+  );
+}
+
+function PreviewBar({ kind }: { kind: OnboardingKind }) {
+  return (
+    <div className="wd-preview" role="note">
+      <span className="wd-sig auto">Preview — nothing is saved</span>
+      <nav aria-label="Preview another flow" className="wd-row-actions" style={{ gap: 4 }}>
+        {PREVIEWS.map((p) => (
+          <Link
+            key={p.kind}
+            href={`/work/welcome?preview=${p.kind}`}
+            className={`wd-btn quiet ${p.kind === kind ? "on" : ""}`}
+            aria-current={p.kind === kind ? "page" : undefined}
+          >
+            {p.label}
+          </Link>
+        ))}
+        <Link href="/work/setup" className="wd-btn quiet">
+          Close
+        </Link>
+      </nav>
+    </div>
+  );
 }
 
 /* ---------------- admin: set up your team ---------------- */
 
-function AdminSetup() {
+function AdminSetup({ preview }: { preview: boolean }) {
   const router = useRouter();
+  // In preview every step starts open; "Mark done" stands in for doing it.
+  const [pretend, setPretend] = useState<Set<SetupStepKey>>(new Set());
   const { hints, dismiss } = useOnboardingHints();
   const { queue, waiting, loading: queueLoading } = useWorkQueue();
   const calendar = useApiQuery<{ integrations: { status: string }[] }>(
@@ -41,24 +97,37 @@ function AdminSetup() {
 
   const loading =
     queueLoading || (calendar.loading && !calendar.data) || (team.loading && !team.data);
-  const steps = adminSteps({
-    calendarConnected: (calendar.data?.integrations ?? []).some((i) => i.status === "connected"),
-    teamSize: (team.data?.members ?? []).filter((m) => m.is_active !== false).length,
-    pendingInvites: team.data?.pendingInvites?.length ?? 0,
-    processReviewed: hints.includes(ONBOARDING_HINTS.processReviewed),
-    hasJob: queue.needsYou.length + queue.moving.length + waiting.length > 0,
-  });
+  const steps = adminSteps(
+    preview
+      ? {
+          calendarConnected: pretend.has("calendar"),
+          teamSize: 1,
+          pendingInvites: pretend.has("team") ? 2 : 0,
+          processReviewed: pretend.has("process"),
+          hasJob: pretend.has("job"),
+        }
+      : {
+          calendarConnected: (calendar.data?.integrations ?? []).some(
+            (i) => i.status === "connected",
+          ),
+          teamSize: (team.data?.members ?? []).filter((m) => m.is_active !== false).length,
+          pendingInvites: team.data?.pendingInvites?.length ?? 0,
+          processReviewed: hints.includes(ONBOARDING_HINTS.processReviewed),
+          hasJob: queue.needsYou.length + queue.moving.length + waiting.length > 0,
+        },
+  );
+  const markDone = (key: SetupStepKey) => setPretend((p) => new Set(p).add(key));
   const here = currentStep(steps);
   const doneCount = steps.filter((s) => s.done).length;
 
   // Everything done: record it once so home stops sending people here.
   useEffect(() => {
-    if (!loading && !here && !hints.includes(ONBOARDING_HINTS.adminSetup)) {
+    if (!preview && !loading && !here && !hints.includes(ONBOARDING_HINTS.adminSetup)) {
       void dismiss(ONBOARDING_HINTS.adminSetup);
     }
-  }, [loading, here, hints, dismiss]);
+  }, [preview, loading, here, hints, dismiss]);
 
-  if (loading) {
+  if (loading && !preview) {
     return (
       <div className="wd-page">
         <p role="status" className="wd-muted">
@@ -69,8 +138,8 @@ function AdminSetup() {
   }
 
   const skip = async () => {
-    await dismiss(ONBOARDING_HINTS.adminSetup);
-    router.push("/work");
+    if (!preview) await dismiss(ONBOARDING_HINTS.adminSetup);
+    router.push(preview ? "/work/setup" : "/work");
   };
 
   return (
@@ -127,9 +196,22 @@ function AdminSetup() {
                         <button
                           type="button"
                           className="wd-btn go"
-                          onClick={() => void dismiss(ONBOARDING_HINTS.processReviewed)}
+                          onClick={() =>
+                            preview
+                              ? markDone("process")
+                              : void dismiss(ONBOARDING_HINTS.processReviewed)
+                          }
                         >
                           These look right
+                        </button>
+                      )}
+                      {preview && s.key !== "process" && (
+                        <button
+                          type="button"
+                          className="wd-btn quiet"
+                          onClick={() => markDone(s.key)}
+                        >
+                          Mark done (preview)
                         </button>
                       )}
                     </div>
@@ -152,7 +234,7 @@ function AdminSetup() {
             Skip for now — it stays under Needs you
           </button>
         ) : (
-          <Link href="/work" className="wd-btn go">
+          <Link href={preview ? "/work/setup" : "/work"} className="wd-btn go">
             Go to your work
           </Link>
         )}
@@ -200,7 +282,7 @@ const HM_SCREENS: Screen[] = [
   },
 ];
 
-function Welcome({ kind }: { kind: Exclude<OnboardingKind, "admin"> }) {
+function Welcome({ kind, preview }: { kind: Exclude<OnboardingKind, "admin">; preview: boolean }) {
   const router = useRouter();
   const { dismiss } = useOnboardingHints();
   const screens = kind === "hm" ? HM_SCREENS : USER_SCREENS;
@@ -210,6 +292,7 @@ function Welcome({ kind }: { kind: Exclude<OnboardingKind, "admin"> }) {
   const home = kind === "hm" ? "/work/hm" : "/work";
 
   const finish = async (to: string) => {
+    if (preview) return router.push("/work/setup");
     await dismiss(ONBOARDING_HINTS.welcome);
     router.push(to);
   };
