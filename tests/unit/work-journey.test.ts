@@ -138,3 +138,16 @@ describe("ideal candidate and screening stages", () => {
     );
   });
 });
+
+describe("phases", () => {
+  it("groups stages and lands on what needs you inside a phase", async () => {
+    const { landingIn, phaseOf, phaseStatus } = await import("@/lib/work/journey");
+    const j = buildJourney({ ...base, applicants: 10, awaitingReview: 4 });
+    expect(phaseOf("rubric")).toBe("prepare");
+    expect(phaseOf("review")).toBe("progress");
+    expect(phaseStatus(j, "prepare")).toBe("done");
+    expect(phaseStatus(j, "progress")).toBe("needs_you");
+    expect(landingIn(j, "progress")).toBe("review");
+    expect(landingIn(j, "prepare")).toBe("publish");
+  });
+});

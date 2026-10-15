@@ -1,7 +1,16 @@
 "use client";
 
 import { useEffect, useRef } from "react";
-import { STAGE_ORDER, type Journey, type StageKey, type StageStatus } from "@/lib/work/journey";
+import {
+  PHASES,
+  STAGE_ORDER,
+  landingIn,
+  phaseOf,
+  phaseStatus,
+  type Journey,
+  type StageKey,
+  type StageStatus,
+} from "@/lib/work/journey";
 
 const STATUS_WORDS: Record<StageStatus, string> = {
   done: "done",
@@ -13,9 +22,10 @@ const STATUS_WORDS: Record<StageStatus, string> = {
 };
 
 /**
- * The job's stages as a quiet line of words with an amber progress rule under
- * it. A dot marks what needs you (amber), what is stuck (red) and what the
- * agent is working on (blue). Stages nobody has reached yet stay closed.
+ * The job's stages, grouped into Prepare, Progress and Decide. Only the phase
+ * you're in shows its steps; the others fold to one word with a dot for what
+ * needs you (amber), what is stuck (red) or what the agent is on (blue).
+ * Opening a folded phase lands on the step that needs you there.
  */
 export function Trail({
   journey,
@@ -27,6 +37,7 @@ export function Trail({
   onSelect: (key: StageKey) => void;
 }) {
   const hereRef = useRef<HTMLButtonElement>(null);
+  const current = phaseOf(here);
   useEffect(() => {
     const el = hereRef.current;
     const list = el?.closest("ol");
@@ -42,23 +53,45 @@ export function Trail({
   return (
     <nav className="wd-steps" aria-label="Where this job is">
       <ol>
-        {journey.stages.map((s) => {
-          const isHere = s.key === here;
-          const reachable = s.status !== "waiting" || isHere;
+        {PHASES.map((p) => {
+          const open = p.key === current;
+          const st = phaseStatus(journey, p.key);
+          const stages = journey.stages.filter((s) => p.stages.includes(s.key));
           return (
-            <li key={s.key}>
+            <li key={p.key} className={`wd-phase ${open ? "open" : ""}`}>
               <button
-                ref={isHere ? hereRef : undefined}
                 type="button"
-                className={`wd-step ${s.status} ${isHere ? "here" : ""}`}
-                aria-current={isHere ? "step" : undefined}
-                aria-label={`${s.label}, ${STATUS_WORDS[s.status]}. ${s.headline}`}
-                disabled={!reachable}
-                onClick={() => onSelect(s.key)}
+                className={`wd-phase-name ${st}`}
+                aria-expanded={open}
+                onClick={() => !open && onSelect(landingIn(journey, p.key))}
               >
                 <i aria-hidden="true" />
-                {s.label}
+                {p.label}
               </button>
+              {open && (
+                <ol className="wd-phase-steps">
+                  {stages.map((s) => {
+                    const isHere = s.key === here;
+                    const reachable = s.status !== "waiting" || isHere;
+                    return (
+                      <li key={s.key}>
+                        <button
+                          ref={isHere ? hereRef : undefined}
+                          type="button"
+                          className={`wd-step ${s.status} ${isHere ? "here" : ""}`}
+                          aria-current={isHere ? "step" : undefined}
+                          aria-label={`${s.label}, ${STATUS_WORDS[s.status]}. ${s.headline}`}
+                          disabled={!reachable}
+                          onClick={() => onSelect(s.key)}
+                        >
+                          <i aria-hidden="true" />
+                          {s.label}
+                        </button>
+                      </li>
+                    );
+                  })}
+                </ol>
+              )}
             </li>
           );
         })}

@@ -386,7 +386,7 @@
   height: 64px;
   display: flex;
   align-items: center;
-  gap: 26px;
+  gap: 30px;
   overflow-x: auto;
   scrollbar-width: none;
 }
@@ -432,6 +432,72 @@
 .wd-step.skipped {
   text-decoration: line-through;
   text-decoration-color: var(--wd-hair-strong);
+}
+/* phases: Prepare / Progress / Decide; only the current one shows its steps */
+.wd-phase {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  flex: none;
+}
+.wd-phase-name {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 6px 0;
+  border: 0;
+  background: none;
+  color: var(--wd-muted);
+  font: inherit;
+  font-size: 13.5px;
+  white-space: nowrap;
+  cursor: pointer;
+}
+.wd-phase-name:hover {
+  color: var(--wd-ink);
+}
+.wd-phase.open .wd-phase-name {
+  color: var(--wd-ink);
+  font-weight: 500;
+  cursor: default;
+}
+.wd-phase-name i {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: transparent;
+}
+.wd-phase-name.needs_you i {
+  background: var(--wd-amber);
+}
+.wd-phase-name.blocked i {
+  background: var(--wd-bad);
+}
+.wd-phase-name.working i {
+  background: var(--wd-agent);
+}
+.wd-phase-name.waiting {
+  color: var(--wd-faint);
+}
+.wd-phase.open .wd-phase-name i {
+  display: none;
+}
+.wd-phase-steps {
+  list-style: none;
+  margin: 0;
+  padding: 0 0 0 18px;
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  border-left: 1px solid var(--wd-hair);
+  height: 22px;
+  animation: wd-phase-in 0.25s var(--wd-ease);
+}
+@keyframes wd-phase-in {
+  from {
+    opacity: 0;
+    transform: translateX(-6px);
+  }
 }
 .wd-progress {
   height: 1px;

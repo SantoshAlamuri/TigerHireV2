@@ -324,3 +324,46 @@ export function nextStop(journey: Journey, key: StageKey): StageKey | null {
 export function isStageKey(v: unknown): v is StageKey {
   return typeof v === "string" && (STAGE_ORDER as string[]).includes(v);
 }
+
+/* ---------- phases: the trail groups stages so only one set shows at a time ---------- */
+
+export type PhaseKey = "prepare" | "progress" | "decide";
+
+export const PHASES: { key: PhaseKey; label: string; stages: StageKey[] }[] = [
+  {
+    key: "prepare",
+    label: "Prepare",
+    stages: ["request", "description", "profile", "rubric", "screening", "publish"],
+  },
+  { key: "progress", label: "Progress", stages: ["applications", "scoring", "review"] },
+  { key: "decide", label: "Decide", stages: ["interviews", "offer"] },
+];
+
+export function phaseOf(key: StageKey): PhaseKey {
+  return PHASES.find((p) => p.stages.includes(key))?.key ?? "prepare";
+}
+
+export type PhaseStatus = "done" | "needs_you" | "blocked" | "working" | "waiting";
+
+/** One status for a whole phase: the most urgent thing inside it. */
+export function phaseStatus(journey: Journey, phase: PhaseKey): PhaseStatus {
+  const keys = PHASES.find((p) => p.key === phase)?.stages ?? [];
+  const st = journey.stages.filter((s) => keys.includes(s.key)).map((s) => s.status);
+  if (st.includes("blocked")) return "blocked";
+  if (st.includes("needs_you")) return "needs_you";
+  if (st.includes("working")) return "working";
+  if (st.every((x) => x === "done" || x === "skipped")) return "done";
+  return "waiting";
+}
+
+/** Where opening a phase lands you: what needs you there, else where it's moving, else its start. */
+export function landingIn(journey: Journey, phase: PhaseKey): StageKey {
+  const keys = PHASES.find((p) => p.key === phase)?.stages ?? [];
+  const inPhase = journey.stages.filter((s) => keys.includes(s.key));
+  const hit =
+    inPhase.find((s) => s.status === "needs_you" || s.status === "blocked") ??
+    inPhase.find((s) => s.status === "working") ??
+    [...inPhase].reverse().find((s) => s.status === "done") ??
+    inPhase.find((s) => s.status !== "skipped");
+  return hit?.key ?? keys[0];
+}
