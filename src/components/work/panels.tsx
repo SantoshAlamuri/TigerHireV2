@@ -249,7 +249,7 @@ export function RubricPanel({ jobId, onDone, onLog, goTo }: PanelProps) {
   }
 
   return (
-    <div className="wd-stack" style={{ gap: 28, maxWidth: 760 }}>
+    <div className="wd-stack" style={{ gap: 28 }}>
       <p className="wd-muted" style={{ margin: 0 }}>
         Every CV is scored on these, weighted by what matters most.
       </p>

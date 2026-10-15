@@ -81,7 +81,7 @@ export function ScreeningBlock({ jobId, facts, onDone, onLog, goTo }: PanelProps
   }
 
   return (
-    <div className="wd-stack" style={{ gap: 28, maxWidth: 760 }}>
+    <div className="wd-stack" style={{ gap: 28 }}>
       <p className="wd-muted" style={{ margin: 0 }}>
         Sent on WhatsApp. A &ldquo;no&rdquo; when they apply holds someone back from your review;
         answers after the shortlist are for context only.

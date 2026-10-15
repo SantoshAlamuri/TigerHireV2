@@ -2,7 +2,7 @@
   display: flex;
   flex-direction: column;
   gap: 4px;
-  max-width: 760px;
+  max-width: none;
 }
 .title {
   margin: 0 0 4px;
