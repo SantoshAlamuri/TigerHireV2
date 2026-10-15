@@ -29,9 +29,9 @@ Theme and classes live in `src/app/(work)/work.css`. Charcoal ground, warm-white
 hairlines instead of boxes, amber only for things you act on, blue for the agent.
 
 | Need                                         | Use                                                                   |
-| -------------------------------------------- | --------------------------------------------------------------------- | ----- | ---- | ------------------ |
+| -------------------------------------------- | --------------------------------------------------------------------- |
 | Big headline / section headline / intro text | `wd-h1`, `wd-h2`, `wd-lede`                                           |
-| Who holds it                                 | `<span className="wd-sig you                                          | agent | auto | bad">Label</span>` |
+| Who holds it                                 | `wd-sig` plus one of `you`, `agent`, `auto`, `bad`                    |
 | Primary / secondary / text button            | `wd-btn go`, `wd-btn`, `wd-btn quiet`                                 |
 | Rows separated by hairlines                  | `wd-lines` > `wd-line` (+ `wd-line-label`, `wd-line-value`, `wd-src`) |
 | Side content                                 | `wd-panel` (`agent`, `you`, `bad` tints)                              |
