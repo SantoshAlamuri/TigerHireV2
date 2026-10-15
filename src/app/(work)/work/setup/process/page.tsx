@@ -170,7 +170,7 @@ function ProcessSetup() {
           </h2>
           <ol className="wd-stages">
             {bands.start.map((s) => (
-              <li key={s.id ?? s.stage_name} className="wd-stage fixed">
+              <li key={s.id ?? s.stage_name} className="wd-stage locked">
                 <span className="wd-stage-name">{s.stage_name}</span>
                 <span className="wd-sig auto">Automatic</span>
               </li>
@@ -234,7 +234,7 @@ function ProcessSetup() {
               </li>
             ))}
             {bands.end.map((s) => (
-              <li key={s.id ?? s.stage_name} className="wd-stage fixed">
+              <li key={s.id ?? s.stage_name} className="wd-stage locked">
                 <span className="wd-stage-name">{s.stage_name}</span>
                 <span className="wd-sig auto">Outcome</span>
               </li>

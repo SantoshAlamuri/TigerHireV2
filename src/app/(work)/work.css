@@ -870,7 +870,7 @@
   padding: 6px 0;
   border-bottom: 1px solid var(--wd-hair);
 }
-.wd-stage.fixed {
+.wd-stage.locked {
   grid-template-columns: minmax(0, 1fr) auto;
   color: var(--wd-muted);
 }
