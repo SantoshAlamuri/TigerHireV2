@@ -98,7 +98,7 @@
 .row {
   position: relative;
   display: grid;
-  grid-template-columns: 36px minmax(0, 1fr) 120px auto;
+  grid-template-columns: 36px minmax(0, 1fr) 130px;
   align-items: center;
   gap: 12px;
   min-height: 64px;
@@ -108,7 +108,7 @@
 }
 .row:hover,
 .row:focus-within {
-  background: color-mix(in srgb, var(--wd-panel) 70%, transparent);
+  background: var(--wd-panel);
 }
 .row[data-current="true"]::before {
   content: "";
@@ -154,7 +154,7 @@
 }
 .open {
   display: grid;
-  grid-template-columns: minmax(160px, 0.8fr) minmax(0, 1.2fr);
+  grid-template-columns: minmax(150px, 0.6fr) minmax(0, 1.4fr);
   align-items: center;
   gap: 16px;
   min-width: 0;
@@ -247,15 +247,22 @@
   color: var(--wd-faint);
 }
 .quick {
+  position: absolute;
+  right: 0;
+  top: 50%;
   display: flex;
   gap: 4px;
+  padding: 6px 4px 6px 24px;
+  background: linear-gradient(to right, transparent, var(--wd-panel) 24px);
+  transform: translateY(-50%);
   opacity: 0;
+  pointer-events: none;
   transition: opacity 120ms ease;
 }
 .row:hover .quick,
-.row:focus-within .quick,
-.row[data-current="true"] .quick {
+.row:focus-within .quick {
   opacity: 1;
+  pointer-events: auto;
 }
 .quick button {
   min-height: 32px;
@@ -289,9 +296,13 @@
     gap: 4px;
   }
   .quick {
+    position: static;
     grid-column: 2 / -1;
+    padding: 0 0 10px;
+    background: none;
+    transform: none;
     opacity: 1;
-    padding-bottom: 10px;
+    pointer-events: auto;
   }
 }
 
