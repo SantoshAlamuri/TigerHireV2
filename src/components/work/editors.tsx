@@ -1,0 +1,593 @@
+"use client";
+
+import { useState } from "react";
+import { useApiMutation, useApiQuery } from "@/lib/hooks/use-api";
+import {
+  draftChanged,
+  draftFromProfile,
+  icpProblems,
+  nudgeFloor,
+  profileFromDraft,
+  questionsFromText,
+  type IcpDraft,
+  type IdealCandidateProfile,
+} from "@/lib/work/icp";
+import { CompanyBulkUploadModal } from "@/app/(dashboard)/recruit/candidates/components/CompanyBulkUploadModal";
+
+type Log = (actor: "agent" | "auto" | "you", what: string) => void;
+
+function Field({
+  label,
+  hint,
+  children,
+}: {
+  label: string;
+  hint?: string;
+  children: React.ReactNode;
+}) {
+  return (
+    <label className="wd-stack" style={{ gap: 6 }}>
+      <span className="wd-small" style={{ color: "var(--wd-soft)" }}>
+        {label}
+      </span>
+      {children}
+      {hint && <span className="wd-src">{hint}</span>}
+    </label>
+  );
+}
+
+/**
+ * The ideal candidate: summary, must-haves, nice-to-haves, years. One save.
+ * Keeps the agent's benchmarks and traits untouched.
+ */
+export function MustHavesEditor({
+  jobId,
+  profile,
+  roleTitle,
+  onSaved,
+  onCancel,
+  onLog,
+}: {
+  jobId: string;
+  profile: Partial<IdealCandidateProfile> | null;
+  roleTitle: string;
+  onSaved: () => void;
+  onCancel: () => void;
+  onLog: Log;
+}) {
+  const start = draftFromProfile(profile);
+  const [d, setD] = useState<IcpDraft>(start);
+  const put = useApiMutation<
+    { jobId: string; idealCandidateProfile: IdealCandidateProfile },
+    unknown
+  >("/api/fitscore/jd-base", "PUT");
+  const problems = icpProblems(d);
+  const changed = draftChanged(start, d);
+  const set =
+    (k: keyof IcpDraft) => (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) =>
+      setD({ ...d, [k]: e.target.value });
+
+  return (
+    <form
+      className="wd-stack"
+      style={{ gap: 24 }}
+      onSubmit={async (e) => {
+        e.preventDefault();
+        if (problems.length || !changed) return;
+        const ok = await put.mutate({
+          jobId,
+          idealCandidateProfile: profileFromDraft(d, profile, roleTitle),
+        });
+        if (ok) {
+          onLog("you", "Changed the ideal candidate");
+          onSaved();
+        }
+      }}
+    >
+      <h3 className="wd-h2" style={{ fontSize: 22 }}>
+        The ideal candidate
+      </h3>
+      <Field label="In one line" hint="How you'd describe the right person to a friend">
+        <input className="wd-input" value={d.summary} onChange={set("summary")} />
+      </Field>
+      <div className="wd-split" style={{ gridTemplateColumns: "minmax(0,1fr) minmax(0,1fr)" }}>
+        <Field label="Must-haves" hint="One per line. Missing one lowers the score a lot.">
+          <textarea
+            className="wd-textarea"
+            rows={7}
+            value={d.mustHaves}
+            onChange={set("mustHaves")}
+          />
+        </Field>
+        <Field label="Nice to have" hint="One per line. Adds to the score, never rules anyone out.">
+          <textarea
+            className="wd-textarea"
+            rows={7}
+            value={d.niceToHaves}
+            onChange={set("niceToHaves")}
+          />
+        </Field>
+      </div>
+      <Field label="Years of experience" hint="For example 4 to 7">
+        <input
+          className="wd-input"
+          style={{ maxWidth: 220 }}
+          value={d.years}
+          onChange={set("years")}
+        />
+      </Field>
+      {(put.error || (changed && problems.length > 0)) && (
+        <p role="alert" className="wd-problem">
+          {put.error ?? problems.join(" ")}
+        </p>
+      )}
+      <div className="wd-row-actions">
+        <button
+          type="submit"
+          className="wd-btn go"
+          disabled={put.loading || !changed || problems.length > 0}
+        >
+          {put.loading ? "Saving…" : "Save the ideal candidate"}
+        </button>
+        <button type="button" className="wd-btn quiet" onClick={onCancel}>
+          Close
+        </button>
+      </div>
+    </form>
+  );
+}
+
+/** The score a candidate needs before they come to you for review. */
+export function ShortlistBar({
+  jobId,
+  floor,
+  onSaved,
+  onLog,
+}: {
+  jobId: string;
+  floor: number;
+  onSaved: () => void;
+  onLog: Log;
+}) {
+  const [edit, setEdit] = useState<{ from: number; value: number } | null>(null);
+  const value = edit && edit.from === floor ? edit.value : floor;
+  const put = useApiMutation<{ jobId: string; scoreFloor: number }, unknown>(
+    "/api/fitscore/jd-base",
+    "PUT",
+  );
+  const changed = value !== floor;
+
+  return (
+    <div className="wd-stack" style={{ gap: 12 }}>
+      <div
+        className="wd-line"
+        style={{ gridTemplateColumns: "minmax(0,1fr) minmax(200px,240px)", alignItems: "center" }}
+      >
+        <div>
+          <div className="wd-line-value">Shortlist bar</div>
+          <div className="wd-src">
+            Below this score, the agent holds people back from your review
+          </div>
+        </div>
+        <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
+          <button
+            type="button"
+            className="wd-circ"
+            aria-label="Lower the shortlist bar"
+            disabled={value <= 0}
+            onClick={() => setEdit({ from: floor, value: nudgeFloor(value, -5) })}
+          >
+            −
+          </button>
+          <span className="wd-bar">
+            <span style={{ width: `${value}%` }} />
+          </span>
+          <button
+            type="button"
+            className="wd-circ"
+            aria-label="Raise the shortlist bar"
+            disabled={value >= 95}
+            onClick={() => setEdit({ from: floor, value: nudgeFloor(value, 5) })}
+          >
+            +
+          </button>
+          <span style={{ width: 30, textAlign: "right", fontSize: 17 }}>{value}</span>
+        </div>
+      </div>
+      {put.error && (
+        <p role="alert" className="wd-problem">
+          {put.error}
+        </p>
+      )}
+      {changed && (
+        <div className="wd-row-actions">
+          <button
+            type="button"
+            className="wd-btn"
+            disabled={put.loading}
+            onClick={async () => {
+              const ok = await put.mutate({ jobId, scoreFloor: value });
+              if (ok) {
+                onLog("you", `Set the shortlist bar to ${value}`);
+                setEdit(null);
+                onSaved();
+              }
+            }}
+          >
+            {put.loading ? "Saving…" : `Save bar at ${value}`}
+          </button>
+          <button type="button" className="wd-btn quiet" onClick={() => setEdit(null)}>
+            Undo
+          </button>
+        </div>
+      )}
+    </div>
+  );
+}
+
+interface ScreeningSetup {
+  whatsappEnabled: boolean;
+  jdBaseReady: boolean;
+  mustHaves: string[];
+  applyQuestions: { id: string; questionText: string }[];
+  postShortlistQuestions: { id: string; questionText: string }[];
+}
+
+const STAGES = {
+  apply: {
+    title: "When someone applies",
+    note: "Yes or no questions. A wrong answer can rule someone out.",
+    max: 5,
+  },
+  post_shortlist: {
+    title: "After you shortlist",
+    note: "For context only. Answers never rule anyone out.",
+    max: 10,
+  },
+} as const;
+
+/** The questions automation asks, edited in place, both stages. */
+export function ScreeningEditor({ jobId, onLog }: { jobId: string; onLog: Log }) {
+  const q = useApiQuery<ScreeningSetup>(`/api/jobs/${jobId}/whatsapp-screening`);
+  const put = useApiMutation<
+    { stage: "apply" | "post_shortlist"; questions: string[] },
+    ScreeningSetup
+  >(`/api/jobs/${jobId}/whatsapp-screening`, "PUT");
+  const [editing, setEditing] = useState<{ stage: keyof typeof STAGES; text: string } | null>(null);
+
+  if (q.loading && !q.data) return <p className="wd-muted">Loading questions…</p>;
+  if (q.error) return <p className="wd-problem">Questions could not be loaded: {q.error}</p>;
+  const data = q.data;
+  if (!data) return null;
+
+  const list = (stage: keyof typeof STAGES) =>
+    stage === "apply" ? data.applyQuestions : data.postShortlistQuestions;
+
+  if (!data.whatsappEnabled) {
+    return (
+      <p className="wd-small wd-muted" style={{ margin: 0 }}>
+        Screening questions are sent on WhatsApp, which is off for your team. Turn it on in Setup,
+        under Scoring and screening.
+      </p>
+    );
+  }
+
+  return (
+    <div className="wd-stack" style={{ gap: 28 }}>
+      {(Object.keys(STAGES) as (keyof typeof STAGES)[]).map((stage) => {
+        const meta = STAGES[stage];
+        const items = list(stage);
+        const isEditing = editing?.stage === stage;
+        const parsed = isEditing ? questionsFromText(editing.text, meta.max) : null;
+        return (
+          <div key={stage} className="wd-stack" style={{ gap: 8 }}>
+            <div className="wd-line-value">{meta.title}</div>
+            <div className="wd-src">{meta.note}</div>
+            {isEditing ? (
+              <>
+                <textarea
+                  className="wd-textarea"
+                  rows={Math.max(3, items.length + 1)}
+                  value={editing.text}
+                  aria-label={`${meta.title}: one question per line`}
+                  onChange={(e) => setEditing({ stage, text: e.target.value })}
+                />
+                {!items.length && data.mustHaves.length > 0 && !editing.text && (
+                  <button
+                    type="button"
+                    className="wd-btn quiet"
+                    onClick={() =>
+                      setEditing({
+                        stage,
+                        text: data.mustHaves
+                          .slice(0, meta.max)
+                          .map((m) => `Do you have ${m.replace(/\.$/, "").toLowerCase()}?`)
+                          .join("\n"),
+                      })
+                    }
+                  >
+                    Start from the must-haves
+                  </button>
+                )}
+                {(parsed?.problem || put.error) && (
+                  <p role="alert" className="wd-problem">
+                    {parsed?.problem ?? put.error}
+                  </p>
+                )}
+                <div className="wd-row-actions">
+                  <button
+                    type="button"
+                    className="wd-btn go"
+                    disabled={
+                      put.loading || !parsed || Boolean(parsed.problem) || !parsed.list.length
+                    }
+                    onClick={async () => {
+                      if (!parsed) return;
+                      const ok = await put.mutate({ stage, questions: parsed.list });
+                      if (ok) {
+                        onLog("you", `Saved ${parsed.list.length} screening questions`);
+                        setEditing(null);
+                        await q.refetch({ silent: true });
+                      }
+                    }}
+                  >
+                    {put.loading ? "Saving…" : "Save questions"}
+                  </button>
+                  <button type="button" className="wd-btn quiet" onClick={() => setEditing(null)}>
+                    Cancel
+                  </button>
+                </div>
+              </>
+            ) : (
+              <>
+                {items.length ? (
+                  <ol style={{ margin: 0, padding: 0, listStyle: "none" }}>
+                    {items.map((it) => (
+                      <li
+                        key={it.id}
+                        style={{
+                          padding: "10px 0",
+                          borderTop: "1px solid var(--wd-hair)",
+                          fontSize: 16,
+                          fontWeight: 300,
+                          lineHeight: 1.45,
+                        }}
+                      >
+                        {it.questionText}
+                      </li>
+                    ))}
+                  </ol>
+                ) : (
+                  <p className="wd-small wd-muted" style={{ margin: 0 }}>
+                    None yet.
+                  </p>
+                )}
+                <div>
+                  <button
+                    type="button"
+                    className="wd-btn quiet"
+                    disabled={!data.jdBaseReady}
+                    title={data.jdBaseReady ? undefined : "Set the ideal candidate first"}
+                    onClick={() =>
+                      setEditing({ stage, text: items.map((i) => i.questionText).join("\n") })
+                    }
+                  >
+                    {items.length ? "Edit questions" : "Add questions"}
+                  </button>
+                </div>
+              </>
+            )}
+          </div>
+        );
+      })}
+    </div>
+  );
+}
+
+interface HiringRequest {
+  title?: string | null;
+  status?: string | null;
+  department?: string | null;
+  headcount?: number | null;
+  urgency?: string | null;
+  must_haves?: string | null;
+  ideal_experience?: string | null;
+  location_city?: string | null;
+  budget_ctc_min?: number | null;
+  budget_ctc_max?: number | null;
+  target_joining_date?: string | null;
+  business_justification?: string | null;
+  submitted_at?: string | null;
+  created_at?: string | null;
+  on_hold_reason?: string | null;
+}
+
+interface ApprovalSnapshot {
+  instanceStatus: string | null;
+  awaitingRoles: string[];
+  issue: string | null;
+}
+
+const ROLE_NAMES: Record<string, string> = {
+  hiring_manager: "the hiring manager",
+  leadership: "leadership",
+  finance: "finance",
+  recruiter: "a recruiter",
+  super_admin: "an admin",
+};
+
+const lpa = (n?: number | null) => (n && n > 0 ? `${Math.round(n / 10_000) / 10} LPA` : null);
+const day = (iso?: string | null) =>
+  iso
+    ? new Date(iso).toLocaleDateString(undefined, {
+        day: "numeric",
+        month: "short",
+        year: "numeric",
+      })
+    : null;
+
+/** Where the request is, and who has it. Used by the job and by the waiting screen. */
+export function ApprovalTimeline({ requestId }: { requestId: string }) {
+  const q = useApiQuery<{ request: HiringRequest; approvalWorkflow: ApprovalSnapshot | null }>(
+    `/api/hiring-requests/${requestId}`,
+  );
+  if (q.loading && !q.data) return <p className="wd-muted">Loading the request…</p>;
+  if (q.error) return <p className="wd-problem">The request could not be loaded: {q.error}</p>;
+  const r = q.data?.request;
+  if (!r) return null;
+  const wf = q.data?.approvalWorkflow;
+  const status = (r.status ?? "").toLowerCase();
+  const approved = ["approved", "converted", "closed", "filled"].includes(status);
+  const waitingOn = (wf?.awaitingRoles ?? []).map((x) => ROLE_NAMES[x] ?? x.replace(/_/g, " "));
+
+  const steps: { label: string; when?: string | null; state: "done" | "now" | "next" }[] = [
+    { label: "Written", when: day(r.created_at), state: "done" },
+    {
+      label: "Sent for approval",
+      when: day(r.submitted_at),
+      state: r.submitted_at || approved ? "done" : "now",
+    },
+    {
+      label: approved
+        ? "Approved"
+        : status === "rejected"
+          ? "Rejected"
+          : waitingOn.length
+            ? `With ${waitingOn.join(" and ")}`
+            : "Being approved",
+      state: approved || status === "rejected" ? "done" : r.submitted_at ? "now" : "next",
+    },
+    { label: "Job set up", state: status === "converted" ? "done" : approved ? "now" : "next" },
+  ];
+
+  const facts: [string, string | null][] = [
+    ["Team", r.department ?? null],
+    ["People", r.headcount ? String(r.headcount) : null],
+    ["Where", r.location_city ?? null],
+    ["Experience", r.ideal_experience ?? null],
+    [
+      "Budget",
+      lpa(r.budget_ctc_min) && lpa(r.budget_ctc_max)
+        ? `${lpa(r.budget_ctc_min)} to ${lpa(r.budget_ctc_max)}`
+        : (lpa(r.budget_ctc_max) ?? lpa(r.budget_ctc_min)),
+    ],
+    ["Join by", day(r.target_joining_date)],
+    ["Urgency", r.urgency ?? null],
+  ];
+
+  return (
+    <div className="wd-split">
+      <ol className="wd-stack" style={{ gap: 0, listStyle: "none", margin: 0, padding: 0 }}>
+        {steps.map((s) => (
+          <li
+            key={s.label}
+            className="wd-line"
+            style={{ gridTemplateColumns: "14px minmax(0,1fr) auto", alignItems: "center" }}
+          >
+            <span
+              aria-hidden="true"
+              style={{
+                width: 8,
+                height: 8,
+                borderRadius: 99,
+                background:
+                  s.state === "done"
+                    ? "var(--wd-soft)"
+                    : s.state === "now"
+                      ? "var(--wd-amber)"
+                      : "var(--wd-hair)",
+              }}
+            />
+            <span
+              className="wd-line-value"
+              style={{ color: s.state === "next" ? "var(--wd-muted)" : undefined }}
+            >
+              {s.label}
+            </span>
+            <span className="wd-src">{s.when ?? ""}</span>
+          </li>
+        ))}
+        {(wf?.issue || r.on_hold_reason) && (
+          <li style={{ paddingTop: 14 }}>
+            <p className="wd-problem" style={{ margin: 0 }}>
+              {r.on_hold_reason ? `On hold: ${r.on_hold_reason}` : wf?.issue}
+            </p>
+          </li>
+        )}
+      </ol>
+      <div className="wd-lines">
+        {facts
+          .filter(([, v]) => v)
+          .map(([k, v]) => (
+            <div key={k} className="wd-line" style={{ gridTemplateColumns: "120px minmax(0,1fr)" }}>
+              <span className="wd-line-label">{k}</span>
+              <span className="wd-line-value">{v}</span>
+            </div>
+          ))}
+        {r.must_haves && (
+          <div className="wd-line" style={{ gridTemplateColumns: "120px minmax(0,1fr)" }}>
+            <span className="wd-line-label">Must-haves</span>
+            <span className="wd-line-value" style={{ whiteSpace: "pre-line" }}>
+              {r.must_haves}
+            </span>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
+
+/** Add people yourself: upload CVs, or share the apply link. */
+export function AddCandidates({
+  jobId,
+  title,
+  status,
+  onAdded,
+}: {
+  jobId: string;
+  title: string;
+  status?: string;
+  onAdded: () => void;
+}) {
+  const [open, setOpen] = useState(false);
+  const [copied, setCopied] = useState(false);
+  const job = useApiQuery<{ orgSlug?: string | null }>(`/api/jobs/${jobId}`);
+  const origin = typeof window !== "undefined" ? window.location.origin : "";
+  const applyUrl = job.data?.orgSlug ? `${origin}/apply/${job.data.orgSlug}?job=${jobId}` : null;
+
+  return (
+    <>
+      <CompanyBulkUploadModal
+        open={open}
+        onClose={() => {
+          setOpen(false);
+          onAdded();
+        }}
+        initialJobId={jobId}
+        jobsLoading={false}
+        jobs={[{ id: jobId, title, status }]}
+      />
+      <div className="wd-row-actions">
+        <button type="button" className="wd-btn" onClick={() => setOpen(true)}>
+          Upload CVs
+        </button>
+        {applyUrl && (
+          <button
+            type="button"
+            className="wd-btn quiet"
+            onClick={async () => {
+              try {
+                await navigator.clipboard.writeText(applyUrl);
+                setCopied(true);
+              } catch {
+                setCopied(false);
+              }
+            }}
+          >
+            {copied ? "Apply link copied" : "Copy the apply link"}
+          </button>
+        )}
+      </div>
+    </>
+  );
+}

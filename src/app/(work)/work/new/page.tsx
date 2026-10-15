@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { ApprovalTimeline } from "@/components/work/editors";
 import { Suspense, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { invalidateQueries, useApiMutation, useApiQuery } from "@/lib/hooks/use-api";
@@ -128,6 +129,7 @@ function Waiting({ requestId }: { requestId: string }) {
                 : "They get it by email and WhatsApp. When they approve, the job is created and comes back to you here."}
           </p>
         </header>
+        <ApprovalTimeline requestId={requestId} />
         <div className="wd-row-actions">
           {jobId ? (
             <Link href={`/work/jobs/${jobId}`} className="wd-btn go" autoFocus>

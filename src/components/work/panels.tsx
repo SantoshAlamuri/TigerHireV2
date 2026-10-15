@@ -3,10 +3,16 @@
 import Link from "next/link";
 import { useMemo, useState } from "react";
 import { useApiMutation, useApiQuery } from "@/lib/hooks/use-api";
-import { JdBaseSetupStep } from "@/app/(dashboard)/recruit/jobs/[id]/components/JdBaseSetupStep";
-import RecruitV2ReviewPage from "@/app/(dashboard)/recruit/v2/jobs/[id]/review/page";
-import RecruitV2InterviewsPage from "@/app/(dashboard)/recruit/v2/jobs/[id]/interviews/page";
-import RecruitV2OffersPage from "@/app/(dashboard)/recruit/v2/jobs/[id]/offers/page";
+import {
+  AddCandidates,
+  ApprovalTimeline,
+  MustHavesEditor,
+  ScreeningEditor,
+  ShortlistBar,
+} from "@/components/work/editors";
+import type { IdealCandidateProfile } from "@/lib/work/icp";
+import { ReviewBlock } from "@/components/work/review/ReviewBlock";
+import { InterviewsBlock } from "@/components/work/interviews/InterviewsBlock";
 import type { JourneyFacts } from "@/lib/work/journey";
 import type { WorkJob } from "@/lib/work/use-job-journey";
 import {
@@ -48,21 +54,9 @@ function Problem({ children }: { children: React.ReactNode }) {
 }
 
 export function RequestPanel({ facts }: PanelProps) {
-  return (
-    <div className="wd-stack" style={{ gap: 28 }}>
-      <p className="wd-lede">
-        This job came from a hiring request. Its status is{" "}
-        <span style={{ color: "var(--wd-ink)" }}>{facts.hiringRequestStatus ?? "unknown"}</span>.
-      </p>
-      {facts.hiringRequestId && (
-        <div className="wd-row-actions">
-          <Link className="wd-btn" href={`/recruit/hiring-requests/${facts.hiringRequestId}`}>
-            Open the request
-          </Link>
-        </div>
-      )}
-    </div>
-  );
+  if (!facts.hiringRequestId)
+    return <p className="wd-lede">This job was set up directly, without a hiring request.</p>;
+  return <ApprovalTimeline requestId={facts.hiringRequestId} />;
 }
 
 /**
@@ -164,10 +158,9 @@ interface JdBasePayload {
   jdBase?: {
     weights?: Record<string, number> | null;
     approvedBy?: string | null;
-    idealCandidateProfile?: {
-      must_haves?: string[] | null;
-      nice_to_haves?: string[] | null;
-    } | null;
+    roleTitle?: string | null;
+    scoreFloor?: number | null;
+    idealCandidateProfile?: Partial<IdealCandidateProfile> | null;
   } | null;
 }
 
@@ -176,7 +169,7 @@ interface JdBasePayload {
  * matters; you nudge the weights until they add up to 100, then approve.
  * Must-haves stay editable through the detailed setup underneath.
  */
-export function RubricPanel({ jobId, onDone, onLog }: PanelProps) {
+export function RubricPanel({ jobId, job, onDone, onLog }: PanelProps) {
   const base = useApiQuery<JdBasePayload>("/api/fitscore/jd-base", { jobId });
   const build = useApiMutation<{ jobId: string }, unknown>("/api/fitscore/jd-base", "POST");
   const put = useApiMutation<{ jobId: string; weights: Record<string, number> }, unknown>(
@@ -321,7 +314,7 @@ export function RubricPanel({ jobId, onDone, onLog }: PanelProps) {
               ))}
             </ul>
           ) : (
-            <p className="wd-small wd-muted">No must-haves yet. Add them below.</p>
+            <p className="wd-small wd-muted">No must-haves yet. Add them to score fairly.</p>
           )}
           <button
             type="button"
@@ -330,7 +323,7 @@ export function RubricPanel({ jobId, onDone, onLog }: PanelProps) {
             onClick={() => setDetails((d) => !d)}
             aria-expanded={details}
           >
-            {details ? "Hide must-haves editor" : "Edit must-haves"}
+            {details ? "Close the editor" : "Edit the ideal candidate"}
           </button>
         </div>
       </div>
@@ -369,18 +362,27 @@ export function RubricPanel({ jobId, onDone, onLog }: PanelProps) {
       </div>
 
       {details && (
-        <div className="wd-embed">
-          <JdBaseSetupStep
+        <div className="wd-panel">
+          <MustHavesEditor
             jobId={jobId}
-            guidedStep={1}
-            onRequirementsSaved={() => {
-              onLog("you", "Saved the must-haves");
+            profile={doc.idealCandidateProfile ?? null}
+            roleTitle={doc.roleTitle ?? job.title ?? ""}
+            onLog={onLog}
+            onCancel={() => setDetails(false)}
+            onSaved={() => {
               void base.refetch({ silent: true });
               setDetails(false);
             }}
           />
         </div>
       )}
+
+      <ShortlistBar
+        jobId={jobId}
+        floor={doc.scoreFloor ?? 0}
+        onLog={onLog}
+        onSaved={() => void base.refetch({ silent: true })}
+      />
     </div>
   );
 }
@@ -389,14 +391,10 @@ export function RubricPanel({ jobId, onDone, onLog }: PanelProps) {
 export function PublishPanel({ jobId, job, facts, onDone, onLog }: PanelProps) {
   const [careers, setCareers] = useState(job.list_on_public_job_board ?? true);
   const [referrals, setReferrals] = useState(job.list_for_internal_referrals ?? true);
-  const screening = useApiQuery<{ applyQuestions?: { id: string; questionText: string }[] }>(
-    `/api/jobs/${jobId}/whatsapp-screening`,
-  );
   const patch = useApiMutation<
     { status?: "open"; listOnPublicJobBoard?: boolean; listForInternalReferrals?: boolean },
     { job: WorkJob }
   >(`/api/jobs/${jobId}`, "PATCH");
-  const questions = screening.data?.applyQuestions ?? [];
   const live = facts.roleOpen;
 
   async function setChannel(which: "careers" | "referrals", on: boolean) {
@@ -465,36 +463,10 @@ export function PublishPanel({ jobId, job, facts, onDone, onLog }: PanelProps) {
           </div>
         </div>
         <div className="wd-panel">
-          <span className="wd-sig auto">Automation asks every applicant</span>
-          {questions.length ? (
-            <ol style={{ margin: "14px 0 0", padding: 0, listStyle: "none" }}>
-              {questions.map((q) => (
-                <li
-                  key={q.id}
-                  style={{
-                    padding: "12px 0",
-                    borderTop: "1px solid var(--wd-hair)",
-                    fontSize: 16,
-                    fontWeight: 300,
-                    lineHeight: 1.45,
-                  }}
-                >
-                  {q.questionText}
-                </li>
-              ))}
-            </ol>
-          ) : (
-            <p className="wd-small wd-muted" style={{ marginBottom: 0 }}>
-              No screening questions yet. Applicants go straight to scoring.
-            </p>
-          )}
-          <Link
-            href={`/recruit/jobs/${jobId}/screening`}
-            className="wd-btn quiet"
-            style={{ marginTop: 8 }}
-          >
-            {questions.length ? "Edit questions" : "Add questions"}
-          </Link>
+          <span className="wd-sig auto">Automation asks on WhatsApp</span>
+          <div style={{ marginTop: 16 }}>
+            <ScreeningEditor jobId={jobId} onLog={onLog} />
+          </div>
         </div>
       </div>
 
@@ -533,7 +505,7 @@ export function PublishPanel({ jobId, job, facts, onDone, onLog }: PanelProps) {
   );
 }
 
-export function ApplicationsPanel({ jobId, facts }: PanelProps) {
+export function ApplicationsPanel({ jobId, job, facts, onLog }: PanelProps) {
   return (
     <div className="wd-stack" style={{ gap: 36 }}>
       <Numbers
@@ -548,11 +520,12 @@ export function ApplicationsPanel({ jobId, facts }: PanelProps) {
           ? "Applications arrive from every channel and go straight to scoring. Nothing to do unless you want to add someone yourself."
           : "Live and collecting. When applications arrive, the agent scores them and the ones that need you come back here."}
       </p>
-      <div className="wd-row-actions">
-        <Link className="wd-btn" href={`/recruit/v2/jobs/${jobId}/add`}>
-          Add candidates yourself
-        </Link>
-      </div>
+      <AddCandidates
+        jobId={jobId}
+        title={job.title ?? "This job"}
+        status={job.status ?? undefined}
+        onAdded={() => onLog("you", "Added candidates")}
+      />
     </div>
   );
 }
@@ -599,25 +572,20 @@ export function ScoringPanel({ facts, goTo }: PanelProps) {
   );
 }
 
-/** Review, interviews and offers reuse the classic screens inside the new frame for now. */
-export function ReviewPanel() {
-  return (
-    <div className="wd-embed">
-      <RecruitV2ReviewPage />
-    </div>
-  );
+export function ReviewPanel(props: PanelProps) {
+  return <ReviewBlock {...props} />;
 }
-export function InterviewsPanel() {
-  return (
-    <div className="wd-embed">
-      <RecruitV2InterviewsPage />
-    </div>
-  );
+export function InterviewsPanel(props: PanelProps) {
+  return <InterviewsBlock {...props} />;
 }
+/** Offers are parked for now: say so plainly instead of showing the old screen. */
 export function OfferPanel() {
   return (
-    <div className="wd-embed">
-      <RecruitV2OffersPage />
+    <div className="wd-stack" style={{ gap: 12 }}>
+      <p className="wd-lede">Offers aren&apos;t in the new view yet.</p>
+      <p className="wd-muted" style={{ margin: 0 }}>
+        Interviews and decisions above are where this job needs you for now.
+      </p>
     </div>
   );
 }

@@ -1,0 +1,193 @@
+/* Interviews block — built only from the --wd-* tokens in work.css. */
+
+.section {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.sectionHead {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.count {
+  font-size: 13.5px;
+  color: var(--wd-muted);
+  font-variant-numeric: tabular-nums;
+}
+
+/* A row: who, the detail under it, and actions on the right (stacked on phones). */
+.row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 8px 24px;
+  align-items: center;
+  padding: 18px 0;
+  border-top: 1px solid var(--wd-hair);
+}
+@media (max-width: 700px) {
+  .row {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+.who {
+  font-size: 19px;
+  font-weight: 400;
+  line-height: 1.35;
+  overflow-wrap: anywhere;
+}
+.meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 14px;
+  margin-top: 4px;
+  font-size: 13.5px;
+  color: var(--wd-faint);
+}
+.meta b {
+  font-weight: 400;
+  color: var(--wd-soft);
+}
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  align-items: center;
+  justify-content: flex-end;
+}
+@media (max-width: 700px) {
+  .actions {
+    justify-content: flex-start;
+  }
+}
+.list {
+  display: flex;
+  flex-direction: column;
+  border-bottom: 1px solid var(--wd-hair);
+}
+
+/* Inline work that opens under a row (slot picker, scorecard, interviewer ask). */
+.drawer {
+  grid-column: 1 / -1;
+  margin-top: 10px;
+  padding: 20px 22px;
+  border-radius: 20px;
+  background: var(--wd-panel);
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  min-width: 0;
+}
+.drawerYou {
+  background: var(--wd-amber-soft);
+}
+
+.slots {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+.slot {
+  min-height: 44px;
+  padding: 0 16px;
+  border-radius: 999px;
+  border: 1px solid var(--wd-hair-strong);
+  background: transparent;
+  color: var(--wd-ink);
+  font: inherit;
+  font-size: 14.5px;
+  cursor: pointer;
+  font-variant-numeric: tabular-nums;
+}
+.slot:hover {
+  border-color: var(--wd-ink);
+}
+.slot[aria-checked="true"] {
+  border-color: var(--wd-amber);
+  background: var(--wd-amber-soft);
+  color: var(--wd-amber);
+}
+.slot small {
+  color: var(--wd-faint);
+  margin-left: 6px;
+}
+
+.fieldGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.fieldLabel {
+  font-size: 15px;
+  color: var(--wd-ink);
+}
+.fieldHint {
+  font-size: 13.5px;
+  color: var(--wd-faint);
+  margin: 0;
+}
+.required {
+  color: var(--wd-amber);
+  margin-left: 4px;
+}
+.evidence {
+  margin: 0;
+  padding-left: 12px;
+  border-left: 2px solid var(--wd-agent);
+  font-size: 13.5px;
+  color: var(--wd-soft);
+}
+.evidence span {
+  color: var(--wd-agent);
+  margin-right: 6px;
+}
+.select {
+  min-height: 44px;
+  border: 0;
+  border-bottom: 1px solid var(--wd-hair-strong);
+  background: transparent;
+  color: var(--wd-ink);
+  font: inherit;
+  font-size: 16px;
+  padding: 6px 0;
+  border-radius: 0;
+}
+.select:focus {
+  outline: none;
+  border-bottom-color: var(--wd-amber);
+}
+.select option {
+  background: var(--wd-panel);
+  color: var(--wd-ink);
+}
+.twoCols {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: 16px;
+}
+@media (max-width: 700px) {
+  .twoCols {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+.notice {
+  margin: 0;
+  font-size: 14px;
+  color: var(--wd-soft);
+}
+.ok {
+  margin: 0;
+  font-size: 14px;
+  color: var(--wd-good);
+}
+.tabs {
+  display: flex;
+  gap: 18px;
+}

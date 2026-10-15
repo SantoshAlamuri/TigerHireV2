@@ -21,7 +21,7 @@ Who uses it:
 3. Agent proposes, you decide. Suggestions are pre-filled, never final.
 4. Always show who holds the work: `wd-sig you` (amber), `wd-sig agent` (blue), `wd-sig auto` (stone).
 5. No dead ends. Finishing anything says what is next (call `onDone`).
-6. Never drop a backend capability. If you don't redesign something, link to the classic screen.
+6. Never drop a backend capability, and never embed or link a classic screen: one way. If a capability is not redesigned yet, say so plainly in the panel.
 
 ## Look (already built — reuse, don't reinvent)
 

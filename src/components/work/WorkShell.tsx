@@ -173,10 +173,6 @@ function Sidebar() {
           <span aria-hidden="true" />
           <span className="wd-qtitle">Setup</span>
         </Link>
-        <Link href="/recruit/jobs" className="wd-qitem">
-          <span aria-hidden="true" />
-          <span className="wd-qtitle wd-muted">Classic view</span>
-        </Link>
       </nav>
     </aside>
   );
@@ -186,6 +182,28 @@ function Sidebar() {
  * The work-driven shell: your queue on the left, the work item on the right.
  * No menus — the work decides which screen you see. Setup sits in one place.
  */
+/** Hiring managers get no queue: their page is the queue. */
+function HmSidebar() {
+  const { user } = useAuth();
+  return (
+    <aside className="wd-side" aria-label="Your work">
+      <div>
+        <Link href="/work/hm" className="wd-brand">
+          tigerhire
+          <i aria-hidden="true" />
+        </Link>
+        <div className="wd-org">{user?.organisationName ?? "Your decisions"}</div>
+      </div>
+      <nav aria-label="Your work" style={{ display: "flex", flexDirection: "column", gap: 2 }}>
+        <Link href="/work/hm" className="wd-qitem" aria-current="page">
+          <span aria-hidden="true" />
+          <span className="wd-qtitle">Your decisions</span>
+        </Link>
+      </nav>
+    </aside>
+  );
+}
+
 export function WorkShell({ children }: { children: React.ReactNode }) {
   const { user, loading } = useAuth();
   const router = useRouter();
@@ -207,7 +225,7 @@ export function WorkShell({ children }: { children: React.ReactNode }) {
         </p>
       ) : (
         <div className="wd-shell">
-          <Sidebar />
+          {user?.role === "hiring_manager" ? <HmSidebar /> : <Sidebar />}
           <main className="wd-main" id="main">
             {children}
           </main>
