@@ -93,8 +93,51 @@ export function ReviewBlock(props: PanelProps) {
 }
 
 function ReviewWork({ jobId, onDone, onLog, userId }: PanelProps & { userId: string }) {
-  const { data, loading, error, refetch, mustHaves, scoresByCandidate, requirementsUnavailable } =
-    useReviewData(jobId);
+  const {
+    data: applied,
+    loading,
+    error,
+    refetch: refetchApplied,
+    mustHaves,
+    scoresByCandidate: appliedScores,
+    requirementsUnavailable,
+  } = useReviewData(jobId);
+  // "Viewed" applicants still await a decision (the job's counts include
+  // them), but the shared review query only asks for "applied". Ask for both
+  // so nobody counted as waiting is missing from the list.
+  const viewed = useApiQuery<NonNullable<typeof applied>>("/api/applications", {
+    jobId,
+    status: "viewed",
+    limit: 100,
+    fields: "review",
+    order: "score",
+  });
+  const data = useMemo(() => {
+    if (!applied) return applied;
+    const extra = viewed.data?.applications ?? [];
+    if (!extra.length) return applied;
+    return {
+      ...applied,
+      applications: [...applied.applications, ...extra],
+      pagination: {
+        ...applied.pagination,
+        total: (applied.pagination?.total ?? applied.applications.length) + extra.length,
+      },
+    };
+  }, [applied, viewed.data]);
+  const scoresByCandidate = useMemo(() => {
+    const m = new Map(appliedScores);
+    for (const row of viewed.data?.applications ?? []) {
+      if (row.fit_scores && !m.has(row.candidate_id))
+        m.set(row.candidate_id, { ...row.fit_scores, candidate_id: row.candidate_id });
+    }
+    return m;
+  }, [appliedScores, viewed.data]);
+  const { refetch: refetchViewed } = viewed;
+  const refetch = useCallback(
+    () => Promise.all([refetchApplied(), refetchViewed()]),
+    [refetchApplied, refetchViewed],
+  );
   // Same key as useReviewData's rubric query, so this is served from cache.
   const base = useApiQuery<JdBaseView>(
     "/api/fitscore/jd-base",
