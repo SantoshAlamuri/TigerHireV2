@@ -108,11 +108,11 @@ export function TriageList({
                     </label>
 
                     <button type="button" className={s.open} onClick={() => onOpen(it.id)}>
-                      <span className={s.who}>
+                      <span className={s.rowWho}>
                         <span className={s.name}>{it.name}</span>
                         {line && <span className={s.sub}>{line}</span>}
                       </span>
-                      <span className={s.why}>
+                      <span className={s.rowWhy}>
                         {it.plus && <span className={s.plus}>{it.plus}</span>}
                         {it.minus && <span className={s.minus}>{it.minus}</span>}
                         {!it.plus && !it.minus && (

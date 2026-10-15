@@ -167,8 +167,8 @@
   text-align: left;
   cursor: pointer;
 }
-.who,
-.why {
+.rowWho,
+.rowWhy {
   display: flex;
   flex-direction: column;
   gap: 3px;
