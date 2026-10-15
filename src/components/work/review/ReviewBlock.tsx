@@ -211,14 +211,15 @@ function ReviewWork({ jobId, onDone, onLog, userId }: PanelProps & { userId: str
   );
 
   const actBulk = useCallback(
-    async (d: Decision, reason?: string) => {
+    async (d: Decision, reason?: string, only?: string[]) => {
       if (lock.current) return;
+      const pool = only ?? q.selected;
       try {
-        bulkDecide(q, d, reason);
+        bulkDecide({ ...q, selected: pool }, d, reason);
       } catch {
         return;
       }
-      const ids = q.selected.filter((id) => !q.decisions.some((r) => r.id === id));
+      const ids = pool.filter((id) => !q.decisions.some((r) => r.id === id));
       if (!ids.length) return;
       lock.current = true;
       setSaving(true);
@@ -336,10 +337,18 @@ function ReviewWork({ jobId, onDone, onLog, userId }: PanelProps & { userId: str
       groupForTriage<TriageRow>(
         q.items.map((it) => {
           const r = rowsById.get(it.id);
+          const fs = r ? scoresByCandidate.get(r.candidate_id) : undefined;
+          const firstFlag = (xs?: (string | null)[] | null) =>
+            (xs ?? []).find((x): x is string => Boolean(x && x.trim())) ?? null;
           return {
             ...it,
             location: r?.candidates?.location ?? null,
-            scoringMethod: r ? scoresByCandidate.get(r.candidate_id)?.scoring_method : null,
+            years: r?.candidates?.experience_years ?? null,
+            noticeDays: r?.notice_period_days ?? null,
+            ctcLpa: r?.expected_ctc_lpa ?? null,
+            plus: firstFlag(fs?.green_flags),
+            minus: firstFlag(fs?.red_flags) ?? firstFlag(fs?.amber_flags),
+            scoringMethod: fs?.scoring_method ?? null,
           };
         }),
         decidedIds,
@@ -566,6 +575,12 @@ function ReviewWork({ jobId, onDone, onLog, userId }: PanelProps & { userId: str
             }}
             onToggle={(id) => {
               if (!saving) setQ((p) => toggleSelect(p, id));
+            }}
+            onQuick={(id, d) => {
+              if (d === "reject") {
+                setQ((p) => ({ ...p, selected: [id] }));
+                setAsking("bulk");
+              } else void actBulk(d, undefined, [id]);
             }}
             onSelectGroup={(ids, on) =>
               setQ((p) => ({
