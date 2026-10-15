@@ -73,7 +73,7 @@ export function adminSteps(f: AdminFacts): SetupStep[] {
       why: "Interviews book themselves into your real free time.",
       done: f.calendarConnected,
       doneLine: "Calendar connected",
-      links: [{ name: "Connect Google or Microsoft", href: "/recruit/settings/integrations" }],
+      links: [{ name: "Connect Google or Microsoft", href: "/work/setup/calendar?from=welcome" }],
     },
     {
       key: "team",
@@ -81,7 +81,7 @@ export function adminSteps(f: AdminFacts): SetupStep[] {
       why: "Recruiters run jobs. Hiring managers only see the decisions that are theirs.",
       done: invited > 0,
       doneLine: invited === 1 ? "1 person invited" : `${invited} people invited`,
-      links: [{ name: "Invite people", href: "/company/team" }],
+      links: [{ name: "Invite people", href: "/work/setup/team?from=welcome" }],
     },
     {
       key: "process",
@@ -89,11 +89,7 @@ export function adminSteps(f: AdminFacts): SetupStep[] {
       why: "Interview stages, and who approves new roles and offers. The defaults work; change them only if yours differ.",
       done: f.processReviewed,
       doneLine: "Hiring process checked",
-      links: [
-        { name: "Interview stages", href: "/recruit/settings/pipeline" },
-        { name: "Who approves new roles", href: "/recruit/settings/requisition-approval-workflow" },
-        { name: "Who approves offers", href: "/recruit/settings/offer-approval-workflow" },
-      ],
+      links: [{ name: "See stages and approvals", href: "/work/setup/process?from=welcome" }],
     },
     {
       key: "job",

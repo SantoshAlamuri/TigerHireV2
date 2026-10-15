@@ -13,12 +13,12 @@ describe("setup sections", () => {
 
   it("hides org-wide settings from a recruiter who is not an org admin", () => {
     const links = hrefs(setupFor("recruiter", false));
-    expect(links).toContain("/recruit/my-availability");
-    expect(links).not.toContain("/company/team");
+    expect(links).toContain("/work/setup/availability");
+    expect(links).not.toContain("/work/setup/team");
   });
 
   it("shows org-wide settings to an org admin with a leadership role", () => {
-    expect(hrefs(setupFor("leadership", true))).toContain("/company/team");
+    expect(hrefs(setupFor("leadership", true))).toContain("/work/setup/team");
   });
 
   it("drops sections that end up empty", () => {

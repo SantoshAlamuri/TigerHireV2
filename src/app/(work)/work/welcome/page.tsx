@@ -331,7 +331,7 @@ function Welcome({ kind, preview }: { kind: Exclude<OnboardingKind, "admin">; pr
                 type="button"
                 className="wd-btn go"
                 autoFocus
-                onClick={() => void finish("/recruit/my-availability")}
+                onClick={() => void finish("/work/setup/availability")}
               >
                 Set my availability
               </button>

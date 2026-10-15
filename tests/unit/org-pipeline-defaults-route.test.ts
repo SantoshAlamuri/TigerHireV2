@@ -233,4 +233,62 @@ describe("POST /api/org/pipeline-defaults", () => {
     const res = await POST(req);
     expect(res.status).toBe(200);
   });
+  it("lets a locked end stage move down when a stage is added above it", async () => {
+    mockGetAuthContext.mockResolvedValue({ ...companyAdminCtx, isOrgAdmin: true });
+    const stageId = "00000000-0000-4000-8000-000000000002";
+    mockSupabaseAdmin
+      .from()
+      .select()
+      .eq()
+      .eq()
+      .maybeSingle.mockResolvedValue({
+        data: { is_locked: true, stage_name: "Hired", stage_order: 8 },
+        error: null,
+      });
+    mockSupabaseAdmin
+      .from()
+      .update()
+      .eq()
+      .eq()
+      .select()
+      .single.mockResolvedValue({
+        data: { id: stageId, stage_name: "Hired", stage_order: 9 },
+        error: null,
+      });
+
+    const { POST } = await import("@/app/api/org/pipeline-defaults/route");
+    const req = new NextRequest("http://localhost:3000/api/org/pipeline-defaults", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ stages: [{ id: stageId, stage_name: "Hired", stage_order: 9 }] }),
+    });
+    expect((await POST(req)).status).toBe(200);
+  });
+
+  it("still refuses to rename a locked stage or move Applied", async () => {
+    mockGetAuthContext.mockResolvedValue({ ...companyAdminCtx, isOrgAdmin: true });
+    const stageId = "00000000-0000-4000-8000-000000000003";
+    mockSupabaseAdmin
+      .from()
+      .select()
+      .eq()
+      .eq()
+      .maybeSingle.mockResolvedValue({
+        data: { is_locked: true, stage_name: "Applied", stage_order: 0 },
+        error: null,
+      });
+    const { POST } = await import("@/app/api/org/pipeline-defaults/route");
+    const moved = new NextRequest("http://localhost:3000/api/org/pipeline-defaults", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ stages: [{ id: stageId, stage_name: "Applied", stage_order: 3 }] }),
+    });
+    expect((await POST(moved)).status).toBe(403);
+    const renamed = new NextRequest("http://localhost:3000/api/org/pipeline-defaults", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ stages: [{ id: stageId, stage_name: "New", stage_order: 0 }] }),
+    });
+    expect((await POST(renamed)).status).toBe(403);
+  });
 });

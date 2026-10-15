@@ -15,6 +15,8 @@ export interface SetupLink {
   name: string;
   note: string;
   href: string;
+  /** Org-wide setting: only org admins see it. */
+  adminOnly?: boolean;
 }
 
 export interface SetupSection {
@@ -30,13 +32,9 @@ export const SETUP_SECTIONS: SetupSection[] = [
     title: "Calendars and availability",
     why: "So interviews can be booked without back-and-forth.",
     links: [
-      { name: "My availability", note: "When you can interview", href: "/recruit/my-availability" },
+      { name: "My availability", note: "When you can interview", href: "/work/setup/availability" },
       { name: "Team calendar", note: "Everyone's interviews in one view", href: "/calendar" },
-      {
-        name: "Calendar and email connections",
-        note: "Google or Microsoft",
-        href: "/recruit/settings/integrations",
-      },
+      { name: "Your calendar", note: "Google or Microsoft", href: "/work/setup/calendar" },
     ],
   },
   {
@@ -45,19 +43,9 @@ export const SETUP_SECTIONS: SetupSection[] = [
     why: "The stages every job moves through, and who approves what.",
     links: [
       {
-        name: "Interview stages",
-        note: "The default pipeline for new jobs",
-        href: "/recruit/settings/pipeline",
-      },
-      {
-        name: "Request approvals",
-        note: "Who signs off a new role",
-        href: "/recruit/settings/requisition-approval-workflow",
-      },
-      {
-        name: "Offer approvals",
-        note: "Who signs off an offer",
-        href: "/recruit/settings/offer-approval-workflow",
+        name: "Stages and approvals",
+        note: "The stages new jobs start with, and who signs off roles and offers",
+        href: "/work/setup/process",
       },
       {
         name: "Approval cover",
@@ -137,7 +125,12 @@ export const SETUP_SECTIONS: SetupSection[] = [
     title: "Team and sharing",
     why: "Who can see and do what.",
     links: [
-      { name: "Team", note: "Invite people and set their roles", href: "/company/team" },
+      {
+        name: "Team",
+        note: "Invite people and choose what they do",
+        href: "/work/setup/team",
+        adminOnly: true,
+      },
       { name: "Permissions", note: "What each role can do", href: "/company/settings/permissions" },
     ],
   },
@@ -148,6 +141,7 @@ export function setupFor(role: UserRole, isOrgAdmin: boolean): SetupSection[] {
   return SETUP_SECTIONS.map((s) => ({
     ...s,
     links: s.links.filter((l) => {
+      if (l.adminOnly && !isOrgAdmin && role !== "super_admin") return false;
       const rule = resolveDashboardRouteAccessRule(l.href);
       if (rule && !rule.roles.includes(role)) return false;
       return !shouldRedirectNonOrgAdminFromOrgConfigPath(l.href, isOrgAdmin, role);
