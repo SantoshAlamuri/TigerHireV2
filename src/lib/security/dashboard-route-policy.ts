@@ -253,6 +253,11 @@ export const DASHBOARD_ROUTE_ACCESS_RULES: ReadonlyArray<{
   /** Work-driven UI: the same recruiting work, reached through the work item. */
   { prefix: "/work", roles: ["recruiter", "leadership", "super_admin"] },
   { prefix: "/work/hm", roles: ["hiring_manager", "leadership", "super_admin"] },
+  /** Reports: hiring managers see figures scoped to the jobs they own. */
+  {
+    prefix: "/work/reports",
+    roles: ["recruiter", "hiring_manager", "leadership", "super_admin"],
+  },
   /** Onboarding: everyone who uses the work-driven UI, hiring managers included. */
   {
     prefix: "/work/welcome",

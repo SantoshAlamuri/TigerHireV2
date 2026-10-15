@@ -1248,3 +1248,138 @@
     grid-template-columns: minmax(0, 1fr);
   }
 }
+
+/* ---------- reports ---------- */
+.wd-chip {
+  display: inline-flex;
+  align-items: center;
+  min-height: 36px;
+  padding: 0 14px;
+  border-radius: 999px;
+  border: 1px solid var(--wd-hair-strong);
+  background: transparent;
+  color: var(--wd-soft);
+  font: inherit;
+  font-size: 14px;
+  text-decoration: none;
+  cursor: pointer;
+}
+.wd-chip:hover {
+  border-color: rgba(244, 241, 234, 0.45);
+  color: var(--wd-ink);
+}
+.wd-chip.on {
+  border-color: var(--wd-amber);
+  background: var(--wd-amber-soft);
+  color: var(--wd-amber);
+}
+.wd-home-numbers dd small,
+.wd-bar-value small {
+  font-size: 14px;
+  color: var(--wd-muted);
+  letter-spacing: 0;
+}
+.wd-home-numbers:has(.wd-number:nth-child(5)) {
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+}
+@media (max-width: 900px) {
+  .wd-home-numbers:has(.wd-number:nth-child(5)) {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+.wd-bars {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  border-top: 1px solid var(--wd-hair);
+  padding-top: 16px;
+}
+.wd-bars li {
+  display: grid;
+  grid-template-columns: minmax(90px, 150px) minmax(0, 1fr) minmax(70px, auto);
+  gap: 14px;
+  align-items: center;
+}
+.wd-bar-name {
+  font-size: 14.5px;
+  color: var(--wd-soft);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.wd-bar-track {
+  height: 10px;
+  border-radius: 999px;
+  background: var(--wd-auto-soft);
+  overflow: hidden;
+}
+.wd-bar-fill {
+  display: block;
+  height: 100%;
+  border-radius: 999px;
+  background: rgba(244, 241, 234, 0.55);
+  transition: width 0.5s var(--wd-ease);
+}
+.wd-bar-fill.go {
+  background: var(--wd-amber);
+}
+.wd-bar-fill.agent {
+  background: var(--wd-agent);
+}
+.wd-bar-fill.bad {
+  background: var(--wd-bad);
+}
+.wd-bar-value {
+  font-size: 15px;
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+.wd-table-wrap {
+  overflow-x: auto;
+  border-top: 1px solid var(--wd-hair);
+}
+.wd-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 15px;
+  font-variant-numeric: tabular-nums;
+}
+.wd-table th,
+.wd-table td {
+  padding: 13px 12px;
+  border-bottom: 1px solid var(--wd-hair);
+  text-align: right;
+  white-space: nowrap;
+}
+.wd-table thead th {
+  font-size: 13px;
+  font-weight: 400;
+  color: var(--wd-muted);
+}
+.wd-table th:first-child {
+  text-align: left;
+  font-weight: 400;
+  padding-left: 0;
+  white-space: normal;
+}
+.wd-table tbody tr:hover {
+  background: var(--wd-panel);
+}
+.wd-table a {
+  color: var(--wd-ink);
+  text-decoration: none;
+}
+.wd-table a:hover {
+  color: var(--wd-amber);
+}
+.wd-table td.you {
+  color: var(--wd-amber);
+}
+.wd-flag {
+  margin-left: 10px;
+  font-size: 12px;
+  color: var(--wd-bad);
+}

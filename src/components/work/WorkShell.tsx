@@ -135,6 +135,22 @@ function Sidebar() {
         {!loading && needCount > 0 && <span className="wd-rail-count">{needCount}</span>}
       </Link>
       <Link
+        href="/work/reports"
+        className="wd-rail-btn"
+        aria-label="Reports"
+        aria-current={pathname.startsWith("/work/reports") ? "page" : undefined}
+        title="Reports"
+      >
+        <svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true">
+          <path
+            d="M3 13V8M8 13V3M13 13v-7"
+            stroke="currentColor"
+            strokeWidth="1.8"
+            strokeLinecap="round"
+          />
+        </svg>
+      </Link>
+      <Link
         href="/work/setup"
         className="wd-rail-btn"
         style={{ marginTop: "auto" }}
@@ -241,6 +257,14 @@ function Sidebar() {
         style={{ marginTop: "auto", display: "flex", flexDirection: "column", gap: 2 }}
       >
         <Link
+          href="/work/reports"
+          className="wd-qitem"
+          aria-current={pathname.startsWith("/work/reports") ? "page" : undefined}
+        >
+          <span aria-hidden="true" />
+          <span className="wd-qtitle">Reports</span>
+        </Link>
+        <Link
           href="/work/setup"
           className="wd-qitem"
           aria-current={pathname.startsWith("/work/setup") ? "page" : undefined}
@@ -259,11 +283,17 @@ function Sidebar() {
  */
 /** Hiring managers get no queue: their page is the queue. */
 function HmSidebar() {
+  const pathname = usePathname();
   const { user } = useAuth();
   const rail = (
     <>
       <Brand href="/work/hm" compact />
-      <Link href="/work/hm" className="wd-rail-btn" aria-label="Your decisions" aria-current="page">
+      <Link
+        href="/work/hm"
+        className="wd-rail-btn"
+        aria-label="Your decisions"
+        aria-current={pathname.startsWith("/work/hm") ? "page" : undefined}
+      >
         <svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true">
           <path
             d="M3 8.5l3 3 7-7"
@@ -272,6 +302,22 @@ function HmSidebar() {
             strokeWidth="1.6"
             strokeLinecap="round"
             strokeLinejoin="round"
+          />
+        </svg>
+      </Link>
+      <Link
+        href="/work/reports"
+        className="wd-rail-btn"
+        aria-label="Reports"
+        title="Reports"
+        aria-current={pathname.startsWith("/work/reports") ? "page" : undefined}
+      >
+        <svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true">
+          <path
+            d="M3 13V8M8 13V3M13 13v-7"
+            stroke="currentColor"
+            strokeWidth="1.8"
+            strokeLinecap="round"
           />
         </svg>
       </Link>
@@ -284,9 +330,21 @@ function HmSidebar() {
         <div className="wd-org">{user?.organisationName ?? "Your decisions"}</div>
       </div>
       <nav aria-label="Your work" style={{ display: "flex", flexDirection: "column", gap: 2 }}>
-        <Link href="/work/hm" className="wd-qitem" aria-current="page">
+        <Link
+          href="/work/hm"
+          className="wd-qitem"
+          aria-current={pathname.startsWith("/work/hm") ? "page" : undefined}
+        >
           <span aria-hidden="true" />
           <span className="wd-qtitle">Your decisions</span>
+        </Link>
+        <Link
+          href="/work/reports"
+          className="wd-qitem"
+          aria-current={pathname.startsWith("/work/reports") ? "page" : undefined}
+        >
+          <span aria-hidden="true" />
+          <span className="wd-qtitle">Reports</span>
         </Link>
       </nav>
     </SideFrame>
