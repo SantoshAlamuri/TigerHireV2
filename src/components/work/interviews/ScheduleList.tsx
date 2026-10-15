@@ -10,7 +10,7 @@ import {
   type ToSchedule,
 } from "@/lib/work/interviews";
 import { AddInterviewer } from "./AddInterviewer";
-import { SlotPicker } from "./SlotPicker";
+import { TimePicker } from "./TimePicker";
 import { postJson } from "./post-json";
 import s from "./interviews.module.css";
 
@@ -54,8 +54,9 @@ export function ScheduleList({
   onSlotsChanged: () => void | Promise<void>;
   onLog: (actor: "agent" | "auto" | "you", what: string) => void;
 }) {
-  const [open, setOpen] = useState<{ id: string; what: "pick" | "interviewer" } | null>(null);
-  const [slotChoice, setSlotChoice] = useState<string | null>(null);
+  const [open, setOpen] = useState<{ id: string; what: "offer" | "book" | "interviewer" } | null>(
+    null,
+  );
   const [busy, setBusy] = useState<string | null>(null);
   const [notes, setNotes] = useState<Record<string, Note>>({});
   const [batch, setBatch] = useState<{ done: number; total: number } | null>(null);
@@ -104,20 +105,18 @@ export function ScheduleList({
     onLog("you", `Sent interview links to ${plural(sent, "candidate")}`);
   }
 
-  async function book(t: ToSchedule) {
-    if (!slotChoice) return;
+  async function book(t: ToSchedule, slotId: string, startIso?: string): Promise<boolean> {
     setBusy(t.pipelineCandidateId);
-    const slot = openSlots.find((x) => x.id === slotChoice);
     const res = await postJson<BookResponse>(`/api/jobs/${jobId}/interviews/book`, {
-      slot_id: slotChoice,
+      slot_id: slotId,
       pipeline_candidate_id: t.pipelineCandidateId,
     });
     setBusy(null);
     if (!res.ok) {
       note(t.pipelineCandidateId, { ok: false, text: res.error });
-      return;
+      return false;
     }
-    const when = formatWhen(res.data.interview_scheduled_at ?? slot?.start);
+    const when = formatWhen(res.data.interview_scheduled_at ?? startIso);
     onLog("you", `Booked ${t.candidateName} for ${when}`);
     if (res.data.has_delivery_failure) {
       onLog(
@@ -128,8 +127,8 @@ export function ScheduleList({
       onLog("auto", `Sent calendar invites to ${t.candidateName} and the interviewer`);
     }
     setOpen(null);
-    setSlotChoice(null);
     await onBooked();
+    return true;
   }
 
   return (
@@ -142,8 +141,8 @@ export function ScheduleList({
       </div>
       {noTimes ? (
         <p className={s.notice}>
-          There are no open interview times, so a link would have nothing to offer. Open a time
-          under &ldquo;Pick a slot&rdquo; first.
+          Offer a few times from the next two weeks and the candidate picks one, or book a time
+          yourself. <span className="wd-sig auto">Automation</span> sends the invites.
         </p>
       ) : (
         <p className={s.notice}>
@@ -203,28 +202,35 @@ export function ScheduleList({
                     Add an interviewer for {stage.stage_name}
                   </button>
                 )}
+                {sent && !noTimes ? (
+                  <button
+                    type="button"
+                    className="wd-btn"
+                    disabled={busy === id || batch !== null}
+                    onClick={() => void sendOne(t)}
+                  >
+                    {busy === id && !isOpen ? "Sending…" : "Send the link again"}
+                  </button>
+                ) : null}
                 <button
                   type="button"
                   className={t.needsInterviewer || sent ? "wd-btn" : "wd-btn go"}
-                  disabled={noTimes || busy === id || batch !== null}
-                  onClick={() => void sendOne(t)}
+                  aria-expanded={isOpen && open?.what === "offer"}
+                  onClick={() =>
+                    setOpen(isOpen && open?.what === "offer" ? null : { id, what: "offer" })
+                  }
                 >
-                  {busy === id && !isOpen
-                    ? "Sending…"
-                    : sent
-                      ? "Send the link again"
-                      : "Send a self-schedule link"}
+                  Offer times
                 </button>
                 <button
                   type="button"
                   className="wd-btn"
-                  aria-expanded={isOpen && open?.what === "pick"}
-                  onClick={() => {
-                    setSlotChoice(null);
-                    setOpen(isOpen && open?.what === "pick" ? null : { id, what: "pick" });
-                  }}
+                  aria-expanded={isOpen && open?.what === "book"}
+                  onClick={() =>
+                    setOpen(isOpen && open?.what === "book" ? null : { id, what: "book" })
+                  }
                 >
-                  Pick a slot
+                  Book a time
                 </button>
               </div>
               {n && (
@@ -247,36 +253,39 @@ export function ScheduleList({
                   }}
                 />
               )}
-              {isOpen && open?.what === "pick" && (
-                <div className={s.drawer}>
-                  <SlotPicker
-                    jobId={jobId}
-                    slots={openSlots}
-                    value={slotChoice}
-                    onChange={setSlotChoice}
-                    label={`Choose a time for ${t.candidateName}`}
-                    onSlotsChanged={async (createdId) => {
-                      onLog("you", "Opened a new interview time");
+              {isOpen && (open?.what === "offer" || open?.what === "book") && (
+                <TimePicker
+                  key={open.what}
+                  jobId={jobId}
+                  defaultPanel={stage?.interviewer_user_id ? [stage.interviewer_user_id] : []}
+                  openSlots={openSlots}
+                  multiple={open.what === "offer"}
+                  confirmLabel={(picked) =>
+                    open.what === "offer"
+                      ? picked.length
+                        ? `Send ${plural(picked.length, "time")} to ${t.candidateName.split(" ")[0]}`
+                        : "Pick times to offer"
+                      : picked.length
+                        ? `Book ${formatWhen(new Date(picked[0].start).toISOString())}`
+                        : "Pick a time"
+                  }
+                  onCancel={() => setOpen(null)}
+                  onConfirm={async (ids, picked) => {
+                    const opened = picked.filter((p) => p.kind === "new").length;
+                    if (opened) {
+                      onLog("you", `Opened ${plural(opened, "interview time")}`);
                       await onSlotsChanged();
-                      if (createdId) setSlotChoice(createdId);
-                    }}
-                  />
-                  <div className="wd-row-actions">
-                    <button
-                      type="button"
-                      className="wd-btn go"
-                      disabled={!slotChoice || busy === id}
-                      onClick={() => void book(t)}
-                    >
-                      {busy === id
-                        ? "Booking…"
-                        : slotChoice
-                          ? `Book ${formatWhen(openSlots.find((x) => x.id === slotChoice)?.start)}`
-                          : "Choose a time to book"}
-                    </button>
-                    <span className="wd-sig auto">Automation sends the invites</span>
-                  </div>
-                </div>
+                    }
+                    if (open.what === "book") {
+                      return book(t, ids[0], new Date(picked[0].start).toISOString());
+                    }
+                    setBusy(id);
+                    const ok = await sendLink(t);
+                    setBusy(null);
+                    if (ok) setOpen(null);
+                    return ok;
+                  }}
+                />
               )}
             </div>
           );

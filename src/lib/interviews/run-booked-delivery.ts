@@ -14,6 +14,7 @@ import {
   type SendBookedInvitesOptions,
 } from "@/lib/interviews/send-booked-invites";
 import { maybeDispatchNotetakerBot } from "@/lib/interviews/notetaker-dispatch";
+import { syncBookedEvent } from "@/lib/calendar/interviews";
 
 export async function persistSlotDeliveryStatus(
   admin: SupabaseClient,
@@ -72,7 +73,29 @@ export async function runBookedInterviewDelivery(params: {
     channelsToRetry: retryKeys,
   };
 
-  const sent = await sendBookedInterviewInvites({ ...ctx, slotId }, options);
+  // Put it on the organiser's calendar first, so the emails carry the video link.
+  let calendar: { meetingUrl: string | null; onCalendar: boolean } = {
+    meetingUrl: ctx.meetingUrl ?? null,
+    onCalendar: false,
+  };
+  try {
+    calendar = await syncBookedEvent(admin, {
+      slotId,
+      jobTitle: ctx.jobTitle,
+      stageName: ctx.stageName,
+      candidateName: ctx.candidateName,
+      candidateEmail: ctx.candidateEmail,
+      startAt: ctx.slotStartAt,
+      endAt: ctx.slotEndAt,
+    });
+  } catch (err) {
+    logger.warn("calendar_event_sync_threw", { slotId, error: String(err) });
+  }
+
+  const sent = await sendBookedInterviewInvites(
+    { ...ctx, slotId, meetingUrl: calendar.meetingUrl, onCalendar: calendar.onCalendar },
+    options,
+  );
   const delivery: SlotDeliveryFields = {
     candidate_email_status: sent.candidate_email_status,
     interviewer_email_status: sent.interviewer_email_status,

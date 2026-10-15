@@ -1,5 +1,6 @@
 import { NextRequest } from "next/server";
 import { createSupabaseAdmin } from "@/lib/supabase/admin";
+import { filterStillFree } from "@/lib/calendar/interviews";
 import { jsonSuccess, jsonError, handleApiError } from "@/lib/api-helpers";
 import { checkRateLimit, RATE_LIMIT_PRESETS } from "@/lib/security/rate-limit";
 import { hashScheduleToken } from "@/lib/interviews/schedule-token-crypto";
@@ -62,7 +63,7 @@ export async function GET(
 
     const { data: slots } = await admin
       .from("interview_availability_slots")
-      .select("id, start_at, end_at, timezone, status, pipeline_candidate_id, bookable_by")
+      .select("id, user_id, start_at, end_at, timezone, status, pipeline_candidate_id, bookable_by")
       .eq("job_id", jobId)
       .order("start_at", { ascending: true });
 
@@ -98,7 +99,7 @@ export async function GET(
     }
 
     const now = new Date();
-    const available =
+    const open =
       hasBooked && !canReschedule
         ? []
         : (slots ?? []).filter(
@@ -108,6 +109,8 @@ export async function GET(
               isSelfServeBookable((s as { bookable_by?: string }).bookable_by) &&
               isSlotEligibleForCandidateSelfServe(s.start_at as string, now),
           );
+    // Drop times that have since filled up on the interviewer's own calendar.
+    const available = await filterStillFree(admin, open);
     const booked = row.booking_done_at
       ? ((slots ?? []).find((s) => s.id === row.booked_slot_id) ?? null)
       : null;

@@ -8,7 +8,7 @@ import {
   type BookedInterview,
   type OpenSlot,
 } from "@/lib/work/interviews";
-import { SlotPicker } from "./SlotPicker";
+import { TimePicker } from "./TimePicker";
 import { postJson } from "./post-json";
 import s from "./interviews.module.css";
 
@@ -33,7 +33,6 @@ export function BookedList({
   onLog: (actor: "agent" | "auto" | "you", what: string) => void;
 }) {
   const [open, setOpen] = useState<{ id: string; mode: Mode } | null>(null);
-  const [choice, setChoice] = useState<string | null>(null);
   const [busy, setBusy] = useState<string | null>(null);
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [resent, setResent] = useState<Record<string, string>>({});
@@ -48,22 +47,23 @@ export function BookedList({
       return next;
     });
 
-  async function reschedule(b: BookedInterview) {
-    if (!choice) return;
+  async function reschedule(b: BookedInterview, newSlotId: string, startIso: string) {
     setBusy(b.slotId);
     clearFail(b.slotId);
-    const to = openSlots.find((x) => x.id === choice);
     const res = await postJson(`/api/jobs/${jobId}/interviews/reschedule`, {
       slot_id: b.slotId,
-      new_slot_id: choice,
+      new_slot_id: newSlotId,
     });
     setBusy(null);
-    if (!res.ok) return fail(b.slotId, res.error);
-    onLog("you", `Moved ${b.candidateName} to ${formatWhen(to?.start)}`);
+    if (!res.ok) {
+      fail(b.slotId, res.error);
+      return false;
+    }
+    onLog("you", `Moved ${b.candidateName} to ${formatWhen(startIso)}`);
     onLog("auto", `Sent ${b.candidateName} and the interviewer the new time`);
     setOpen(null);
-    setChoice(null);
     await onChanged();
+    return true;
   }
 
   async function cancel(b: BookedInterview) {
@@ -150,7 +150,6 @@ export function BookedList({
                   className="wd-btn"
                   aria-expanded={isOpen && open?.mode === "reschedule"}
                   onClick={() => {
-                    setChoice(null);
                     setOpen(
                       isOpen && open?.mode === "reschedule"
                         ? null
@@ -179,35 +178,25 @@ export function BookedList({
                 </p>
               )}
               {isOpen && open?.mode === "reschedule" && (
-                <div className={s.drawer}>
-                  <SlotPicker
-                    jobId={jobId}
-                    slots={openSlots}
-                    value={choice}
-                    onChange={setChoice}
-                    label={`Move ${b.candidateName} to`}
-                    onSlotsChanged={async (createdId) => {
+                <TimePicker
+                  jobId={jobId}
+                  defaultPanel={[]}
+                  openSlots={openSlots}
+                  multiple={false}
+                  confirmLabel={(picked) =>
+                    picked.length
+                      ? `Move to ${formatWhen(new Date(picked[0].start).toISOString())}`
+                      : "Pick the new time"
+                  }
+                  onCancel={() => setOpen(null)}
+                  onConfirm={async (ids, picked) => {
+                    if (picked.some((p) => p.kind === "new")) {
                       onLog("you", "Opened a new interview time");
                       await onSlotsChanged();
-                      if (createdId) setChoice(createdId);
-                    }}
-                  />
-                  <div className="wd-row-actions">
-                    <button
-                      type="button"
-                      className="wd-btn go"
-                      disabled={!choice || busy === b.slotId}
-                      onClick={() => void reschedule(b)}
-                    >
-                      {busy === b.slotId
-                        ? "Moving…"
-                        : choice
-                          ? `Move to ${formatWhen(openSlots.find((x) => x.id === choice)?.start)}`
-                          : "Choose the new time"}
-                    </button>
-                    <span className="wd-sig auto">Automation tells both sides</span>
-                  </div>
-                </div>
+                    }
+                    return reschedule(b, ids[0], new Date(picked[0].start).toISOString());
+                  }}
+                />
               )}
               {isOpen && open?.mode === "cancel" && (
                 <div className={`${s.drawer} ${s.drawerYou}`}>

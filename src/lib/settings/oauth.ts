@@ -11,6 +11,9 @@ export function getOauthRedirectUri(
     scope === "user"
       ? "/api/settings/me/integrations/oauth/callback"
       : "/api/settings/integrations/oauth/callback";
+  // The single-URI overrides belong to the organisation flow; personal
+  // connections always come back to their own callback.
+  if (scope === "user") return `${env.baseUrl}${prefix}/${provider}`;
   if (provider === "google_calendar") {
     return process.env.GOOGLE_OAUTH_REDIRECT_URI || `${env.baseUrl}${prefix}/google_calendar`;
   }
@@ -31,7 +34,7 @@ export function buildOauthAuthorizeUrl(
       include_granted_scopes: "true",
       prompt: "consent",
       scope:
-        "https://www.googleapis.com/auth/calendar.events https://www.googleapis.com/auth/calendar.readonly",
+        "openid email https://www.googleapis.com/auth/calendar.events https://www.googleapis.com/auth/calendar.readonly",
       state,
     });
     return `https://accounts.google.com/o/oauth2/v2/auth?${params.toString()}`;
@@ -234,5 +237,18 @@ export async function refreshOauthToken(
         : null,
     scopes: token.scope ? token.scope.split(" ") : [],
     accountEmail: null,
+  };
+}
+
+/** Whether this deployment has the app credentials to connect a calendar. */
+export function calendarProvidersConfigured(): { google: boolean; microsoft: boolean } {
+  return {
+    google: Boolean(
+      (process.env.GOOGLE_OAUTH_CLIENT_ID || process.env.GOOGLE_CLIENT_ID) &&
+        (process.env.GOOGLE_OAUTH_CLIENT_SECRET || process.env.GOOGLE_CLIENT_SECRET),
+    ),
+    microsoft: Boolean(
+      process.env.MICROSOFT_OAUTH_CLIENT_ID && process.env.MICROSOFT_OAUTH_CLIENT_SECRET,
+    ),
   };
 }

@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useAuth } from "@/lib/auth/AuthProvider";
 import { setupFor } from "@/lib/work/setup-sections";
+import { MyCalendar } from "@/components/work/MyCalendar";
 
 /**
  * Setup: everything that isn't part of one job, in one place. Jobs still ask

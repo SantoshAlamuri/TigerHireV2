@@ -1,3 +1,4 @@
+import { cancelBookedEvent, syncBookedEvent } from "@/lib/calendar/interviews";
 import { NextRequest } from "next/server";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 import { createSupabaseAdmin } from "@/lib/supabase/admin";
@@ -183,6 +184,35 @@ export async function POST(request: NextRequest, { params }: { params: Promise<{
     }
   }
 
+  // Move the calendar event: cancel the old one, book the new one with a fresh link.
+  let meetingUrl: string | null = null;
+  try {
+    const adminCal = createSupabaseAdmin();
+    await cancelBookedEvent(adminCal, slot_id, oldSlot.user_id ?? null);
+    const { data: pcCal } = await adminCal
+      .from("pipeline_candidates")
+      .select("candidates(name, email)")
+      .eq("id", finalPipelineCandidateId)
+      .maybeSingle();
+    const { data: jobCal } = await adminCal
+      .from("jobs")
+      .select("title")
+      .eq("id", jobId)
+      .maybeSingle();
+    const cand = (pcCal?.candidates ?? null) as { name?: string; email?: string } | null;
+    const synced = await syncBookedEvent(adminCal, {
+      slotId: new_slot_id,
+      jobTitle: (jobCal?.title as string | undefined) ?? "Interview",
+      candidateName: cand?.name ?? null,
+      candidateEmail: cand?.email ?? null,
+      startAt: newSlot.start_at,
+      endAt: newSlot.end_at,
+    });
+    meetingUrl = synced.meetingUrl;
+  } catch (calErr) {
+    logger.warn("calendar_reschedule_failed", { error: String(calErr) });
+  }
+
   try {
     const { data: pcData } = await supabase
       .from("pipeline_candidates")
@@ -239,6 +269,7 @@ export async function POST(request: NextRequest, { params }: { params: Promise<{
       slot_id: new_slot_id,
       pipeline_candidate_id: finalPipelineCandidateId,
       interview_scheduled_at: finalInterviewScheduledAt,
+      meeting_url: meetingUrl,
     },
     200,
   );
