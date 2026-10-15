@@ -25,6 +25,11 @@ export default function WorkSetupPage() {
           Change how your team hires here. Jobs pick up the changes, and still ask you at the moment
           they need something that isn&apos;t set up.
         </p>
+        {user.isOrgAdmin && (
+          <Link href="/work/welcome" className="wd-small wd-muted">
+            Open the setup checklist
+          </Link>
+        )}
       </header>
 
       <div className="wd-stack" style={{ gap: 30 }}>

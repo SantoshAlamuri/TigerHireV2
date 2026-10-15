@@ -9,6 +9,8 @@ import { ROLE_DASHBOARD_PATH } from "@/types/database";
 import { resolveDashboardRouteAccessRule } from "@/lib/security/dashboard-route-policy";
 import type { JobApplicantCounts } from "@/lib/v2/ta-portfolio";
 import { buildQueue, type QueueEntry } from "@/lib/work/queue";
+import { isOnboardingEntry, needsOnboarding, onboardingKind } from "@/lib/work/onboarding";
+import { useOnboardingHints } from "@/components/work/use-onboarding";
 
 interface PortfolioJob {
   id: string;
@@ -96,6 +98,12 @@ function Sidebar() {
   const activeId = pathname.match(/^\/work\/jobs\/([^/]+)/)?.[1] ?? null;
   const { user } = useAuth();
   const { queue, waiting, loading, error } = useWorkQueue();
+  const onboarding = useOnboardingHints();
+  const setupOpen =
+    !!user &&
+    onboardingKind(user.role, Boolean(user.isOrgAdmin)) === "admin" &&
+    onboarding.ready &&
+    needsOnboarding("admin", onboarding.hints);
 
   return (
     <aside className="wd-side" aria-label="Your work">
@@ -114,7 +122,7 @@ function Sidebar() {
       <section aria-label="Needs you">
         <div className="wd-qhead">
           <span>Needs you</span>
-          <span>{loading ? "" : queue.needsYou.length}</span>
+          <span>{loading ? "" : queue.needsYou.length + (setupOpen ? 1 : 0)}</span>
         </div>
         {loading ? (
           <p className="wd-qsub">Loading your work…</p>
@@ -122,8 +130,27 @@ function Sidebar() {
           <p className="wd-qsub" role="alert">
             Could not load your jobs. Reload to try again.
           </p>
-        ) : queue.needsYou.length ? (
-          <QueueList entries={queue.needsYou} activeId={activeId} />
+        ) : queue.needsYou.length || setupOpen ? (
+          <>
+            {setupOpen && (
+              <ul className="wd-qlist">
+                <li>
+                  <Link
+                    href="/work/welcome"
+                    className="wd-qitem"
+                    aria-current={pathname.startsWith("/work/welcome") ? "page" : undefined}
+                  >
+                    <span className="wd-qdot you" aria-hidden="true" />
+                    <span style={{ minWidth: 0 }}>
+                      <span className="wd-qtitle">Set up your team</span>
+                      <span className="wd-qsub">A few minutes, once</span>
+                    </span>
+                  </Link>
+                </li>
+              </ul>
+            )}
+            <QueueList entries={queue.needsYou} activeId={activeId} />
+          </>
         ) : (
           <p className="wd-qsub">Nothing is waiting on you.</p>
         )}
@@ -217,9 +244,24 @@ export function WorkShell({ children }: { children: React.ReactNode }) {
     else if (!allowed) router.replace(ROLE_DASHBOARD_PATH[user.role]);
   }, [loading, user, allowed, router]);
 
+  // First visit: the home screen hands over to onboarding until it is finished or skipped.
+  const onboarding = useOnboardingHints();
+  const kind = user ? onboardingKind(user.role, Boolean(user.isOrgAdmin)) : null;
+  const sendToWelcome =
+    allowed &&
+    !!kind &&
+    onboarding.ready &&
+    isOnboardingEntry(pathname) &&
+    needsOnboarding(kind, onboarding.hints);
+  useEffect(() => {
+    if (sendToWelcome) router.replace("/work/welcome");
+  }, [sendToWelcome, router]);
+  // Hold the home screen until we know, so it doesn't flash before onboarding.
+  const holding = !!kind && isOnboardingEntry(pathname) && onboarding.loading;
+
   return (
     <div className="wd">
-      {!allowed ? (
+      {!allowed || sendToWelcome || holding ? (
         <p role="status" className="wd-muted" style={{ padding: 32 }}>
           Opening your work…
         </p>

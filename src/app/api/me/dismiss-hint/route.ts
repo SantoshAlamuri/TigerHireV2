@@ -13,7 +13,12 @@ import { createSupabaseAdmin } from "@/lib/supabase/admin";
 import { validateOrigin } from "@/lib/security/csrf";
 
 // Allowlist of dismissible UI hint keys (prevents arbitrary writes into the array).
-const ALLOWED_HINTS = new Set(["company_setup_welcome"]);
+const ALLOWED_HINTS = new Set([
+  "company_setup_welcome",
+  "work_welcome",
+  "work_admin_setup",
+  "work_process_reviewed",
+]);
 
 const bodySchema = z.object({ hint: z.string().optional() });
 
