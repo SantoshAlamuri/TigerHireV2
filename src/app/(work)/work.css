@@ -449,7 +449,10 @@
 
 /* ---------- layout pieces ---------- */
 .wd-page {
-  max-width: 1040px;
+  /* Fill the room beside the rail; only very wide screens get side margins. */
+  width: 100%;
+  max-width: 1600px;
+  margin-inline: auto;
   padding-top: 36px;
   display: flex;
   flex-direction: column;
@@ -1034,7 +1037,6 @@
 .wd-home {
   gap: 44px;
   padding-top: clamp(36px, 8vh, 88px);
-  max-width: 980px;
 }
 .wd-home .wd-h1 {
   max-width: 20ch;
